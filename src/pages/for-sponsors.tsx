@@ -7,7 +7,7 @@ import { DynamicForm } from '@/components/cms/DynamicForm';
 
 export default function ForSponsorsPage() {
   const { data: cms = FALLBACK_CMS_CONTENT } = useCmsContent();
-  const htmlContent = cms.sponsorsPageHtml;
+  const htmlContent = cms.sponsorsPageHtml || FALLBACK_CMS_CONTENT.sponsorsPageHtml;
 
   const site = 'https://deliveriq.live';
   const title = 'Sponsor DeliverIQ — Reach Project Professionals';

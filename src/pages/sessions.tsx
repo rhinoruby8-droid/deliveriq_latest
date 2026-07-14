@@ -5,7 +5,7 @@ import { SessionsList } from '@/components/SessionsList';
 
 export default function SessionsPage() {
   const { data: cms = FALLBACK_CMS_CONTENT } = useCmsContent();
-  const htmlContent = cms.sessionsPageHtml;
+  const htmlContent = cms.sessionsPageHtml || FALLBACK_CMS_CONTENT.sessionsPageHtml;
 
   const site = 'https://deliveriq.live';
   const title = 'Sessions — DeliverIQ';

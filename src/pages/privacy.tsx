@@ -5,7 +5,7 @@ import { DocumentVisual } from '@/components/page-renderers/DocumentVisual';
 
 export default function PrivacyPage() {
   const { data: cms = FALLBACK_CMS_CONTENT } = useCmsContent();
-  const htmlContent = cms.privacyPageHtml;
+  const htmlContent = cms.privacyPageHtml || FALLBACK_CMS_CONTENT.privacyPageHtml;
 
   const site = 'https://deliveriq.live';
   const title = 'Privacy Policy — DeliverIQ';

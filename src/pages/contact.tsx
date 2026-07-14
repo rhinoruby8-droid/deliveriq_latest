@@ -6,7 +6,7 @@ import { DynamicForm } from '@/components/cms/DynamicForm';
 
 export default function ContactPage() {
   const { data: cms = FALLBACK_CMS_CONTENT } = useCmsContent();
-  let htmlContent = cms.contactPageHtml || '';
+  let htmlContent = cms.contactPageHtml || FALLBACK_CMS_CONTENT.contactPageHtml;
 
   const site = 'https://deliveriq.live';
   const title = 'Contact — DeliverIQ';

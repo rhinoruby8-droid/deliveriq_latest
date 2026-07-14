@@ -6,7 +6,7 @@ import { DynamicForm } from '@/components/cms/DynamicForm';
 
 export default function ForSpeakersPage() {
   const { data: cms = FALLBACK_CMS_CONTENT } = useCmsContent();
-  const htmlContent = cms.speakersPageHtml;
+  const htmlContent = cms.speakersPageHtml || FALLBACK_CMS_CONTENT.speakersPageHtml;
 
   const site = 'https://deliveriq.live';
   const title = 'Speak at DeliverIQ — Share Practical AI Skills';

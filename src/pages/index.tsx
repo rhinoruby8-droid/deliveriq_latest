@@ -6,7 +6,7 @@ import { HomepageVisual } from '@/components/page-renderers/HomepageVisual';
 
 export default function HomePage() {
   const { data: cms = FALLBACK_CMS_CONTENT } = useCmsContent();
-  const htmlContent = cms.homepageHtml;
+  const htmlContent = cms.homepageHtml || FALLBACK_CMS_CONTENT.homepageHtml;
 
   const site = 'https://deliveriq.live';
   const title = "DeliverIQ — The Project World's Live Room";

@@ -95,7 +95,7 @@ export default function SessionDetailPage() {
     ${session.status === 'draft' ? '<span class="text-[10px] font-bold text-yellow-400 uppercase tracking-wider bg-yellow-950/30 border border-yellow-900/30 px-3 py-1 rounded-full">Draft</span>' : ''}
   `;
 
-  let htmlContent = cms.sessionDetailPageHtml || '';
+  let htmlContent = cms.sessionDetailPageHtml || FALLBACK_CMS_CONTENT.sessionDetailPageHtml;
   htmlContent = htmlContent
     .replace(/\{\{session.title\}\}/g, session.title)
     .replace(/\{\{session.tag\}\}/g, session.tag)

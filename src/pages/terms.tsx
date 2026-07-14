@@ -5,7 +5,7 @@ import { DocumentVisual } from '@/components/page-renderers/DocumentVisual';
 
 export default function TermsPage() {
   const { data: cms = FALLBACK_CMS_CONTENT } = useCmsContent();
-  const htmlContent = cms.termsPageHtml;
+  const htmlContent = cms.termsPageHtml || FALLBACK_CMS_CONTENT.termsPageHtml;
 
   const site = 'https://deliveriq.live';
   const title = 'Terms of Use — DeliverIQ';
