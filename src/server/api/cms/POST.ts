@@ -123,6 +123,14 @@ export default async function handler(req: Request, res: Response) {
       if (error) throw new Error(`Settings upsert failed: ${error.message}`);
     }
 
+    if (data.globalCss !== undefined) {
+      const { error } = await supabaseAdmin.from('settings').upsert({
+        id: 'global_css',
+        value: { css: data.globalCss }
+      });
+      if (error) throw new Error(`Global CSS upsert failed: ${error.message}`);
+    }
+
     // Clear local memory cache
     const cacheModule = await import('./cache');
     cacheModule.clearCmsCache();

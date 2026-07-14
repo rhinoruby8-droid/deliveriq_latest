@@ -132,6 +132,13 @@ export default async function handler(req: Request, res: Response) {
       data.paymentConfig = paymentConfigSetting.value;
     }
 
+    const globalCssSetting = settingsRes.data.find(s => s.id === 'global_css');
+    if (globalCssSetting) {
+      data.globalCss = globalCssSetting.value?.css || '';
+    } else {
+      data.globalCss = '';
+    }
+
     // Store in cache for future requests
     const cacheModule = await import('./cache');
     cacheModule.setCmsCache(data);

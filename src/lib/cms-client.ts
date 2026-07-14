@@ -190,11 +190,13 @@ export interface CmsContent {
   replaysPageCss?: string;
   sessionDetailPageCss?: string;
   notFoundPageCss?: string;
+  globalCss?: string;
 }
 
 // --- Fallback default content (useful during loading and hydration) ---
 
 export const FALLBACK_CMS_CONTENT: CmsContent = {
+  globalCss: '',
   paymentConfig: {
     stripeActive: true,
     paypalActive: false,

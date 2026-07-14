@@ -1,6 +1,7 @@
 import { Helmet } from '@dr.pogodin/react-helmet';
 import { type ReactElement } from 'react';
 import { ScrollRestoration } from 'react-router-dom';
+import { useCmsContent } from '@/lib/cms-client';
 
 import Footer from '@/layouts/parts/Footer';
 import Header from '@/layouts/parts/Header';
@@ -20,8 +21,12 @@ interface RootLayoutProps {
 }
 
 export default function RootLayout({ children }: RootLayoutProps) {
+  const { data: cms } = useCmsContent();
   return (
     <Website>
+      {cms?.globalCss ? (
+        <style id="global-css-override" dangerouslySetInnerHTML={{ __html: cms.globalCss }} />
+      ) : null}
       <Helmet>
         <title>DeliverIQ — The Project World's Live Room</title>
         <meta

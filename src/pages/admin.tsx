@@ -14,7 +14,7 @@ import { FALLBACK_CMS_CONTENT } from '@/lib/cms-client';
 
 type ActiveTabType = 
   | 'home' | 'sessions-html' | 'speakers-html' | 'sponsors-html' | 'contact-html' | 'privacy-html' | 'terms-html' | 'register-html'
-  | 'replays-html' | 'session-detail-html' | '404-html'
+  | 'replays-html' | 'session-detail-html' | '404-html' | 'global-css'
   | 'manage-sessions' | 'manage-speakers' | 'manage-sponsors' | 'manage-forms' | 'settings' | 'json';
 
 export default function AdminPage() {
@@ -713,6 +713,15 @@ export default function AdminPage() {
               <AlertTriangle size={14} />
               404 Page Layout
             </button>
+            <button
+              onClick={() => handleTabChange('global-css')}
+              className={`w-full flex items-center gap-3 px-4 py-2.5 rounded text-xs font-semibold transition-all ${
+                activeTab === 'global-css' ? 'bg-[#C79A4E] text-[#1A1D24]' : 'text-[#8A8D96] hover:bg-[#2C2F38] hover:text-[#F0EDE8]'
+              }`}
+            >
+              <Code size={14} />
+              Global CSS Editor
+            </button>
             
             <p className="text-[9px] font-bold text-[#8A8D96] uppercase tracking-widest px-4 py-2 mt-4 hidden md:block select-none">Database Modules</p>
             <button
@@ -1189,6 +1198,37 @@ export default function AdminPage() {
                       <option value="INR">INR (₹)</option>
                       <option value="AUD">AUD ($)</option>
                     </select>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ==================== GLOBAL CSS TAB ==================== */}
+            {activeTab === 'global-css' && (
+              <div className="flex flex-col gap-6">
+                <div>
+                  <h2 className="text-xl font-bold">Global CSS stylesheet Editor</h2>
+                  <p className="text-xs text-[#8A8D96] mt-1">
+                    Directly view and edit global stylesheet style rules. These rules are injected site-wide (acting as overrides to the main bundle index-CGTjzYuQ.css).
+                  </p>
+                </div>
+
+                <div className="border border-[#2C2F38] bg-[#21242C] rounded-sm overflow-hidden flex flex-col">
+                  <div className="px-5 py-4 border-b border-[#2C2F38] flex items-center justify-between bg-[#1A1D24]/40">
+                    <div className="flex items-center gap-2">
+                      <Code size={14} className="text-[#C79A4E]" />
+                      <span className="text-xs font-mono font-bold text-[#F0EDE8]">index-CGTjzYuQ.css (Overrides)</span>
+                    </div>
+                    <span className="text-[10px] text-[#8A8D96] italic">Persistent global custom styling</span>
+                  </div>
+                  <div className="p-5 flex flex-col gap-2">
+                    <textarea
+                      rows={24}
+                      value={localContent?.globalCss || ''}
+                      onChange={(e) => handleUpdate('globalCss', e.target.value)}
+                      placeholder="/* Add global CSS rules here to override default site colors, layout margins, padding or fonts */"
+                      className="w-full font-mono text-xs bg-[#1A1D24] border border-[#2C2F38] rounded p-3 text-[#F0EDE8] placeholder-[#4A4D56] focus:outline-none focus:border-[#C79A4E] resize-y leading-relaxed"
+                    />
                   </div>
                 </div>
               </div>
