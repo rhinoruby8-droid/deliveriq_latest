@@ -2,6 +2,7 @@ import express, { type Express, type NextFunction, type Request, type Response }
 import { fileURLToPath } from "node:url";
 import { dirname, extname, join } from "node:path";
 import { readFileSync } from "node:fs";
+import compression from "compression";
 
 // <api-imports>
 import health_get_0 from "./api/health/GET";
@@ -86,6 +87,7 @@ const app = express();
 // the sitemap origin in robots.txt.
 app.set("trust proxy", true);
 
+app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
