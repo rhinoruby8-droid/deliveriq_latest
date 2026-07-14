@@ -1,5 +1,13 @@
 {
   "version": 2,
+  "functions": {
+    "api/index.js": {
+      "includeFiles": [
+        "dist/client/**",
+        "src/data/cms-content.json"
+      ]
+    }
+  },
   "routes": [
     {
       "src": "/assets/(.*)",
