@@ -1,0 +1,6 @@
+/* Custom overrides that apply to the entire website */
+
+/* Example: Expand the sessions container on the home page to fit 2 columns side-by-side */
+.max-w-4xl {
+  max-width: 1200px !important;
+}
