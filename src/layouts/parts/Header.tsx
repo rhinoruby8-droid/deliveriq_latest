@@ -14,6 +14,7 @@ export default function Header() {
   }, []);
 
   const navItems = [
+    { href: '/', label: 'Home' },
     { href: '/sessions', label: 'Sessions' },
     { href: '/replays', label: 'Replays' },
     { href: '/register', label: 'Register' },
