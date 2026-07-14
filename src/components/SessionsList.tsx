@@ -225,66 +225,68 @@ function SessionCard({ session, speakers, sponsors, isPast, onTitleClick }: {
       </div>
 
       {/* Footer: Speakers, Sponsors, Action */}
-      <div className="flex flex-col lg:flex-row lg:items-center gap-6 lg:justify-between pt-4 border-t border-[#2C2F38]/40">
-        {/* Speakers */}
-        <div className="flex flex-wrap gap-4 items-center">
-          <span className="text-[10px] font-bold text-[#8A8D96] uppercase tracking-wider">Presenters:</span>
-          <div className="flex flex-wrap gap-3">
-            {speakers.map(sp => (
-              <div key={sp.id} className="flex items-center gap-2 bg-[#1A1D24] border border-[#2C2F38] pl-1.5 pr-3 py-1 rounded-full text-xs">
-                <img
-                  src={sp.avatarUrl} alt={sp.name}
-                  loading="lazy"
-                  decoding="async"
-                  onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=32&h=32'; }}
-                  className="w-5 h-5 rounded-full object-cover bg-[#21242C] border border-[#2C2F38]"
-                />
-                <span className="font-semibold text-[#F0EDE8]">{sp.name}</span>
-                <span className="text-[#8A8D96] text-[10px] truncate max-w-[100px]">({sp.role})</span>
-              </div>
-            ))}
-            {speakers.length === 0 && <span className="text-xs text-[#8A8D96] italic">TBA</span>}
+      <div className="flex flex-col gap-4 pt-4 border-t border-[#2C2F38]/40">
+        {/* Row 1: Metadata (Speakers & Sponsors) */}
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          {/* Speakers */}
+          <div className="flex flex-wrap gap-2 items-center">
+            <span className="text-[9px] font-bold text-[#8A8D96] uppercase tracking-wider">Presenters:</span>
+            <div className="flex flex-wrap gap-1.5">
+              {speakers.map(sp => (
+                <div key={sp.id} className="flex items-center gap-1.5 bg-[#1A1D24] border border-[#2C2F38] pl-1 pr-2 py-0.5 rounded-full text-[10px]">
+                  <img
+                    src={sp.avatarUrl} alt={sp.name}
+                    loading="lazy"
+                    decoding="async"
+                    onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=32&h=32'; }}
+                    className="w-4 h-4 rounded-full object-cover bg-[#21242C] border border-[#2C2F38]"
+                  />
+                  <span className="font-semibold text-[#F0EDE8]">{sp.name}</span>
+                </div>
+              ))}
+              {speakers.length === 0 && <span className="text-[10px] text-[#8A8D96] italic">TBA</span>}
+            </div>
           </div>
+
+          {/* Sponsors */}
+          {sponsors.length > 0 && (
+            <div className="flex flex-wrap gap-2 items-center">
+              <span className="text-[9px] font-bold text-[#8A8D96] uppercase tracking-wider">Sponsors:</span>
+              {sponsors.map(sp => (
+                <a key={sp.id} href={sp.websiteUrl} target="_blank" rel="noreferrer"
+                  className="h-6 px-1.5 py-0.5 rounded bg-[#1A1D24] border border-[#2C2F38] flex items-center justify-center hover:border-[#C79A4E]/30 transition-colors" title={sp.name}>
+                  <img src={sp.logoUrl} alt={sp.name}
+                    loading="lazy"
+                    decoding="async"
+                    onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=48&h=48'; }}
+                    className="max-h-full max-w-[50px] object-contain filter brightness-90 shrink-0" />
+                </a>
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* Sponsors */}
-        {sponsors.length > 0 && (
-          <div className="flex flex-wrap gap-3 items-center">
-            <span className="text-[10px] font-bold text-[#8A8D96] uppercase tracking-wider">Sponsors:</span>
-            {sponsors.map(sp => (
-              <a key={sp.id} href={sp.websiteUrl} target="_blank" rel="noreferrer"
-                className="h-7 px-2 py-0.5 rounded bg-[#1A1D24] border border-[#2C2F38] flex items-center justify-center hover:border-[#C79A4E]/30 transition-colors" title={sp.name}>
-                <img src={sp.logoUrl} alt={sp.name}
-                  loading="lazy"
-                  decoding="async"
-                  onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=48&h=48'; }}
-                  className="max-h-full max-w-[60px] object-contain filter brightness-90 shrink-0" />
-              </a>
-            ))}
-          </div>
-        )}
-
-        {/* Action button */}
-        <div className="lg:ml-auto flex items-center gap-2 shrink-0">
+        {/* Row 2: Action Buttons */}
+        <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#2C2F38]/20">
           <button
             onClick={onTitleClick}
-            className="text-xs font-semibold text-[#8A8D96] hover:text-[#F0EDE8] border border-[#2C2F38] hover:border-[#2C2F38] px-4 py-2.5 rounded-sm transition-all"
+            className="text-[11px] font-semibold text-[#8A8D96] hover:text-[#F0EDE8] border border-[#2C2F38] hover:border-[#2C2F38] px-3.5 py-2 rounded-sm transition-all"
           >
             Details
           </button>
           {isPast ? (
             <Link
               to="/replays"
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#2C2F38] border border-[#2C2F38] text-[#8A8D96] hover:bg-[#C79A4E]/10 hover:border-[#C79A4E]/30 hover:text-[#C79A4E] text-xs font-semibold rounded-sm transition-all whitespace-nowrap"
+              className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#2C2F38] border border-[#2C2F38] text-[#8A8D96] hover:bg-[#C79A4E]/10 hover:border-[#C79A4E]/30 hover:text-[#C79A4E] text-[11px] font-semibold rounded-sm transition-all whitespace-nowrap"
             >
-              <PlayCircle size={13} /> View Replay
+              <PlayCircle size={12} /> View Replay
             </Link>
           ) : (
             <Link
               to={`/sessions/${session.id}`}
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#C79A4E] text-[#1A1D24] hover:brightness-110 text-xs font-semibold rounded-sm transition-all whitespace-nowrap"
+              className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#C79A4E] text-[#1A1D24] hover:brightness-110 text-[11px] font-semibold rounded-sm transition-all whitespace-nowrap"
             >
-              Register Interest <ArrowRight size={12} />
+              Register Interest <ArrowRight size={11} />
             </Link>
           )}
         </div>
@@ -353,7 +355,7 @@ export function SessionsList() {
               <p className="text-xs text-[#8A8D96] max-w-xs leading-relaxed">Check back soon — new live sessions are added regularly.</p>
             </div>
           ) : (
-            <div className="flex flex-col gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {upcomingSessions.map(session => (
                 <SessionCard
                   key={session.id}
@@ -379,7 +381,7 @@ export function SessionsList() {
               </span>
             </div>
 
-            <div className="flex flex-col gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {visiblePast.map(session => (
                 <SessionCard
                   key={session.id}
