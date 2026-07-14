@@ -2,6 +2,7 @@ import { Helmet } from '@dr.pogodin/react-helmet';
 import { useCmsContent, FALLBACK_CMS_CONTENT } from '@/lib/cms-client';
 import { PageHtmlRenderer } from '@/components/PageHtmlRenderer';
 import { SpeakersVisual } from '@/components/page-renderers/SpeakersVisual';
+import { DynamicForm } from '@/components/cms/DynamicForm';
 
 export default function ForSpeakersPage() {
   const { data: cms = FALLBACK_CMS_CONTENT } = useCmsContent();
@@ -42,10 +43,22 @@ export default function ForSpeakersPage() {
       </Helmet>
 
       <main>
-        {cms.speakersContent?.visualMode
-          ? <SpeakersVisual data={cms.speakersContent} />
-          : <PageHtmlRenderer html={htmlContent} widgets={widgets} />
-        }
+        {cms.speakersContent?.visualMode ? (
+          <>
+            <SpeakersVisual data={cms.speakersContent} />
+            <section id="apply" className="py-20 lg:py-28 bg-[#1A1D24] border-t border-[#2C2F38]">
+              <div className="container mx-auto px-6 lg:px-8 max-w-2xl">
+                <div className="text-center mb-10">
+                  <h2 className="text-3xl font-bold text-[#F0EDE8] mb-3">Apply to Speak</h2>
+                  <p className="text-sm text-[#8A8D96]">Share your real-world AI insights with a dedicated audience of project professionals.</p>
+                </div>
+                <DynamicForm formId="speaker" />
+              </div>
+            </section>
+          </>
+        ) : (
+          <PageHtmlRenderer html={htmlContent} widgets={widgets} />
+        )}
       </main>
     </>
   );

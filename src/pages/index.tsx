@@ -62,10 +62,18 @@ export default function HomePage() {
       </Helmet>
 
       <main>
-        {cms.homepageContent?.visualMode
-          ? <HomepageVisual data={cms.homepageContent} />
-          : <PageHtmlRenderer html={htmlContent} widgets={widgets} />
-        }
+        {cms.homepageContent?.visualMode ? (
+          <>
+            <HomepageVisual data={cms.homepageContent} />
+            <section className="py-20 lg:py-28 bg-[#1A1D24] border-t border-[#2C2F38]">
+              <div className="container mx-auto px-6 lg:px-8 max-w-4xl">
+                {widgets.SessionsList}
+              </div>
+            </section>
+          </>
+        ) : (
+          <PageHtmlRenderer html={htmlContent} widgets={widgets} />
+        )}
       </main>
     </>
   );

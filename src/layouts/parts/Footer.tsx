@@ -19,7 +19,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="flex flex-col gap-3">
             <img
-              src="/airo-assets/images/logo/horizontal"
+              src="/assets/deliveriq-logo-dark-notag-1400.png"
               alt="DeliverIQ"
               className="h-8 w-auto object-contain self-start shrink-0"
             />

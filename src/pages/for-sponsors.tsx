@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import { useCmsContent, FALLBACK_CMS_CONTENT } from '@/lib/cms-client';
 import { PageHtmlRenderer } from '@/components/PageHtmlRenderer';
 import { SponsorsVisual } from '@/components/page-renderers/SponsorsVisual';
+import { DynamicForm } from '@/components/cms/DynamicForm';
 
 export default function ForSponsorsPage() {
   const { data: cms = FALLBACK_CMS_CONTENT } = useCmsContent();
@@ -77,10 +78,29 @@ export default function ForSponsorsPage() {
       </Helmet>
 
       <main>
-        {cms.sponsorsContent?.visualMode
-          ? <SponsorsVisual data={cms.sponsorsContent} />
-          : <PageHtmlRenderer html={htmlContent} widgets={widgets} />
-        }
+        {cms.sponsorsContent?.visualMode ? (
+          <>
+            <SponsorsVisual data={cms.sponsorsContent} />
+            <section id="apply" className="py-20 lg:py-28 bg-[#1A1D24] border-t border-[#2C2F38]">
+              <div className="container mx-auto px-6 lg:px-8">
+                <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-16 lg:gap-20 items-start">
+                  <div>
+                    <div className="mb-10">
+                      <h2 className="text-3xl font-bold text-[#F0EDE8] mb-3">Partner with Us</h2>
+                      <p className="text-sm text-[#8A8D96]">Reach a highly target audience of active project professionals applying AI techniques.</p>
+                    </div>
+                    <DynamicForm formId="sponsor" />
+                  </div>
+                  <div className="lg:sticky lg:top-32">
+                    {widgets.SponsorStats}
+                  </div>
+                </div>
+              </div>
+            </section>
+          </>
+        ) : (
+          <PageHtmlRenderer html={htmlContent} widgets={widgets} />
+        )}
       </main>
     </>
   );
