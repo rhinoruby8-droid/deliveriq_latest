@@ -1,0 +1,219 @@
+{
+  "homepageHtml": "<section class=\"relative overflow-hidden pt-20 pb-16 lg:pt-32 lg:pb-24\">\n  <div class=\"container mx-auto px-6 lg:px-8 relative z-10\">\n    <div class=\"max-w-4xl\">\n      <h1 class=\"text-5xl md:text-6xl lg:text-[5rem] font-bold text-[#F0EDE8] leading-[1.0] tracking-tight mb-0\">\n        The Project\n      </h1>\n      <h1 class=\"text-5xl md:text-6xl lg:text-[5rem] font-bold leading-[1.0] tracking-tight mb-0\">\n        <span class=\"text-[#C79A4E]\">World's LIVE</span>\n        <span class=\"text-[#F0EDE8]\">Room!</span>\n      </h1>\n      \n      <p class=\"mt-7 text-lg text-[#8A8D96] leading-relaxed font-normal max-w-xl\">\n        Practical, developer-free live sessions on applying AI tools to project management, project controls, and delivery leadership.\n      </p>\n\n      <p class=\"mt-5 text-sm text-[#C0B89A] leading-relaxed border-l-2 border-[#C79A4E]/50 pl-4\">\n        No flight bookings, no hotel expenses, no days out of the office.\n      </p>\n\n      <div class=\"mt-10 flex flex-wrap gap-4\">\n        <a href=\"/sessions\" class=\"inline-flex items-center gap-2 px-7 py-3.5 text-sm font-semibold bg-[#C79A4E] text-[#1A1D24] rounded transition-all duration-200 hover:brightness-110 hover:scale-[1.02]\">\n          View live sessions\n        </a>\n        <a href=\"/for-speakers\" class=\"inline-flex items-center gap-2 px-7 py-3.5 text-sm font-semibold border border-[#2C2F38] text-[#F0EDE8] rounded hover:bg-[#2C2F38] transition-colors\">\n          Share your expertise\n        </a>\n      </div>\n    </div>\n  </div>\n</section>\n\n[MarqueeTicker]\n\n<section class=\"py-20 lg:py-28\">\n  <div class=\"container mx-auto px-6 lg:px-8\">\n    <div class=\"flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16\">\n      <div>\n        <p class=\"text-[11px] font-semibold tracking-[0.2em] text-[#C79A4E] uppercase mb-3\">\n          Upcoming Sessions\n        </p>\n        <h2 class=\"text-3xl md:text-4xl font-bold text-[#F0EDE8] leading-tight max-w-sm\">\n          Sessions in development.\n        </h2>\n      </div>\n      <a href=\"/sessions\" class=\"inline-flex items-center gap-2 text-sm font-medium text-[#C79A4E] hover:text-[#C79A4E]/70 transition-colors\">\n        View all &rarr;\n      </a>\n    </div>\n    [SessionsList]\n  </div>\n</section>\n\n<section class=\"py-20 lg:py-24 bg-[#21242C]\">\n  <div class=\"container mx-auto px-6 lg:px-8\">\n    <div class=\"mb-16\">\n      <p class=\"text-[11px] font-semibold tracking-[0.2em] text-[#C79A4E] uppercase mb-3\">\n        Why DeliverIQ\n      </p>\n      <h2 class=\"text-3xl md:text-4xl lg:text-5xl font-bold text-[#F0EDE8] leading-tight max-w-2xl\">\n        Built for the way project professionals actually work.\n      </h2>\n    </div>\n\n    <div class=\"flex flex-col\">\n      <div class=\"grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-20 py-12 border-t border-[#2C2F38]\">\n        <div class=\"flex items-start gap-5\">\n          <span class=\"text-5xl font-bold text-[#C79A4E]/15 leading-none shrink-0 select-none\">01</span>\n          <h3 class=\"text-xl md:text-2xl font-bold text-[#F0EDE8] leading-tight pt-1\">Live, not recorded.</h3>\n        </div>\n        <p class=\"text-base text-[#8A8D96] leading-relaxed self-center\">\n          Every session is live with real-time Q&A. Ask questions, challenge ideas, and learn alongside peers — not just watch a video.\n        </p>\n      </div>\n\n      <div class=\"grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-20 py-12 border-t border-[#2C2F38]\">\n        <div class=\"flex items-start gap-5\">\n          <span class=\"text-5xl font-bold text-[#C79A4E]/15 leading-none shrink-0 select-none\">02</span>\n          <h3 class=\"text-xl md:text-2xl font-bold text-[#F0EDE8] leading-tight pt-1\">Practical, not theoretical.</h3>\n        </div>\n        <p class=\"text-base text-[#8A8D96] leading-relaxed self-center\">\n          No AI hype. No generic overviews. Every session is built around real project work — the tools, tasks, and decisions you face every week.\n        </p>\n      </div>\n\n      <div class=\"grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-20 py-12 border-t border-[#2C2F38] last:border-b\">\n        <div class=\"flex items-start gap-5\">\n          <span class=\"text-5xl font-bold text-[#C79A4E]/15 leading-none shrink-0 select-none\">03</span>\n          <h3 class=\"text-xl md:text-2xl font-bold text-[#F0EDE8] leading-tight pt-1\">Expert-led, peer-tested.</h3>\n        </div>\n        <p class=\"text-base text-[#8A8D96] leading-relaxed self-center\">\n          Sessions are led by working professionals in project management, controls, and delivery — people who use these tools in the field.\n        </p>\n      </div>\n    </div>\n  </div>\n</section>\n\n<section class=\"py-20 lg:py-28\">\n  <div class=\"container mx-auto px-6 lg:px-8\">\n    <div class=\"grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-12 lg:gap-20 items-start\">\n      <div>\n        <p class=\"text-[11px] font-semibold tracking-[0.2em] text-[#C79A4E] uppercase mb-3\">FAQ</p>\n        <h2 class=\"text-3xl font-bold text-[#F0EDE8] leading-tight\">Common questions.</h2>\n        <p class=\"text-sm text-[#8A8D96] mt-4 leading-relaxed\">Straight answers. No filler.</p>\n      </div>\n      <div class=\"flex flex-col gap-0 w-full\">\n        <details class=\"group py-5 border-t border-[#2C2F38] cursor-pointer\">\n          <summary class=\"flex justify-between items-center text-[#F0EDE8] hover:text-[#C79A4E] transition-colors font-medium\">\n            What is DeliverIQ?\n            <span class=\"text-[#C79A4E] font-bold\">&plus;</span>\n          </summary>\n          <p class=\"mt-3 text-sm text-[#8A8D96] leading-relaxed\">\n            DeliverIQ is a live learning platform for project management, project controls, and delivery professionals. We host expert-led online sessions focused on applying AI to real project work — with live Q&A and replay access.\n          </p>\n        </details>\n        <details class=\"group py-5 border-t border-[#2C2F38] cursor-pointer\">\n          <summary class=\"flex justify-between items-center text-[#F0EDE8] hover:text-[#C79A4E] transition-colors font-medium\">\n            Are sessions free to attend?\n            <span class=\"text-[#C79A4E] font-bold\">&plus;</span>\n          </summary>\n          <p class=\"mt-3 text-sm text-[#8A8D96] leading-relaxed\">\n            Some sessions are free; others require registration. Pricing is shown on each session listing. Joining the notification list ensures you hear about upcoming sessions before registration fills.\n          </p>\n        </details>\n        <details class=\"group py-5 border-t border-[#2C2F38] cursor-pointer\">\n          <summary class=\"flex justify-between items-center text-[#F0EDE8] hover:text-[#C79A4E] transition-colors font-medium\">\n            How do I access replays?\n            <span class=\"text-[#C79A4E] font-bold\">&plus;</span>\n          </summary>\n          <p class=\"mt-3 text-sm text-[#8A8D96] leading-relaxed\">\n            Replays of past sessions are available in the Replays section. Some replays are open access; others may require a one-time fee or registration.\n          </p>\n        </details>\n        <details class=\"group py-5 border-t border-[#2C2F38] cursor-pointer\">\n          <summary class=\"flex justify-between items-center text-[#F0EDE8] hover:text-[#C79A4E] transition-colors font-medium\">\n            Can I apply to speak at a DeliverIQ session?\n            <span class=\"text-[#C79A4E] font-bold\">&plus;</span>\n          </summary>\n          <p class=\"mt-3 text-sm text-[#8A8D96] leading-relaxed\">\n            Yes. We actively invite practitioners to share their expertise. Visit the For Speakers page to learn about what we look for and submit an expression of interest.\n          </p>\n        </details>\n        <details class=\"group py-5 border-t border-[#2C2F38] cursor-pointer\">\n          <summary class=\"flex justify-between items-center text-[#F0EDE8] hover:text-[#C79A4E] transition-colors font-medium\">\n            How can my brand sponsor a session?\n            <span class=\"text-[#C79A4E] font-bold\">&plus;</span>\n          </summary>\n          <p class=\"mt-3 text-sm text-[#8A8D96] leading-relaxed\">\n            Sponsorship opportunities are available for brands that want to reach project professionals. Visit the For Sponsors page for audience details and package options.\n          </p>\n        </details>\n        <details class=\"group py-5 border-t border-[#2C2F38] border-b cursor-pointer\">\n          <summary class=\"flex justify-between items-center text-[#F0EDE8] hover:text-[#C79A4E] transition-colors font-medium\">\n            Is DeliverIQ only for project managers?\n            <span class=\"text-[#C79A4E] font-bold\">&plus;</span>\n          </summary>\n          <p class=\"mt-3 text-sm text-[#8A8D96] leading-relaxed\">\n            No. DeliverIQ is built for the full project delivery community — project managers, project controls professionals, planners, schedulers, cost engineers, and delivery leaders.\n          </p>\n        </details>\n      </div>\n    </div>\n  </div>\n</section>\n\n<section class=\"relative py-24 lg:py-32 overflow-hidden border-t border-[#2C2F38] bg-[#21242C]/20\">\n  <div class=\"container mx-auto px-6 lg:px-8 text-center relative z-10\">\n    <h2 class=\"text-4xl md:text-5xl lg:text-6xl font-bold text-[#F0EDE8] leading-tight mb-6 max-w-3xl mx-auto\">\n      Ready to bring AI into your project work?\n    </h2>\n    <p class=\"text-[#8A8D96] text-lg mb-10 max-w-xl mx-auto leading-relaxed\">\n      Join the list and be first to know when new sessions open for registration.\n    </p>\n    <div class=\"flex justify-center gap-4\">\n      <a href=\"/sessions\" class=\"inline-flex items-center gap-2 px-7 py-3.5 text-sm font-semibold bg-[#C79A4E] text-[#1A1D24] rounded hover:brightness-110 transition-all\">\n        Explore sessions\n      </a>\n    </div>\n  </div>\n</section>",
+  "sessionsPageHtml": "<section class=\"relative overflow-hidden pt-20 pb-16 lg:pt-28 lg:pb-20\">\n  <div class=\"container mx-auto px-6 lg:px-8 relative z-10\">\n    <div class=\"max-w-3xl\">\n      <p class=\"text-xs font-semibold tracking-[0.2em] text-[#C79A4E] uppercase mb-4\">\n        Live Sessions\n      </p>\n      <h1 class=\"text-4xl md:text-5xl font-bold text-[#F0EDE8] leading-tight mb-5\">\n        Sessions are coming.\n        <br />\n        <span class=\"text-[#C79A4E]\">Be first to know.</span>\n      </h1>\n      <p class=\"text-lg text-[#8A8D96] leading-relaxed max-w-xl\">\n        We're building out the first wave of live sessions for project professionals. Register your interest below and we'll notify you the moment registration opens.\n      </p>\n    </div>\n  </div>\n</section>\n\n<section class=\"bg-[#21242C] py-12\">\n  <div class=\"container mx-auto px-6 lg:px-8\">\n    [RegisterForm]\n  </div>\n</section>\n\n<section class=\"py-16\">\n  <div class=\"container mx-auto px-6 lg:px-8\">\n    <div class=\"mb-12\">\n      <p class=\"text-xs font-semibold tracking-[0.2em] text-[#C79A4E] uppercase mb-4\">\n        Upcoming Schedule\n      </p>\n      <h2 class=\"text-3xl md:text-4xl font-bold text-[#F0EDE8] leading-tight\">\n        Live learning sessions.\n      </h2>\n    </div>\n    [SessionsList]\n  </div>\n</section>\n\n<section class=\"py-20 lg:py-28\">\n  <div class=\"container mx-auto px-6 lg:px-8\">\n    <p class=\"text-xs font-semibold tracking-[0.2em] text-[#C79A4E] uppercase mb-4\">\n      What to Expect\n    </p>\n    <h2 class=\"text-3xl md:text-4xl font-bold text-[#F0EDE8] mb-12 max-w-xl leading-tight\">\n      Practical AI skills across three disciplines.\n    </h2>\n    [TopicsList]\n  </div>\n</section>",
+  "speakersPageHtml": "<section class=\"relative overflow-hidden pt-20 pb-16 lg:pt-28 lg:pb-20\">\n  <div class=\"container mx-auto px-6 lg:px-8 relative z-10\">\n    <div class=\"grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center\">\n      <div>\n        <p class=\"text-xs font-semibold tracking-[0.2em] text-[#C79A4E] uppercase mb-4\">\n          For Speakers\n        </p>\n        <h1 class=\"text-4xl md:text-5xl font-bold text-[#F0EDE8] leading-tight mb-5\">\n          Teach what you know.\n          <br />\n          <span class=\"text-[#C79A4E]\">To the people who need it.</span>\n        </h1>\n        <p class=\"text-lg text-[#8A8D96] leading-relaxed max-w-xl\">\n          DeliverIQ brings together project professionals who want practical AI skills. If you use AI in real project work and have something valuable to share, we want to hear from you.\n        </p>\n        <div class=\"mt-8\">\n          <a href=\"#apply\" class=\"inline-flex items-center gap-2 px-7 py-3.5 text-sm font-semibold bg-[#C79A4E] text-[#1A1D24] rounded hover:brightness-110 transition-all\">\n            Apply to speak &rarr;\n          </a>\n        </div>\n      </div>\n      <div>\n        <div class=\"relative rounded-sm overflow-hidden border border-[#2C2F38]\">\n          <div class=\"aspect-video bg-[#21242C]\">\n            <video src=\"/airo-assets/videos/pages/speakers/preview\" autoPlay muted loop playsInline class=\"w-full h-full object-cover opacity-90\" />\n          </div>\n          <div class=\"bg-[#21242C] px-4 py-3 border-t border-[#2C2F38]\">\n            <span class=\"text-[11px] font-semibold text-[#C79A4E] uppercase tracking-wider\">Share your expertise with project professionals</span>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n</section>\n\n<section class=\"py-20 lg:py-28 bg-[#21242C]\">\n  <div class=\"container mx-auto px-6 lg:px-8\">\n    <p class=\"text-xs font-semibold tracking-[0.2em] text-[#C79A4E] uppercase mb-4\">\n      Criteria\n    </p>\n    <h2 class=\"text-3xl md:text-4xl font-bold text-[#F0EDE8] mb-12 max-w-xl leading-tight\">\n      Practitioners, not presenters.\n    </h2>\n    <div class=\"grid grid-cols-1 md:grid-cols-2 gap-0\">\n      <div class=\"flex flex-col gap-3 py-8 pr-0 md:pr-12 border-t border-[#2C2F38]\">\n        <h3 class=\"text-base font-semibold text-[#F0EDE8]\">Real-world application</h3>\n        <p class=\"text-sm text-[#8A8D96] leading-relaxed\">You use AI in actual project work — not in theory. Your session should be grounded in practice, with examples your audience can apply immediately.</p>\n      </div>\n      <div class=\"flex flex-col gap-3 py-8 pr-0 md:pr-12 border-t border-[#2C2F38]\">\n        <h3 class=\"text-base font-semibold text-[#F0EDE8]\">Relevant discipline</h3>\n        <p class=\"text-sm text-[#8A8D96] leading-relaxed\">Your expertise sits in project management, project controls, planning, scheduling, cost engineering, risk, or delivery leadership.</p>\n      </div>\n      <div class=\"flex flex-col gap-3 py-8 pr-0 md:pr-12 border-t border-[#2C2F38]\">\n        <h3 class=\"text-base font-semibold text-[#F0EDE8]\">Clear, practical content</h3>\n        <p class=\"text-sm text-[#8A8D96] leading-relaxed\">You can structure a focused 60–75 minute session with a clear takeaway. No vendor pitches, no generic AI overviews.</p>\n      </div>\n      <div class=\"flex flex-col gap-3 py-8 pr-0 md:pr-12 border-t border-[#2C2F38]\">\n        <h3 class=\"text-base font-semibold text-[#F0EDE8]\">Comfortable on camera</h3>\n        <p class=\"text-sm text-[#8A8D96] leading-relaxed\">Sessions are live with Q&A. You should be comfortable presenting online and engaging directly with a professional audience.</p>\n      </div>\n    </div>\n  </div>\n</section>\n\n<section class=\"py-20 lg:py-28\">\n  <div class=\"container mx-auto px-6 lg:px-8\">\n    <p class=\"text-xs font-semibold tracking-[0.2em] text-[#C79A4E] uppercase mb-4\">\n      Formats\n    </p>\n    <h2 class=\"text-3xl md:text-4xl font-bold text-[#F0EDE8] mb-12 max-w-xl leading-tight\">\n      Three ways to share your expertise.\n    </h2>\n    <div class=\"flex flex-col gap-0\">\n      <div class=\"grid grid-cols-1 md:grid-cols-[200px_1fr] gap-4 md:gap-12 py-8 border-t border-[#2C2F38]\">\n        <div>\n          <p class=\"text-base font-semibold text-[#F0EDE8] mb-1\">Practical Walkthrough</p>\n          <span class=\"text-xs font-semibold tracking-widest text-[#C79A4E] uppercase\">60 min</span>\n        </div>\n        <p class=\"text-sm text-[#8A8D96] leading-relaxed self-center\">A step-by-step demonstration of an AI tool or workflow applied to a real project task.</p>\n      </div>\n      <div class=\"grid grid-cols-1 md:grid-cols-[200px_1fr] gap-4 md:gap-12 py-8 border-t border-[#2C2F38]\">\n        <div>\n          <p class=\"text-base font-semibold text-[#F0EDE8] mb-1\">Case Study</p>\n          <span class=\"text-xs font-semibold tracking-widest text-[#C79A4E] uppercase\">60–75 min</span>\n        </div>\n        <p class=\"text-sm text-[#8A8D96] leading-relaxed self-center\">A structured review of how AI was applied on a real project — what worked, what did not, and what you learned.</p>\n      </div>\n      <div class=\"grid grid-cols-1 md:grid-cols-[200px_1fr] gap-4 md:gap-12 py-8 border-t border-[#2C2F38] last:border-b\">\n        <div>\n          <p class=\"text-base font-semibold text-[#F0EDE8] mb-1\">Live Workshop</p>\n          <span class=\"text-xs font-semibold tracking-widest text-[#C79A4E] uppercase\">75 min</span>\n        </div>\n        <p class=\"text-sm text-[#8A8D96] leading-relaxed self-center\">An interactive session where attendees work through exercises alongside you, guided by your expertise.</p>\n      </div>\n    </div>\n  </div>\n</section>\n\n<section class=\"py-20 lg:py-28 bg-[#21242C]\">\n  <div class=\"container mx-auto px-6 lg:px-8\">\n    <div class=\"grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start\">\n      <div>\n        <p class=\"text-xs font-semibold tracking-[0.2em] text-[#C79A4E] uppercase mb-4\">\n          Benefits\n        </p>\n        <h2 class=\"text-3xl md:text-4xl font-bold text-[#F0EDE8] leading-tight\">\n          Your expertise, amplified.\n        </h2>\n      </div>\n      <ul class=\"flex flex-col gap-4 pt-2\">\n        <li class=\"flex items-start gap-3 text-sm text-[#8A8D96] leading-relaxed\">\n          <span class=\"text-[#C79A4E]\">&checkmark;</span> A live audience of project professionals actively seeking practical AI skills\n        </li>\n        <li class=\"flex items-start gap-3 text-sm text-[#8A8D96] leading-relaxed\">\n          <span class=\"text-[#C79A4E]\">&checkmark;</span> Promotion across DeliverIQ channels before and after your session\n        </li>\n        <li class=\"flex items-start gap-3 text-sm text-[#8A8D96] leading-relaxed\">\n          <span class=\"text-[#C79A4E]\">&checkmark;</span> A replay of your session published to the DeliverIQ library\n        </li>\n        <li class=\"flex items-start gap-3 text-sm text-[#8A8D96] leading-relaxed\">\n          <span class=\"text-[#C79A4E]\">&checkmark;</span> A speaker profile on the DeliverIQ platform\n        </li>\n        <li class=\"flex items-start gap-3 text-sm text-[#8A8D96] leading-relaxed\">\n          <span class=\"text-[#C79A4E]\">&checkmark;</span> Direct Q&A with your audience — no intermediary\n        </li>\n      </ul>\n    </div>\n  </div>\n</section>\n\n<section id=\"apply\" class=\"py-20 lg:py-28\">\n  <div class=\"container mx-auto px-6 lg:px-8\">\n    [SpeakerForm]\n  </div>\n</section>",
+  "sponsorsPageHtml": "<section class=\"relative overflow-hidden pt-20 pb-16 lg:pt-28 lg:pb-20\">\n  <div class=\"container mx-auto px-6 lg:px-8 relative z-10\">\n    <div class=\"grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center\">\n      <div>\n        <p class=\"text-xs font-semibold tracking-[0.2em] text-[#C79A4E] uppercase mb-4\">\n          For Sponsors\n        </p>\n        <h1 class=\"text-4xl md:text-5xl font-bold text-[#F0EDE8] leading-tight mb-5\">\n          Be in the room\n          <br />\n          <span class=\"text-[#C79A4E]\">where project pros learn.</span>\n        </h1>\n        <p class=\"text-lg text-[#8A8D96] leading-relaxed max-w-xl\">\n          DeliverIQ brings together a focused audience of project management, project controls, and delivery professionals. Sponsorship puts your brand alongside content they actively seek out.\n        </p>\n        <div class=\"mt-8\">\n          <a href=\"#enquire\" class=\"inline-flex items-center gap-2 px-7 py-3.5 text-sm font-semibold bg-[#C79A4E] text-[#1A1D24] rounded hover:brightness-110 transition-all\">\n            Enquire about sponsorship &rarr;\n          </a>\n        </div>\n      </div>\n      <div>\n        [SponsorStats]\n      </div>\n    </div>\n  </div>\n</section>\n\n<section class=\"py-20 lg:py-28\">\n  <div class=\"container mx-auto px-6 lg:px-8\">\n    <p class=\"text-xs font-semibold tracking-[0.2em] text-[#C79A4E] uppercase mb-4\">\n      The Audience\n    </p>\n    <h2 class=\"text-3xl md:text-4xl font-bold text-[#F0EDE8] mb-12 max-w-xl leading-tight\">\n      Professionals who deliver projects for a living.\n    </h2>\n    <div class=\"flex flex-col gap-0\">\n      <div class=\"grid grid-cols-1 md:grid-cols-[260px_1fr] gap-4 md:gap-12 py-8 border-t border-[#2C2F38]\">\n        <p class=\"text-base font-semibold text-[#F0EDE8]\">Project Managers</p>\n        <p class=\"text-sm text-[#8A8D96] leading-relaxed self-center\">Responsible for delivery outcomes across sectors and project scales.</p>\n      </div>\n      <div class=\"grid grid-cols-1 md:grid-cols-[260px_1fr] gap-4 md:gap-12 py-8 border-t border-[#2C2F38]\">\n        <p class=\"text-base font-semibold text-[#F0EDE8]\">Project Controls</p>\n        <p class=\"text-sm text-[#8A8D96] leading-relaxed self-center\">Planners, schedulers, cost engineers, and risk professionals.</p>\n      </div>\n      <div class=\"grid grid-cols-1 md:grid-cols-[260px_1fr] gap-4 md:gap-12 py-8 border-t border-[#2C2F38] last:border-b\">\n        <p class=\"text-base font-semibold text-[#F0EDE8]\">Delivery Leaders</p>\n        <p class=\"text-sm text-[#8A8D96] leading-relaxed self-center\">Programme directors, heads of PMO, and senior delivery executives.</p>\n      </div>\n    </div>\n  </div>\n</section>\n\n<section class=\"py-20 lg:py-24 bg-[#21242C]\">\n  <div class=\"container mx-auto px-6 lg:px-8\">\n    <p class=\"text-xs font-semibold tracking-[0.2em] text-[#C79A4E] uppercase mb-4\">\n      Why Sponsor\n    </p>\n    <h2 class=\"text-3xl md:text-4xl font-bold text-[#F0EDE8] mb-12 max-w-xl leading-tight\">\n      Visibility that compounds.\n    </h2>\n    <div class=\"grid grid-cols-1 md:grid-cols-2 gap-0\">\n      <div class=\"flex flex-col gap-3 py-8 pr-0 md:pr-12 border-t border-[#2C2F38]\">\n        <h3 class=\"text-base font-semibold text-[#F0EDE8]\">A focused, professional audience</h3>\n        <p class=\"text-sm text-[#8A8D96] leading-relaxed\">DeliverIQ attracts practitioners actively upskilling in AI — not casual browsers. Your brand reaches people making real decisions about tools, platforms, and services.</p>\n      </div>\n      <div class=\"flex flex-col gap-3 py-8 pr-0 md:pr-12 border-t border-[#2C2F38]\">\n        <h3 class=\"text-base font-semibold text-[#F0EDE8]\">Live session visibility</h3>\n        <p class=\"text-sm text-[#8A8D96] leading-relaxed\">Sponsors are featured before, during, and after each session — in pre-session communications, on-screen during the live event, and in post-session replays.</p>\n      </div>\n      <div class=\"flex flex-col gap-3 py-8 pr-0 md:pr-12 border-t border-[#2C2F38]\">\n        <h3 class=\"text-base font-semibold text-[#F0EDE8]\">Replay longevity</h3>\n        <p class=\"text-sm text-[#8A8D96] leading-relaxed\">Sessions remain available on demand after they air. Sponsor visibility extends beyond the live event and compounds over time as replays accumulate.</p>\n      </div>\n      <div class=\"flex flex-col gap-3 py-8 pr-0 md:pr-12 border-t border-[#2C2F38]\">\n        <h3 class=\"text-base font-semibold text-[#F0EDE8]\">Relevant context</h3>\n        <p class=\"text-sm text-[#8A8D96] leading-relaxed\">Your brand appears alongside practical, expert-led content that your audience values. No banner blindness — sponsorship is integrated, not bolted on.</p>\n      </div>\n    </div>\n  </div>\n</section>\n\n<section class=\"py-20 lg:py-28\">\n  <div class=\"container mx-auto px-6 lg:px-8\">\n    <p class=\"text-xs font-semibold tracking-[0.2em] text-[#C79A4E] uppercase mb-4\">\n      Sponsorship Packages\n    </p>\n    <h2 class=\"text-3xl md:text-4xl font-bold text-[#F0EDE8] mb-4 max-w-xl leading-tight\">\n      Three levels of partnership.\n    </h2>\n    <p class=\"text-[#8A8D96] text-sm mb-12 max-w-lg leading-relaxed\">\n      Pricing and availability are discussed directly. Enquire below and we'll share full details.\n    </p>\n    <div class=\"flex flex-col gap-5\">\n      <div class=\"flex flex-col md:flex-row md:items-start gap-4 md:gap-12 p-8 border border-[#2C2F38] rounded-sm hover:border-[#C79A4E]/40 transition-colors\">\n        <div class=\"flex items-center gap-3 md:w-48 shrink-0\">\n          <span class=\"text-[#C79A4E]\">&checkmark;</span>\n          <p class=\"text-base font-semibold text-[#F0EDE8]\">Session Sponsor</p>\n        </div>\n        <p class=\"text-sm text-[#8A8D96] leading-relaxed\">Exclusive sponsorship of a single live session. Includes pre-session promotion, on-screen branding during the live event, and replay credit.</p>\n      </div>\n      <div class=\"flex flex-col md:flex-row md:items-start gap-4 md:gap-12 p-8 border border-[#2C2F38] rounded-sm hover:border-[#C79A4E]/40 transition-colors\">\n        <div class=\"flex items-center gap-3 md:w-48 shrink-0\">\n          <span class=\"text-[#C79A4E]\">&checkmark;</span>\n          <p class=\"text-base font-semibold text-[#F0EDE8]\">Series Sponsor</p>\n        </div>\n        <p class=\"text-sm text-[#8A8D96] leading-relaxed\">Sponsorship across a defined series of sessions within a topic area. Sustained visibility with a consistent, relevant audience over multiple events.</p>\n      </div>\n      <div class=\"flex flex-col md:flex-row md:items-start gap-4 md:gap-12 p-8 border border-[#2C2F38] rounded-sm hover:border-[#C79A4E]/40 transition-colors\">\n        <div class=\"flex items-center gap-3 md:w-48 shrink-0\">\n          <span class=\"text-[#C79A4E]\">&checkmark;</span>\n          <p class=\"text-base font-semibold text-[#F0EDE8]\">Platform Partner</p>\n        </div>\n        <p class=\"text-sm text-[#8A8D96] leading-relaxed\">Ongoing partnership across all DeliverIQ sessions and content. Maximum reach, deepest integration, and first right of refusal on new session topics.</p>\n      </div>\n    </div>\n  </div>\n</section>\n\n<section id=\"enquire\" class=\"py-20 lg:py-28 bg-[#21242C]\">\n  <div class=\"container mx-auto px-6 lg:px-8\">\n    [SponsorForm]\n  </div>\n</section>",
+  "contactPageHtml": "<section class=\"relative overflow-hidden pt-20 pb-16 lg:pt-28 lg:pb-20\">\n  <div class=\"container mx-auto px-6 lg:px-8 relative z-10\">\n    <div class=\"max-w-3xl\">\n      <p class=\"text-xs font-semibold tracking-[0.2em] text-[#C79A4E] uppercase mb-4\">\n        Contact\n      </p>\n      <h1 class=\"text-4xl md:text-5xl font-bold text-[#F0EDE8] leading-tight mb-5\">\n        We'd like to\n        <br />\n        <span class=\"text-[#C79A4E]\">hear from you.</span>\n      </h1>\n      <p class=\"text-lg text-[#8A8D96] leading-relaxed max-w-xl\">\n        Use the form below or email us directly at <a href=\"mailto:info@deliveriq.live\" class=\"text-[#C79A4E] hover:underline\">info@deliveriq.live</a>. We aim to respond within 2 business days.\n      </p>\n    </div>\n  </div>\n</section>\n\n<section class=\"py-20 lg:py-24\">\n  <div class=\"container mx-auto px-6 lg:px-8\">\n    <p class=\"text-xs font-semibold tracking-[0.2em] text-[#C79A4E] uppercase mb-4\">\n      How We Can Help\n    </p>\n    <div class=\"flex flex-col gap-0\">\n      <div class=\"grid grid-cols-1 md:grid-cols-[220px_1fr] gap-4 md:gap-12 py-7 border-t border-[#2C2F38]\">\n        <p class=\"text-sm font-semibold text-[#F0EDE8]\">General enquiries</p>\n        <p class=\"text-sm text-[#8A8D96] leading-relaxed self-center\">Questions about DeliverIQ, the platform, or upcoming sessions.</p>\n      </div>\n      <div class=\"grid grid-cols-1 md:grid-cols-[220px_1fr] gap-4 md:gap-12 py-7 border-t border-[#2C2F38]\">\n        <p class=\"text-sm font-semibold text-[#F0EDE8]\">Speaking</p>\n        <p class=\"text-sm text-[#8A8D96] leading-relaxed self-center\">Interested in leading a session? Use the form or visit the For Speakers page.</p>\n      </div>\n      <div class=\"grid grid-cols-1 md:grid-cols-[220px_1fr] gap-4 md:gap-12 py-7 border-t border-[#2C2F38]\">\n        <p class=\"text-sm font-semibold text-[#F0EDE8]\">Sponsorship</p>\n        <p class=\"text-sm text-[#8A8D96] leading-relaxed self-center\">Want to reach our audience? Use the form or visit the For Sponsors page.</p>\n      </div>\n      <div class=\"grid grid-cols-1 md:grid-cols-[220px_1fr] gap-4 md:gap-12 py-7 border-t border-[#2C2F38] last:border-b\">\n        <p class=\"text-sm font-semibold text-[#F0EDE8]\">Everything else</p>\n        <p class=\"text-sm text-[#8A8D96] leading-relaxed self-center\">Feedback, press, partnerships, or anything else — we read every message.</p>\n      </div>\n    </div>\n  </div>\n</section>\n\n<section class=\"py-20 lg:py-28 bg-[#21242C]\">\n  <div class=\"container mx-auto px-6 lg:px-8\">\n    [ContactForm]\n  </div>\n</section>",
+  "privacyPageHtml": "<section class=\"relative overflow-hidden pt-20 pb-16 lg:pt-28 lg:pb-20\">\n  <div class=\"container mx-auto px-6 lg:px-8 relative z-10\">\n    <div class=\"max-w-3xl\">\n      <h1 class=\"text-4xl md:text-5xl font-bold text-[#F0EDE8] mb-5\">Privacy Policy</h1>\n      <p class=\"text-sm text-[#8A8D96] mb-8\">Last updated: July 12, 2026</p>\n      \n      <div class=\"prose prose-invert max-w-none text-sm text-[#8A8D96] leading-relaxed space-y-6\">\n        <p>DeliverIQ is committed to protecting your privacy. This policy describes how we collect, use, and handle your personal data when you use our platform, register for webinars, or contact us.</p>\n        \n        <h2 class=\"text-lg font-bold text-[#C79A4E] mt-6 mb-2\">1. Information We Collect</h2>\n        <p>We collect your name, email address, job title, and organisation name when you register for webinars or submit enquiries. This data is used solely to facilitate session invitations and updates.</p>\n\n        <h2 class=\"text-lg font-bold text-[#C79A4E] mt-6 mb-2\">2. Cookies</h2>\n        <p>We use essential cookies to maintain your login session and track analytics preferences according to your consent settings.</p>\n\n        <h2 class=\"text-lg font-bold text-[#C79A4E] mt-6 mb-2\">3. Data Retention</h2>\n        <p>We store data securely in compliance with standard regulations. You can request deletion of your information at any time by emailing us at info@deliveriq.live.</p>\n      </div>\n    </div>\n  </div>\n</section>",
+  "termsPageHtml": "<section class=\"relative overflow-hidden pt-20 pb-16 lg:pt-28 lg:pb-20\">\n  <div class=\"container mx-auto px-6 lg:px-8 relative z-10\">\n    <div class=\"max-w-3xl\">\n      <h1 class=\"text-4xl md:text-5xl font-bold text-[#F0EDE8] mb-5\">Terms of Service</h1>\n      <p class=\"text-sm text-[#8A8D96] mb-8\">Last updated: July 12, 2026</p>\n      \n      <div class=\"prose prose-invert max-w-none text-sm text-[#8A8D96] leading-relaxed space-y-6\">\n        <p>By accessing and using the DeliverIQ live learning platform and replays library, you agree to comply with and be bound by the following terms.</p>\n        \n        <h2 class=\"text-lg font-bold text-[#C79A4E] mt-6 mb-2\">1. Permitted Use</h2>\n        <p>DeliverIQ resources, webinars, and replay videos are provided for individual professional learning. Redistribution, screen recording, or commercial reuse of session materials without permission is prohibited.</p>\n\n        <h2 class=\"text-lg font-bold text-[#C79A4E] mt-6 mb-2\">2. Registration</h2>\n        <p>You agree to provide accurate and complete registration data. You are responsible for maintaining the confidentiality of your credentials.</p>\n\n        <h2 class=\"text-lg font-bold text-[#C79A4E] mt-6 mb-2\">3. Intellectual Property</h2>\n        <p>All session materials, slides, brand assets, and videos are the property of DeliverIQ and the respective presenters.</p>\n      </div>\n    </div>\n  </div>\n</section>",
+  "sessions": [
+    {
+      "id": "schedule-risk",
+      "title": "AI-Assisted Schedule Risk Analysis",
+      "description": "Apply AI tools to identify schedule risks earlier, model scenarios faster, and communicate findings with clarity.",
+      "tag": "Project Controls",
+      "date": "2026-07-28",
+      "time": "14:00 BST",
+      "duration": "60 min",
+      "status": "published",
+      "speakerIds": [
+        "john-doe"
+      ],
+      "sponsorIds": [
+        "aecom"
+      ]
+    },
+    {
+      "id": "pm-prompting",
+      "title": "Prompting for Project Managers",
+      "description": "Write effective prompts for real PM tasks — status reports, risk registers, stakeholder briefs, and more.",
+      "tag": "Project Management",
+      "date": "2026-08-04",
+      "time": "15:00 BST",
+      "duration": "60 min",
+      "status": "published",
+      "speakerIds": [
+        "jane-smith"
+      ],
+      "sponsorIds": [
+        "microsoft"
+      ]
+    },
+    {
+      "id": "evm-ai",
+      "title": "AI in Earned Value Management",
+      "description": "Accelerate EVM reporting, flag variances, and support forecasting without replacing your professional judgment.",
+      "tag": "Delivery Leadership",
+      "date": "2026-08-11",
+      "time": "16:00 BST",
+      "duration": "60 min",
+      "status": "published",
+      "speakerIds": [
+        "bob-johnson"
+      ],
+      "sponsorIds": [
+        "slack"
+      ]
+    },
+    {
+      "id": "abc",
+      "title": "test",
+      "description": "I'll teach you",
+      "tag": "Project Controls",
+      "date": "2026-07-09",
+      "time": "09:00 IST",
+      "duration": "60 min",
+      "status": "published",
+      "speakerIds": [
+        "Kunal-Sarkar"
+      ],
+      "sponsorIds": [
+        "Test"
+      ],
+      "registrationUrl": "Understand Project Contols",
+      "videoUrl": "https://imgs.search.brave.com/_0JYrKtg_vP4PdDbHS0RBR9BZP6I5lgXOZ8Yvho-DB0/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9tZWRp/YS5tYWduaWZpYy5j/b20vcGhvdG9zL2hv/bWUvaW1hZ2UtZ2Vu/ZXJhdG9yLndlYnA"
+    },
+    {
+      "id": "abc-de",
+      "title": "test5",
+      "description": "test 6",
+      "tag": "Project Controls",
+      "date": "2026-08-21",
+      "time": "09:00 IST",
+      "duration": "60 min",
+      "status": "published",
+      "speakerIds": [
+        "Kunal-Sarkar"
+      ],
+      "sponsorIds": [
+        "Test"
+      ]
+    }
+  ],
+  "speakers": [
+    {
+      "id": "john-doe",
+      "name": "John Doe",
+      "role": "Project Controls Manager",
+      "organisation": "AECOM",
+      "bio": "John has 15 years of experience in project controls, schedule forecasting, and risk analysis.",
+      "avatarUrl": "/airo-assets/images/speakers/john-doe",
+      "email": "john.doe@aecom.com"
+    },
+    {
+      "id": "jane-smith",
+      "name": "Jane Smith",
+      "role": "Senior Project Manager",
+      "organisation": "Google",
+      "bio": "Jane specializes in agile execution, prompt engineering for product delivery, and cross-functional leadership.",
+      "avatarUrl": "/airo-assets/images/speakers/jane-smith",
+      "email": "janesmith@google.com"
+    },
+    {
+      "id": "bob-johnson",
+      "name": "Bob Johnson",
+      "role": "Programme Director",
+      "organisation": "DeliverIQ",
+      "bio": "Bob leads large-scale software transformations and has researched lessons-learned automation using LLMs.",
+      "avatarUrl": "/airo-assets/images/speakers/bob-johnson",
+      "email": "bob@deliveriq.live"
+    },
+    {
+      "id": "Kunal-Sarkar",
+      "name": "Kunal Sarkar",
+      "role": "IT",
+      "organisation": "-",
+      "bio": "test 1",
+      "avatarUrl": "https://imgs.search.brave.com/Q6NzJIXneYryHhM1RJhkU800bjiwMlmnARNEVinP9A0/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy90/aHVtYi9iL2I2L0lt/YWdlX2NyZWF0ZWRf/d2l0aF9hX21vYmls/ZV9waG9uZS5wbmcv/MTI4MHB4LUltYWdl/X2NyZWF0ZWRfd2l0/aF9hX21vYmlsZV9w/aG9uZS5wbmc",
+      "email": "kunal.sarkar6019@gmail.com",
+      "socialUrl": "google.com"
+    }
+  ],
+  "sponsors": [
+    {
+      "id": "aecom",
+      "name": "AECOM",
+      "logoUrl": "/airo-assets/images/logo/aecom",
+      "websiteUrl": "https://aecom.com",
+      "tier": "Session Sponsor"
+    },
+    {
+      "id": "microsoft",
+      "name": "Microsoft",
+      "logoUrl": "/airo-assets/images/logo/microsoft",
+      "websiteUrl": "https://microsoft.com",
+      "tier": "Series Sponsor"
+    },
+    {
+      "id": "slack",
+      "name": "Slack",
+      "logoUrl": "/airo-assets/images/logo/slack",
+      "websiteUrl": "https://slack.com",
+      "tier": "Platform Partner"
+    },
+    {
+      "id": "Test",
+      "name": "Test",
+      "logoUrl": "https://imgs.search.brave.com/_0JYrKtg_vP4PdDbHS0RBR9BZP6I5lgXOZ8Yvho-DB0/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9tZWRp/YS5tYWduaWZpYy5j/b20vcGhvdG9zL2hv/bWUvaW1hZ2UtZ2Vu/ZXJhdG9yLndlYnA",
+      "websiteUrl": "https://imgs.search.brave.com/_0JYrKtg_vP4PdDbHS0RBR9BZP6I5lgXOZ8Yvho-DB0/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9tZWRp/YS5tYWduaWZpYy5j/b20vcGhvdG9zL2hv/bWUvaW1hZ2UtZ2Vu/ZXJhdG9yLndlYnA",
+      "tier": "Platform Partner"
+    }
+  ],
+  "forms": [
+    {
+      "id": "contact",
+      "name": "Contact Form",
+      "submitButtonText": "Send Message",
+      "successMessage": "Thank you for your message. We will get back to you shortly.",
+      "fields": [
+        { "id": "name", "type": "text", "label": "Name", "required": true, "placeholder": "Jane Doe" },
+        { "id": "email", "type": "email", "label": "Email", "required": true, "placeholder": "jane@example.com" },
+        { "id": "message", "type": "textarea", "label": "Message", "required": true, "placeholder": "How can we help?" }
+      ]
+    },
+    {
+      "id": "register",
+      "name": "Registration Form",
+      "submitButtonText": "Register",
+      "successMessage": "Thank you for registering. We will notify you when sessions open.",
+      "fields": [
+        { "id": "name", "type": "text", "label": "Name", "required": true, "placeholder": "Jane Doe" },
+        { "id": "email", "type": "email", "label": "Email", "required": true, "placeholder": "jane@example.com" },
+        { "id": "role", "type": "text", "label": "Role", "required": true, "placeholder": "Project Manager" }
+      ]
+    },
+    {
+      "id": "speaker",
+      "name": "Apply to Speak",
+      "submitButtonText": "Submit Application",
+      "successMessage": "Thank you for applying. We will review your application and get back to you.",
+      "fields": [
+        { "id": "name", "type": "text", "label": "Name", "required": true, "placeholder": "Jane Doe" },
+        { "id": "email", "type": "email", "label": "Email", "required": true, "placeholder": "jane@example.com" },
+        { "id": "topic", "type": "text", "label": "Proposed Topic", "required": true, "placeholder": "AI in Risk Management" },
+        { "id": "experience", "type": "textarea", "label": "Relevant Experience", "required": true, "placeholder": "Describe your practical experience." }
+      ]
+    },
+    {
+      "id": "sponsor",
+      "name": "Enquire about Sponsorship",
+      "submitButtonText": "Enquire Now",
+      "successMessage": "Thank you for your enquiry. Our team will reach out soon.",
+      "fields": [
+        { "id": "name", "type": "text", "label": "Name", "required": true, "placeholder": "Jane Doe" },
+        { "id": "email", "type": "email", "label": "Work Email", "required": true, "placeholder": "jane@company.com" },
+        { "id": "company", "type": "text", "label": "Company", "required": true, "placeholder": "Acme Corp" },
+        { "id": "interest", "type": "select", "label": "Sponsorship Interest", "required": true, "options": ["Session Sponsor", "Series Sponsor", "Platform Partner", "Other"] }
+      ]
+    },
+    {
+      "id": "notify",
+      "name": "Notify Me",
+      "submitButtonText": "Join the List",
+      "successMessage": "You are on the list! We will notify you.",
+      "fields": [
+        { "id": "email", "type": "email", "label": "Email", "required": true, "placeholder": "jane@example.com" }
+      ]
+    }
+  ]
+}

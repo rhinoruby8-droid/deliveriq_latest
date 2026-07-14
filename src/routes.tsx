@@ -1,0 +1,64 @@
+import { lazy, Suspense } from 'react';
+import { RouteObject } from 'react-router-dom';
+import Spinner from './components/Spinner';
+
+// ── Lazy-loaded page components ───────────────────────────────────────────
+// Each page is split into its own JS chunk. The heavy admin panel (which
+// carries Lexical + TipTap + RichTextEditor) is fully isolated so those
+// editor libraries never ship to non-admin visitors.
+const HomePage        = lazy(() => import('./pages/index'));
+const SessionsPage    = lazy(() => import('./pages/sessions'));
+const SessionDetailPage = lazy(() => import('./pages/session-detail'));
+const ReplaysPage     = lazy(() => import('./pages/replays'));
+const ForSpeakersPage = lazy(() => import('./pages/for-speakers'));
+const ForSponsorsPage = lazy(() => import('./pages/for-sponsors'));
+const ContactPage     = lazy(() => import('./pages/contact'));
+const PrivacyPage     = lazy(() => import('./pages/privacy'));
+const TermsPage       = lazy(() => import('./pages/terms'));
+const RegisterPage    = lazy(() => import('./pages/register'));
+const AdminPage       = lazy(() => import('./pages/admin')); // isolated — carries editor libs
+const NotFoundPage    = lazy(() => import('./pages/_404'));
+
+const PageFallback = () => (
+  <div className="flex justify-center items-center min-h-[60vh]">
+    <Spinner />
+  </div>
+);
+
+function Lazy({ component: Component }: { component: React.ComponentType }) {
+  return (
+    <Suspense fallback={<PageFallback />}>
+      <Component />
+    </Suspense>
+  );
+}
+
+export const routes: RouteObject[] = [
+  { path: '/',              element: <Lazy component={HomePage} /> },
+  { path: '/sessions',      element: <Lazy component={SessionsPage} /> },
+  { path: '/sessions/:id',  element: <Lazy component={SessionDetailPage} /> },
+  { path: '/replays',       element: <Lazy component={ReplaysPage} /> },
+  { path: '/for-speakers',  element: <Lazy component={ForSpeakersPage} /> },
+  { path: '/for-sponsors',  element: <Lazy component={ForSponsorsPage} /> },
+  { path: '/contact',       element: <Lazy component={ContactPage} /> },
+  { path: '/register',      element: <Lazy component={RegisterPage} /> },
+  { path: '/privacy',       element: <Lazy component={PrivacyPage} /> },
+  { path: '/terms',         element: <Lazy component={TermsPage} /> },
+  { path: '/admin',         element: <Lazy component={AdminPage} /> },
+  { path: '*',              element: <Lazy component={NotFoundPage} /> },
+];
+
+export type Path =
+  | '/'
+  | '/sessions'
+  | '/sessions/:id'
+  | '/replays'
+  | '/for-speakers'
+  | '/for-sponsors'
+  | '/contact'
+  | '/register'
+  | '/privacy'
+  | '/admin'
+  | '/terms';
+
+export type Params = Record<string, string | undefined>;

@@ -1,0 +1,15 @@
+{
+  "_support": {
+    "account": "12fd2c27-2383-40bd-a878-c8c10065a6a6",
+    "ui": {
+      "widget": {
+        "icon": "webChat",
+        "color": "#C79A4E",
+        "position": "bottom-right",
+        "label": {
+          "text": "Ask us a question!"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,113 @@
+{
+  "logo/horizontal": {
+    "mediaType": "logo",
+    "currentUrl": "/airo-assets/uploads/logo-horizontal-408ace61.png",
+    "searchQuery": "",
+    "alternatives": [
+      "https://isteam.wsimg.com/genai-assistant/logoagent/customer/ae05914b-42d7-4871-b9a7-c0c10ea85f88/session/a0379e59-26a6-43d5-84dd-8391b93beb5b/horizontal-transparent-35853142-f80b-4bd9-9e47-8b6128d197f0/logo-logo.png",
+      "/airo-assets/uploads/airo-logo-shimmer-horizontal.svg"
+    ],
+    "userModified": true,
+    "createdAt": "2026-06-28T08:58:37.846Z",
+    "lastUpdated": "2026-06-28T09:23:14.358Z",
+    "uploadSources": {
+      "/airo-assets/uploads/logo-horizontal-408ace61.png": "z6ybietxyw_1782638576236_file_NfC9GZtgZa.png"
+    },
+    "uploadContentHash": "962dc295015e504e6667902b3af8e2e82a00bbff43c6e622b57aca6daecde258",
+    "naturalOrientation": "horizontal"
+  },
+  "logo/icon-dark": {
+    "mediaType": "image",
+    "currentUrl": "/airo-assets/uploads/logo-icon-dark-82195156.png",
+    "searchQuery": "",
+    "alternatives": [],
+    "userModified": true,
+    "createdAt": "2026-06-28T09:23:19.627Z",
+    "lastUpdated": "2026-06-28T09:23:19.627Z",
+    "uploadSources": {
+      "/airo-assets/uploads/logo-icon-dark-82195156.png": "z6ybietxyw_1782638576548_file_fj3bWjVojS.png"
+    },
+    "uploadContentHash": "92c610c50aa322db1202ec4807208498d3f649064f2b3f9980473d9a7ce2e7ff",
+    "naturalOrientation": "square"
+  },
+  "pages/home/hero-webinar": {
+    "mediaType": "video",
+    "currentUrl": "https://blobby.wsimg.com/getty/videos/2022430272",
+    "thumbnailUrl": "https://media.gettyimages.com/id/2022430272/video/woman-having-a-videoconference-meeting-with-four-colleagues-while-looking-at-a-presentation.mp4?b=1&s=192_srp&k=20&c=PhK7atArmVFfC5gpwo8m3pdtT-Hh4nT0LoYd0HULmLE=",
+    "searchQuery": "professional online webinar presentation screen recording project management",
+    "alternatives": [],
+    "userModified": false,
+    "createdAt": "2026-06-28T10:39:25.119Z",
+    "lastUpdated": "2026-06-28T10:39:25.119Z",
+    "gettyId": "2022430272",
+    "requestedSize": {
+      "width": 640,
+      "height": 400,
+      "fit": "cover"
+    }
+  },
+  "pages/sessions/preview": {
+    "mediaType": "video",
+    "currentUrl": "https://blobby.wsimg.com/getty/videos/1418983422",
+    "thumbnailUrl": "https://media.gettyimages.com/id/1418983422/video/online-video-conferencing-call-waving-hand-group-chat.mp4?b=1&s=192_srp&k=20&c=tA9SrJJoZ8BqCfr2HqWPxqLs0jVkPzXOVPDDJBWlNsk=",
+    "searchQuery": "professional online live webinar session audience engagement learning",
+    "alternatives": [],
+    "userModified": false,
+    "createdAt": "2026-06-28T11:00:09.667Z",
+    "lastUpdated": "2026-06-28T11:00:09.667Z",
+    "gettyId": "1418983422",
+    "requestedSize": {
+      "width": 640,
+      "height": 400,
+      "fit": "cover"
+    }
+  },
+  "pages/replays/preview": {
+    "mediaType": "video",
+    "currentUrl": "https://blobby.wsimg.com/getty/videos/1473888227",
+    "thumbnailUrl": "https://media.gettyimages.com/id/1473888227/video/browsing-an-online-streaming-service-on-the-laptop-at-home.mp4?b=1&s=192_srp&k=20&c=zxEouBnZWyCQS0nLqws8mc_ArYP9tpnTQJENWEDgZJM=",
+    "searchQuery": "person watching video replay recording screen laptop learning",
+    "alternatives": [],
+    "userModified": false,
+    "createdAt": "2026-06-28T11:00:10.637Z",
+    "lastUpdated": "2026-06-28T11:00:10.637Z",
+    "gettyId": "1473888227",
+    "requestedSize": {
+      "width": 640,
+      "height": 400,
+      "fit": "cover"
+    }
+  },
+  "pages/speakers/preview": {
+    "mediaType": "video",
+    "currentUrl": "https://blobby.wsimg.com/getty/videos/1384732058",
+    "thumbnailUrl": "https://media.gettyimages.com/id/1384732058/video/close-up-of-a-visionary-female-speaker-talks-on-diversity-in-the-workplace-topic.mp4?b=1&s=192_srp&k=20&c=hdjOnuJMCF2m0gmfNY13A1woPEfhSSw3n-GIhHM21pg=",
+    "searchQuery": "professional speaker presenting conference stage expert talk",
+    "alternatives": [],
+    "userModified": false,
+    "createdAt": "2026-06-28T11:00:11.223Z",
+    "lastUpdated": "2026-06-28T11:00:11.223Z",
+    "gettyId": "1384732058",
+    "requestedSize": {
+      "width": 640,
+      "height": 400,
+      "fit": "cover"
+    }
+  },
+  "pages/sponsors/preview": {
+    "mediaType": "video",
+    "currentUrl": "https://blobby.wsimg.com/getty/videos/2148554250",
+    "thumbnailUrl": "https://media.gettyimages.com/id/2148554250/video/business-people-handshake-and-meeting-in-conference-networking-and-discussion-at-global.mp4?b=1&s=192_srp&k=20&c=iSDnA2uSAUh-ECfb8dcuhcmduaIEndzEyLL6FcqwIFw=",
+    "searchQuery": "business partnership corporate branding sponsorship professional event",
+    "alternatives": [],
+    "userModified": false,
+    "createdAt": "2026-06-28T11:00:12.580Z",
+    "lastUpdated": "2026-06-28T11:00:12.580Z",
+    "gettyId": "2148554250",
+    "requestedSize": {
+      "width": 640,
+      "height": 400,
+      "fit": "cover"
+    }
+  }
+}
