@@ -150,6 +150,8 @@ export default function ReplaysPage() {
   const { data: cms = FALLBACK_CMS_CONTENT } = useCmsContent();
   const [playingVideoUrl, setPlayingVideoUrl] = useState<string | null>(null);
 
+  const htmlContent = cms.replaysPageHtml || FALLBACK_CMS_CONTENT.replaysPageHtml;
+
   const site = 'https://deliveriq.live';
   const title = 'Replays — DeliverIQ';
   const description = 'Access replays of past DeliverIQ sessions on AI for project management, project controls, and delivery professionals.';
@@ -189,7 +191,7 @@ export default function ReplaysPage() {
       </Helmet>
 
       <main>
-        <PageHtmlRenderer html={cms.replaysPageHtml} widgets={widgets} />
+        <PageHtmlRenderer html={htmlContent} widgets={widgets} />
       </main>
 
       <AnimatePresence>

@@ -13,7 +13,7 @@ export default function NotFoundPage() {
         {cms.notFoundPageCss ? <style>{cms.notFoundPageCss}</style> : null}
       </Helmet>
       <main>
-        <PageHtmlRenderer html={cms.notFoundPageHtml} />
+        <PageHtmlRenderer html={cms.notFoundPageHtml || FALLBACK_CMS_CONTENT.notFoundPageHtml} />
       </main>
     </>
   );
