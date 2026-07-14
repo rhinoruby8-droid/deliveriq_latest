@@ -169,7 +169,7 @@ if (import.meta.env.PROD) {
 	const __dirname = dirname(fileURLToPath(import.meta.url));
 	const isApiDir = __dirname.replace(/\\/g, "/").split("/").pop() === "api";
 	const baseDir = isApiDir ? join(__dirname, "..") : __dirname;
-	const clientDir = isApiDir ? join(__dirname, "../dist/client") : join(__dirname, "client");
+	const clientDir = isApiDir ? join(__dirname, "../dist") : join(__dirname, "dist");
 	const adSenseRuntimeConfig = loadAdSenseRuntimeConfig(baseDir);
 
 	registerAdSenseTextRoutes(app, adSenseRuntimeConfig);

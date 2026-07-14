@@ -139,7 +139,7 @@ export default defineConfig(({ mode, isSsrBuild }) => ({
 				},
 			}
 		: {
-				outDir: "dist/client",
+				outDir: "dist",
 				emptyOutDir: true,
 				copyPublicDir: true,
 				rollupOptions: {

@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 import express from 'express';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const clientDir = join(__dirname, 'dist/client');
+const clientDir = join(__dirname, 'dist');
 const port = parseInt(process.env.PORT || '3001', 10);
 const host = process.env.HOST || '0.0.0.0';
 
