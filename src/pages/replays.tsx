@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useState } from 'react';
 import { Play, Clock, ArrowRight, X } from 'lucide-react';
 import { PageHtmlRenderer } from '@/components/PageHtmlRenderer';
+import { trackWatchTime } from '@/lib/user-auth';
+import { trackEvent } from '@/lib/analytics';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -22,7 +24,13 @@ const stagger = {
 
 const tags = ['All', 'Project Controls', 'Project Management', 'Delivery Leadership'];
 
-function ReplaysArchiveWidget({ setPlayingVideoUrl }: { setPlayingVideoUrl: (url: string) => void }) {
+export interface PlayingSession {
+  id: string;
+  title: string;
+  url: string;
+}
+
+function ReplaysArchiveWidget({ setPlayingSession }: { setPlayingSession: (session: PlayingSession | null) => void }) {
   const { data: cms } = useCmsContent();
   const [activeTag, setActiveTag] = useState('All');
 
@@ -60,7 +68,10 @@ function ReplaysArchiveWidget({ setPlayingVideoUrl }: { setPlayingVideoUrl: (url
                 className="border border-[#2C2F38] bg-[#21242C]/40 rounded-sm overflow-hidden flex flex-col hover:border-[#C79A4E]/30 transition-all duration-300 group"
               >
                 <div
-                  onClick={() => setPlayingVideoUrl(session.videoUrl || '')}
+                  onClick={() => {
+                    trackEvent('video', { action: 'play_recording', title: session.title });
+                    setPlayingSession({ id: session.id, title: session.title, url: session.videoUrl || '' });
+                  }}
                   className="aspect-video bg-[#1A1D24] relative cursor-pointer overflow-hidden border-b border-[#2C2F38]"
                 >
                   <div className="absolute inset-0 bg-gradient-to-tr from-[#1A1D24] to-[#C79A4E]/5 flex items-center justify-center">
@@ -148,7 +159,21 @@ function ReplaysArchiveWidget({ setPlayingVideoUrl }: { setPlayingVideoUrl: (url
 
 export default function ReplaysPage() {
   const { data: cms = FALLBACK_CMS_CONTENT } = useCmsContent();
-  const [playingVideoUrl, setPlayingVideoUrl] = useState<string | null>(null);
+  const [playingSession, setPlayingSession] = useState<PlayingSession | null>(null);
+
+  // Watch time telemetry heartbeat
+  import('react').then(({ useEffect }) => {
+    useEffect(() => {
+      if (!playingSession) return;
+      
+      const intervalId = setInterval(() => {
+        trackWatchTime('recording', 1);
+        trackEvent('video', { action: 'watch_minute', title: playingSession.title });
+      }, 60000); // every minute
+
+      return () => clearInterval(intervalId);
+    }, [playingSession]);
+  });
 
   const htmlContent = cms.replaysPageHtml || FALLBACK_CMS_CONTENT.replaysPageHtml;
 
@@ -168,7 +193,7 @@ export default function ReplaysPage() {
   };
 
   const widgets = {
-    ReplaysGrid: <ReplaysArchiveWidget setPlayingVideoUrl={setPlayingVideoUrl} />
+    ReplaysGrid: <ReplaysArchiveWidget setPlayingSession={setPlayingSession} />
   };
 
   return (
@@ -195,7 +220,7 @@ export default function ReplaysPage() {
       </main>
 
       <AnimatePresence>
-        {playingVideoUrl && (
+        {playingSession && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -203,7 +228,7 @@ export default function ReplaysPage() {
             transition={{ duration: 0.2 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 lg:p-12 bg-[#1A1D24]/95 backdrop-blur-sm"
           >
-            <div className="absolute inset-0" onClick={() => setPlayingVideoUrl(null)} />
+            <div className="absolute inset-0" onClick={() => setPlayingSession(null)} />
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -212,13 +237,13 @@ export default function ReplaysPage() {
               className="relative w-full max-w-5xl aspect-video bg-black rounded-sm overflow-hidden shadow-2xl border border-[#2C2F38]"
             >
               <video
-                src={playingVideoUrl}
+                src={playingSession.url}
                 autoPlay
                 controls
                 className="w-full h-full"
               />
               <button
-                onClick={() => setPlayingVideoUrl(null)}
+                onClick={() => setPlayingSession(null)}
                 className="absolute top-4 right-4 w-10 h-10 bg-black/50 hover:bg-black text-[#F0EDE8] hover:text-[#C79A4E] rounded flex items-center justify-center backdrop-blur transition-colors"
                 aria-label="Close video"
               >

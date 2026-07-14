@@ -2,22 +2,30 @@ import { useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useGoogleReCaptcha, GoogleReCaptchaProvider } from 'react-google-recaptcha-v3';
 import { useCmsContent } from '../../lib/cms-client';
+import { useSearchParams } from 'react-router-dom';
 
 interface DynamicFormProps {
   formId: string;
 }
 
 export function DynamicForm({ formId }: DynamicFormProps) {
-  return (
-    <GoogleReCaptchaProvider reCaptchaKey={import.meta.env.VITE_RECAPTCHA_SITE_KEY || 'dummy-key'}>
-      <DynamicFormInner formId={formId} />
-    </GoogleReCaptchaProvider>
-  );
+  const siteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
+  if (siteKey && siteKey !== 'dummy-key') {
+    return (
+      <GoogleReCaptchaProvider reCaptchaKey={siteKey}>
+        <RecaptchaFormInner formId={formId} />
+      </GoogleReCaptchaProvider>
+    );
+  }
+  return <BaseFormInner formId={formId} executeRecaptcha={undefined} />;
 }
 
-import { useSearchParams } from 'react-router-dom';
+function RecaptchaFormInner({ formId }: DynamicFormProps) {
+  const { executeRecaptcha } = useGoogleReCaptcha();
+  return <BaseFormInner formId={formId} executeRecaptcha={executeRecaptcha} />;
+}
 
-function DynamicFormInner({ formId }: DynamicFormProps) {
+function BaseFormInner({ formId, executeRecaptcha }: DynamicFormProps & { executeRecaptcha?: (action: string) => Promise<string> }) {
   const { data: cms } = useCmsContent();
   const [searchParams] = useSearchParams();
   const sessionSlug = searchParams.get('session');
@@ -25,7 +33,6 @@ function DynamicFormInner({ formId }: DynamicFormProps) {
 
   const formDef = cms?.forms?.find(f => f.id === formId);
   const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm();
-  const { executeRecaptcha } = useGoogleReCaptcha();
   const [success, setSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 

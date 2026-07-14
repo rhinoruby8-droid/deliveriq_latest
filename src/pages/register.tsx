@@ -60,7 +60,7 @@ export default function RegisterPage() {
       </Helmet>
       <main>
         {cms.registerContent?.visualMode !== false ? (
-          <RegisterVisual data={cms.registerContent} />
+          <RegisterVisual data={cms.registerContent!} />
         ) : (
           <PageHtmlRenderer html={htmlContent} widgets={widgets} />
         )}

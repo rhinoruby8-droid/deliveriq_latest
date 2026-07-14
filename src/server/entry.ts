@@ -12,7 +12,14 @@ import notify_post_3 from "./api/notify/POST";
 import cms_get_4 from "./api/cms/GET";
 import cms_post_5 from "./api/cms/POST";
 import cms_login_post_6 from "./api/cms/login/POST";
+import auth_register_post from "./api/auth/register/POST";
+import auth_login_post from "./api/auth/login/POST";
+import auth_me_get from "./api/auth/me/GET";
+import user_dashboard_get from "./api/user/dashboard/GET";
+import user_register_session_post from "./api/user/register-session/POST";
+import user_watch_time_post from "./api/user/telemetry/watch-time/POST";
 // </api-imports>
+import { requireAuth, requireRole } from "./auth";
 import { seoRoutes } from "../lib/seo-routes";
 import {
 	loadAdSenseRuntimeConfig,
@@ -97,8 +104,14 @@ app.post("/api/stripe/checkout", stripe_checkout_post_1);
 app.post("/api/stripe/webhook", stripe_webhook_post_2);
 app.post("/api/notify", notify_post_3);
 app.get("/api/cms/content", cms_get_4);
-app.post("/api/cms/content", cms_post_5);
+app.post("/api/cms/content", requireRole(['admin']) as any, cms_post_5 as any);
 app.post("/api/cms/login", cms_login_post_6);
+app.post("/api/auth/register", auth_register_post);
+app.post("/api/auth/login", auth_login_post);
+app.get("/api/auth/me", requireAuth as any, auth_me_get as any);
+app.get("/api/user/dashboard", requireAuth as any, user_dashboard_get as any);
+app.post("/api/user/register-session", requireAuth as any, user_register_session_post as any);
+app.post("/api/user/telemetry/watch-time", requireAuth as any, user_watch_time_post as any);
 // </api-registrations>
 
 // Error middleware must be registered AFTER the routes it protects; Express

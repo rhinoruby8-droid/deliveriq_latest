@@ -61,3 +61,15 @@ create table if not exists form_submissions (
   data jsonb not null,
   created_at timestamp with time zone default timezone('utc'::text, now())
 );
+
+create table if not exists users (
+  id uuid primary key default gen_random_uuid(),
+  email text unique not null,
+  password_hash text not null,
+  name text not null,
+  role text default 'delegate',
+  registered_session_ids text[] default '{}',
+  minutes_attended integer default 0,
+  hours_watched numeric default 0,
+  created_at timestamp with time zone default timezone('utc'::text, now())
+);

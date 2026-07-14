@@ -38,7 +38,7 @@ export default async function handler(req: Request, res: Response) {
     };
     
     const data: any = {
-      speakers: speakersRes.data.map(s => ({
+      speakers: speakersRes.data.map((s: any) => ({
         id: s.id,
         name: s.name,
         role: s.role,
@@ -48,14 +48,14 @@ export default async function handler(req: Request, res: Response) {
         email: s.email,
         socialUrl: s.social_url
       })),
-      sponsors: sponsorsRes.data.map(s => ({
+      sponsors: sponsorsRes.data.map((s: any) => ({
         id: s.id,
         name: s.name,
         logoUrl: optimizeImg(s.logo_url),
         websiteUrl: s.website_url,
         tier: s.tier
       })),
-      sessions: sessionsRes.data.map(s => ({
+      sessions: sessionsRes.data.map((s: any) => ({
         id: s.id,
         title: s.title,
         description: s.description,
@@ -69,7 +69,7 @@ export default async function handler(req: Request, res: Response) {
         registrationUrl: s.registration_url,
         videoUrl: s.video_url
       })),
-      forms: formsRes.data.map(f => ({
+      forms: formsRes.data.map((f: any) => ({
         id: f.id,
         name: f.name,
         fields: f.fields,
@@ -78,7 +78,7 @@ export default async function handler(req: Request, res: Response) {
       }))
     };
 
-    pagesRes.data.forEach(p => {
+    pagesRes.data.forEach((p: any) => {
       const pageKey = p.id;
       if (pageKey === 'homepage') {
         data.homepageHtml = p.html;
@@ -127,12 +127,12 @@ export default async function handler(req: Request, res: Response) {
       }
     });
 
-    const paymentConfigSetting = settingsRes.data.find(s => s.id === 'payment_config');
+    const paymentConfigSetting = settingsRes.data.find((s: any) => s.id === 'payment_config');
     if (paymentConfigSetting) {
       data.paymentConfig = paymentConfigSetting.value;
     }
 
-    const globalCssSetting = settingsRes.data.find(s => s.id === 'global_css');
+    const globalCssSetting = settingsRes.data.find((s: any) => s.id === 'global_css');
     if (globalCssSetting) {
       data.globalCss = globalCssSetting.value?.css || '';
     } else {

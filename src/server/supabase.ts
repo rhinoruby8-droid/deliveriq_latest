@@ -28,7 +28,7 @@ const getClient = () => {
   return clientInstance;
 };
 
-export const supabaseAdmin = new Proxy({} as ReturnType<typeof createClient>, {
+export const supabaseAdmin: any = new Proxy({} as ReturnType<typeof createClient>, {
   get(target, prop, receiver) {
     const client = getClient();
     const value = Reflect.get(client, prop, receiver);

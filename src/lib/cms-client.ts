@@ -1386,11 +1386,13 @@ export function useCmsContent() {
   });
 }
 
+import { getUserToken } from './user-auth';
+
 export function useUpdateCmsContent() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (content: CmsContent) => {
-      const token = getAuthToken();
+      const token = getUserToken();
       const res = await fetch('/api/cms/content', {
         method: 'POST',
         headers: {

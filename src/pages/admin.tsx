@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { useCmsContent, useUpdateCmsContent, isLoggedIn, setAuthToken, removeAuthToken, CmsContent, Speaker, Sponsor, Session } from '@/lib/cms-client';
-import { Save, LogOut, Lock, Layout, BookOpen, User, Award, Mail, Shield, FileText, Code, RefreshCw, CheckCircle, AlertTriangle, Plus, Trash2, Edit2, Eye, Calendar, Clock, Globe, Settings, CheckSquare, Play } from 'lucide-react';
+import { useCmsContent, useUpdateCmsContent, CmsContent, Speaker, Sponsor, Session } from '@/lib/cms-client';
+import { Save, LogOut, Layout, BookOpen, User, Award, Mail, Shield, FileText, Code, RefreshCw, CheckCircle, AlertTriangle, Plus, Trash2, Edit2, Eye, Calendar, Clock, Globe, Settings, CheckSquare, Play } from 'lucide-react';
 import { Helmet } from '@dr.pogodin/react-helmet';
 import { RichTextEditor } from '@/components/RichTextEditor';
 import { ModeToggle } from '@/components/cms/ModeToggle';
@@ -17,15 +17,19 @@ type ActiveTabType =
   | 'replays-html' | 'session-detail-html' | '404-html' | 'global-css'
   | 'manage-sessions' | 'manage-speakers' | 'manage-sponsors' | 'manage-forms' | 'settings' | 'json';
 
+import { removeUserToken } from '@/lib/user-auth';
+
+// ... (imports remain)
+
 export default function AdminPage() {
   const queryClient = useQueryClient();
   const { data: cmsContent, isLoading } = useCmsContent();
   const updateMutation = useUpdateCmsContent();
 
-  const [authenticated, setAuthenticated] = useState(false);
-  const [password, setPassword] = useState('');
-  const [loginError, setLoginError] = useState('');
-  const [loginLoading, setLoginLoading] = useState(false);
+  const handleLogout = () => {
+    removeUserToken();
+    window.location.href = '/login?mode=login';
+  };
 
   const [activeTab, setActiveTab] = useState<ActiveTabType>('home');
   const [localContent, setLocalContent] = useState<CmsContent | null>(null);
@@ -96,45 +100,6 @@ export default function AdminPage() {
       setLocalContent(cmsContent);
     }
   }, [cmsContent]);
-
-  // Check login state on mount
-  useEffect(() => {
-    if (isLoggedIn()) {
-      setAuthenticated(true);
-    }
-  }, []);
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoginError('');
-    setLoginLoading(true);
-
-    try {
-      const res = await fetch('/api/cms/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password }),
-      });
-
-      if (!res.ok) {
-        const data = await res.json() as { error?: string };
-        throw new Error(data.error || 'Invalid credentials');
-      }
-
-      const data = await res.json() as { token: string };
-      setAuthToken(data.token);
-      setAuthenticated(true);
-    } catch (err) {
-      setLoginError(err instanceof Error ? err.message : 'Login failed');
-    } finally {
-      setLoginLoading(false);
-    }
-  };
-
-  const handleLogout = () => {
-    removeAuthToken();
-    setAuthenticated(false);
-  };
 
   const handleUpdate = (key: keyof CmsContent, value: unknown) => {
     if (!localContent) return;
@@ -503,54 +468,7 @@ export default function AdminPage() {
     handleSave(newContent);
   };
 
-  if (!authenticated) {
-    return (
-      <>
-        <Helmet>
-          <title>CMS Login — DeliverIQ</title>
-          <meta name="robots" content="noindex" />
-        </Helmet>
-        <div className="min-h-[90vh] flex items-center justify-center bg-[#1A1D24] px-6">
-          <div className="w-full max-w-sm border border-[#2C2F38] bg-[#21242C] p-8 rounded shadow-2xl">
-            <div className="flex flex-col items-center gap-3 mb-6">
-              <div className="w-12 h-12 rounded-full border border-[#C79A4E]/30 bg-[#C79A4E]/5 flex items-center justify-center text-[#C79A4E]">
-                <Lock size={20} />
-              </div>
-              <h1 className="text-xl font-bold text-[#F0EDE8]">CMS Admin Login</h1>
-              <p className="text-xs text-[#8A8D96] text-center">Enter the administration password to configure layout copy and settings.</p>
-            </div>
 
-            <form onSubmit={handleLogin} className="flex flex-col gap-4">
-              <div className="flex flex-col gap-2">
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Admin password"
-                  required
-                  className="bg-[#1A1D24] border border-[#2C2F38] text-[#F0EDE8] placeholder-[#8A8D96] px-4 py-3 text-sm rounded focus:outline-none focus:border-[#C79A4E] transition-colors"
-                />
-              </div>
-
-              {loginError && (
-                <p className="text-xs text-red-500 font-semibold flex items-center gap-1">
-                  <AlertTriangle size={12} /> {loginError}
-                </p>
-              )}
-
-              <button
-                type="submit"
-                disabled={loginLoading}
-                className="w-full py-3 text-sm font-semibold bg-[#C79A4E] text-[#1A1D24] rounded transition-all hover:brightness-110 disabled:opacity-50"
-              >
-                {loginLoading ? 'Authenticating...' : 'Login'}
-              </button>
-            </form>
-          </div>
-        </div>
-      </>
-    );
-  }
 
   if (isLoading || !localContent) {
     return (

@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { UserNav } from '../../components/UserNav';
 
 export default function Header() {
   const location = useLocation();
@@ -17,7 +18,6 @@ export default function Header() {
     { href: '/', label: 'Home' },
     { href: '/sessions', label: 'Sessions' },
     { href: '/replays', label: 'Replays' },
-    { href: '/register', label: 'Register' },
     { href: '/for-speakers', label: 'Speakers' },
     { href: '/for-sponsors', label: 'Sponsors' },
   ];
@@ -67,12 +67,9 @@ export default function Header() {
 
           {/* CTA + Mobile Toggle */}
           <div className="flex items-center gap-4">
-            <Link
-              to="/register"
-              className="hidden md:inline-flex items-center px-5 py-2.5 text-sm font-semibold tracking-wide bg-[#C79A4E] text-[#1A1D24] rounded transition-all duration-200 hover:brightness-110 hover:scale-[1.02]"
-            >
-              Register
-            </Link>
+            <div className="hidden md:block">
+              <UserNav />
+            </div>
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="md:hidden p-2 text-[#8A8D96] hover:text-[#F0EDE8] transition-colors"
@@ -101,13 +98,9 @@ export default function Header() {
                   {item.label}
                 </Link>
               ))}
-              <Link
-                to="/register"
-                className="mt-3 inline-flex items-center justify-center px-5 py-2.5 text-sm font-semibold bg-[#C79A4E] text-[#1A1D24] rounded transition-all duration-200"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Register
-              </Link>
+              <div className="mt-4 px-2">
+                <UserNav />
+              </div>
             </nav>
           </div>
         )}

@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { RouteObject } from 'react-router-dom';
 import Spinner from './components/Spinner';
+import { ProtectedRoute } from './components/ProtectedRoute';
 
 // ── Lazy-loaded page components ───────────────────────────────────────────
 // Each page is split into its own JS chunk. The heavy admin panel (which
@@ -16,6 +17,8 @@ const ContactPage     = lazy(() => import('./pages/contact'));
 const PrivacyPage     = lazy(() => import('./pages/privacy'));
 const TermsPage       = lazy(() => import('./pages/terms'));
 const RegisterPage    = lazy(() => import('./pages/register'));
+const LoginPage       = lazy(() => import('./pages/login'));
+const DashboardPage   = lazy(() => import('./pages/dashboard'));
 const AdminPage       = lazy(() => import('./pages/admin')); // isolated — carries editor libs
 const NotFoundPage    = lazy(() => import('./pages/_404'));
 
@@ -42,9 +45,12 @@ export const routes: RouteObject[] = [
   { path: '/for-sponsors',  element: <Lazy component={ForSponsorsPage} /> },
   { path: '/contact',       element: <Lazy component={ContactPage} /> },
   { path: '/register',      element: <Lazy component={RegisterPage} /> },
+  { path: '/login',         element: <Lazy component={LoginPage} /> },
+  { path: '/signup',        element: <Lazy component={LoginPage} /> },
+  { path: '/dashboard',     element: <ProtectedRoute><Lazy component={DashboardPage} /></ProtectedRoute> },
   { path: '/privacy',       element: <Lazy component={PrivacyPage} /> },
   { path: '/terms',         element: <Lazy component={TermsPage} /> },
-  { path: '/admin',         element: <Lazy component={AdminPage} /> },
+  { path: '/admin',         element: <ProtectedRoute allowedRoles={['admin']}><Lazy component={AdminPage} /></ProtectedRoute> },
   { path: '*',              element: <Lazy component={NotFoundPage} /> },
 ];
 
@@ -57,6 +63,9 @@ export type Path =
   | '/for-sponsors'
   | '/contact'
   | '/register'
+  | '/login'
+  | '/signup'
+  | '/dashboard'
   | '/privacy'
   | '/admin'
   | '/terms';

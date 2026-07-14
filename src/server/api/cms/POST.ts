@@ -1,26 +1,9 @@
-import type { Request, Response } from 'express';
+import type { Response } from 'express';
 import { supabaseAdmin } from '../../supabase';
+import type { AuthRequest } from '../../auth';
 
-export default async function handler(req: Request, res: Response) {
+export default async function handler(req: AuthRequest, res: Response) {
   try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ error: 'Authorization token is required' });
-    }
-
-    const token = authHeader.substring(7);
-    let payload: { role?: string; exp?: number };
-    try {
-      const json = Buffer.from(token, 'base64').toString('utf-8');
-      payload = JSON.parse(json) as { role?: string; exp?: number };
-    } catch {
-      return res.status(401).json({ error: 'Invalid token format' });
-    }
-
-    if (payload.role !== 'admin' || !payload.exp || payload.exp < Date.now()) {
-      return res.status(401).json({ error: 'Token has expired or is invalid' });
-    }
-
     const data = req.body;
 
     // Upsert Speakers
