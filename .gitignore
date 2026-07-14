@@ -82,3 +82,7 @@ pids
 
 # Admin credentials - never commit
 docs/credentials.md
+
+# Vercel serverless builds
+api/index.js
+api/bin/

@@ -125,14 +125,14 @@ export default defineConfig(({ mode, isSsrBuild }) => ({
 
 	build: isSsrBuild
 		? {
-				outDir: "dist",
+				outDir: "api",
 				emptyOutDir: false,
 				copyPublicDir: false,
 				ssr: "src/server/entry.ts",
 				rollupOptions: {
 					output: {
 						format: "es",
-						entryFileNames: "server.bundle.mjs",
+						entryFileNames: "index.js",
 						chunkFileNames: "bin/[name]-[hash].js",
 						banner: "import { createRequire } from 'module';\nconst require = createRequire(import.meta.url);",
 					},

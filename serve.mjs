@@ -1,7 +1,7 @@
 // Production server startup script
 // Imports the Express app from the built bundle and starts it listening
 
-import app from './dist/server.bundle.mjs';
+import app from './api/index.js';
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
