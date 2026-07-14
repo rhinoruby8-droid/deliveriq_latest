@@ -167,8 +167,10 @@ app.get("/llms.txt", llmsTxtHandler);
 
 if (import.meta.env.PROD) {
 	const __dirname = dirname(fileURLToPath(import.meta.url));
-	const clientDir = join(__dirname, "client");
-	const adSenseRuntimeConfig = loadAdSenseRuntimeConfig(__dirname);
+	const isApiDir = __dirname.replace(/\\/g, "/").split("/").pop() === "api";
+	const baseDir = isApiDir ? join(__dirname, "..") : __dirname;
+	const clientDir = isApiDir ? join(__dirname, "../dist/client") : join(__dirname, "client");
+	const adSenseRuntimeConfig = loadAdSenseRuntimeConfig(baseDir);
 
 	registerAdSenseTextRoutes(app, adSenseRuntimeConfig);
 
