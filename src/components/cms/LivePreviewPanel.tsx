@@ -8,6 +8,7 @@ import { SpeakersVisual } from '@/components/page-renderers/SpeakersVisual';
 import { SponsorsVisual } from '@/components/page-renderers/SponsorsVisual';
 import { ContactVisual } from '@/components/page-renderers/ContactVisual';
 import { DocumentVisual } from '@/components/page-renderers/DocumentVisual';
+import { RegisterVisual } from '@/components/page-renderers/RegisterVisual';
 
 type PageKey = 'homepage' | 'sessions' | 'speakers' | 'sponsors' | 'contact' | 'privacy' | 'terms' | 'register' | 'replays' | 'session-detail' | '404';
 
@@ -23,10 +24,10 @@ export function LivePreviewPanel({ page, content }: Props) {
       case 'speakers': return <SpeakersVisual data={content as SpeakersPageContent} />;
       case 'sponsors': return <SponsorsVisual data={content as SponsorsPageContent} />;
       case 'contact':  return <ContactVisual data={content as ContactPageContent} />;
+      case 'register': return <RegisterVisual data={content as GenericPageContent} />;
       case 'privacy':
       case 'terms':   return <DocumentVisual data={content as DocumentPageContent} />;
       case 'sessions':
-      case 'register':
       case 'replays':
       case 'session-detail':
       case '404':

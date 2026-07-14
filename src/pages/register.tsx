@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useCmsContent, FALLBACK_CMS_CONTENT } from '@/lib/cms-client';
 import { PageHtmlRenderer } from '@/components/PageHtmlRenderer';
+import { RegisterVisual } from '@/components/page-renderers/RegisterVisual';
 
 export default function RegisterPage() {
   const { data: cms = FALLBACK_CMS_CONTENT } = useCmsContent();
@@ -58,7 +59,11 @@ export default function RegisterPage() {
         {cms.registerPageCss ? <style>{cms.registerPageCss}</style> : null}
       </Helmet>
       <main>
-        <PageHtmlRenderer html={htmlContent} widgets={widgets} />
+        {cms.registerContent?.visualMode ? (
+          <RegisterVisual data={cms.registerContent} />
+        ) : (
+          <PageHtmlRenderer html={htmlContent} widgets={widgets} />
+        )}
       </main>
     </>
   );

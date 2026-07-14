@@ -873,7 +873,7 @@ export const FALLBACK_CMS_CONTENT: CmsContent = {
   <div class="absolute inset-0 pointer-events-none" aria-hidden="true" style="background-image: linear-gradient(rgba(44,47,56,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(44,47,56,0.35) 1px, transparent 1px); background-size: 48px 48px"></div>
   <div class="absolute inset-0 pointer-events-none" aria-hidden="true" style="background: radial-gradient(ellipse 50% 60% at 20% 50%, rgba(199,154,78,0.06) 0%, transparent 70%)"></div>
   <div class="container mx-auto px-6 lg:px-8 relative z-10">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
       <div>
         <p class="text-[11px] font-semibold tracking-[0.18em] text-[#C79A4E] uppercase mb-4">
           Register Your Interest
@@ -904,7 +904,7 @@ export const FALLBACK_CMS_CONTENT: CmsContent = {
           </li>
         </ul>
       </div>
-      <div>
+      <div class="lg:sticky lg:top-32">
         <div class="border border-[#2C2F38] bg-[#21242C] rounded-sm overflow-hidden">
           <div class="px-6 py-5 border-b border-[#2C2F38]">
             <p class="text-[10px] font-semibold tracking-widest text-[#C79A4E] uppercase">
