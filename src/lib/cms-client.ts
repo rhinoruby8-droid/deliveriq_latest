@@ -145,6 +145,9 @@ export interface FormField {
 export interface FormDefinition {
   id: string;
   name: string;
+  formType?: 'native' | 'embed';
+  embedCode?: string;
+  customCss?: string;
   fields: FormField[];
   submitButtonText: string;
   successMessage: string;

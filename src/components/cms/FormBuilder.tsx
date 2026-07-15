@@ -73,37 +73,82 @@ export function FormBuilder({ forms, onChange }: FormBuilderProps) {
             </div>
           </div>
 
-          <div className="space-y-4 mb-8">
-            <div>
-              <label className="block text-sm font-semibold text-[#8A8D96] mb-1">Form Name (Internal)</label>
-              <input 
-                type="text" 
-                value={activeForm.name}
-                onChange={(e) => updateActiveForm({name: e.target.value})}
-                className="w-full px-3 py-2 bg-[#1A1D24] border border-[#2C2F38] rounded text-[#F0EDE8] focus:border-[#C79A4E] outline-none"
-              />
+          <div className="space-y-6 mb-8">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-semibold text-[#8A8D96] mb-1">Form Name (Internal)</label>
+                <input 
+                  type="text" 
+                  value={activeForm.name}
+                  onChange={(e) => updateActiveForm({name: e.target.value})}
+                  className="w-full px-3 py-2 bg-[#1A1D24] border border-[#2C2F38] rounded text-[#F0EDE8] focus:border-[#C79A4E] outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-[#8A8D96] mb-1">Form Type</label>
+                <select 
+                  value={activeForm.formType || 'native'}
+                  onChange={(e) => updateActiveForm({formType: e.target.value as 'native' | 'embed'})}
+                  className="w-full px-3 py-2 bg-[#1A1D24] border border-[#2C2F38] rounded text-[#F0EDE8] focus:border-[#C79A4E] outline-none"
+                >
+                  <option value="native">Native React Form</option>
+                  <option value="embed">External Embed Code</option>
+                </select>
+              </div>
             </div>
+
+            {(!activeForm.formType || activeForm.formType === 'native') && (
+              <>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-[#8A8D96] mb-1">Submit Button Text</label>
+                    <input 
+                      type="text" 
+                      value={activeForm.submitButtonText}
+                      onChange={(e) => updateActiveForm({submitButtonText: e.target.value})}
+                      className="w-full px-3 py-2 bg-[#1A1D24] border border-[#2C2F38] rounded text-[#F0EDE8] focus:border-[#C79A4E] outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-[#8A8D96] mb-1">Success Message</label>
+                    <input 
+                      type="text" 
+                      value={activeForm.successMessage}
+                      onChange={(e) => updateActiveForm({successMessage: e.target.value})}
+                      className="w-full px-3 py-2 bg-[#1A1D24] border border-[#2C2F38] rounded text-[#F0EDE8] focus:border-[#C79A4E] outline-none"
+                    />
+                  </div>
+                </div>
+              </>
+            )}
+
+            {activeForm.formType === 'embed' && (
+              <div>
+                <label className="block text-sm font-semibold text-[#8A8D96] mb-1">Raw Embed HTML / Script</label>
+                <textarea 
+                  value={activeForm.embedCode || ''}
+                  onChange={(e) => updateActiveForm({embedCode: e.target.value})}
+                  className="w-full px-3 py-2 bg-[#1A1D24] border border-[#2C2F38] rounded text-[#F0EDE8] focus:border-[#C79A4E] outline-none min-h-[150px] font-mono text-xs"
+                  placeholder="Paste your Hubspot, Typeform, or raw HTML embed code here..."
+                />
+              </div>
+            )}
+
             <div>
-              <label className="block text-sm font-semibold text-[#8A8D96] mb-1">Submit Button Text</label>
-              <input 
-                type="text" 
-                value={activeForm.submitButtonText}
-                onChange={(e) => updateActiveForm({submitButtonText: e.target.value})}
-                className="w-full px-3 py-2 bg-[#1A1D24] border border-[#2C2F38] rounded text-[#F0EDE8] focus:border-[#C79A4E] outline-none"
+              <label className="block text-sm font-semibold text-[#8A8D96] mb-1">Custom CSS Overrides</label>
+              <textarea 
+                value={activeForm.customCss || ''}
+                onChange={(e) => updateActiveForm({customCss: e.target.value})}
+                className="w-full px-3 py-2 bg-[#1A1D24] border border-[#2C2F38] rounded text-[#F0EDE8] focus:border-[#C79A4E] outline-none min-h-[80px] font-mono text-xs"
+                placeholder={`#form-embed-${activeForm.id} input { height: 60px; }`}
               />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-[#8A8D96] mb-1">Success Message</label>
-              <input 
-                type="text" 
-                value={activeForm.successMessage}
-                onChange={(e) => updateActiveForm({successMessage: e.target.value})}
-                className="w-full px-3 py-2 bg-[#1A1D24] border border-[#2C2F38] rounded text-[#F0EDE8] focus:border-[#C79A4E] outline-none"
-              />
+              <p className="text-[10px] text-[#8A8D96] mt-1">This CSS will be injected only when this form is rendered.</p>
             </div>
           </div>
 
-          <div className="flex justify-between items-center mb-4 pt-6 border-t border-[#2C2F38]">
+          {(!activeForm.formType || activeForm.formType === 'native') && (
+            <>
+              <div className="flex justify-between items-center mb-4 pt-6 border-t border-[#2C2F38]">
             <h3 className="text-lg font-bold text-[#F0EDE8]">Fields</h3>
             <button onClick={addField} className="text-sm text-[#C79A4E] hover:underline">
               + Add Field
@@ -187,6 +232,8 @@ export function FormBuilder({ forms, onChange }: FormBuilderProps) {
               </div>
             ))}
           </div>
+            </>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-4">

@@ -3,6 +3,7 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { useGoogleReCaptcha, GoogleReCaptchaProvider } from 'react-google-recaptcha-v3';
 import { useCmsContent } from '../../lib/cms-client';
 import { useSearchParams } from 'react-router-dom';
+import { EmbedRenderer } from './EmbedRenderer';
 
 interface DynamicFormProps {
   formId: string;
@@ -38,6 +39,16 @@ function BaseFormInner({ formId, executeRecaptcha }: DynamicFormProps & { execut
 
   if (!formDef) {
     return null; // Or a loading skeleton
+  }
+
+  // If this is an embed code form, bypass standard native rendering
+  if (formDef.formType === 'embed') {
+    return (
+      <div className="deliveriq-embed-wrapper" id={`form-embed-${formId}`}>
+        {formDef.customCss && <style>{formDef.customCss}</style>}
+        <EmbedRenderer html={formDef.embedCode || ''} />
+      </div>
+    );
   }
 
   const onSubmit: SubmitHandler<any> = async (data) => {
@@ -91,7 +102,8 @@ function BaseFormInner({ formId, executeRecaptcha }: DynamicFormProps & { execut
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6" id={`form-wrapper-${formId}`}>
+      {formDef.customCss && <style>{formDef.customCss}</style>}
       {matchedSession && (
         <div className="bg-[#1A1D24] border border-[#2C2F38] rounded-sm p-4 text-xs">
           <span className="text-[9px] font-bold text-[#C79A4E] uppercase tracking-wider block mb-1">{matchedSession.tag}</span>
