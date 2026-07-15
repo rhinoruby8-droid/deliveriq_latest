@@ -56,7 +56,9 @@ export function FormBuilder({ forms, onChange }: FormBuilderProps) {
   };
 
   const copyEmbedCode = (formId: string) => {
-    navigator.clipboard.writeText(`<DynamicForm formId="${formId}" />`);
+    const embedUrl = `${window.location.origin}/embed/form/${formId}`;
+    const embedHtml = `<iframe src="${embedUrl}" width="100%" height="600" style="border:none;" title="DeliverIQ Form"></iframe>`;
+    navigator.clipboard.writeText(embedHtml);
     alert('Embed code copied to clipboard!');
   };
 

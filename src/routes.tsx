@@ -19,6 +19,7 @@ const TermsPage       = lazy(() => import('./pages/terms'));
 const RegisterPage    = lazy(() => import('./pages/register'));
 const LoginPage       = lazy(() => import('./pages/login'));
 const DashboardPage   = lazy(() => import('./pages/dashboard'));
+const EmbedFormPage   = lazy(() => import('./pages/embed-form'));
 const AdminPage       = lazy(() => import('./pages/admin')); // isolated — carries editor libs
 const AdminLoginPage  = lazy(() => import('./pages/admin-login'));
 const NotFoundPage    = lazy(() => import('./pages/_404'));
@@ -48,6 +49,7 @@ export const routes: RouteObject[] = [
   { path: '/register',      element: <Lazy component={RegisterPage} /> },
   { path: '/login',         element: <Lazy component={LoginPage} /> },
   { path: '/signup',        element: <Lazy component={LoginPage} /> },
+  { path: '/embed/form/:id',element: <Lazy component={EmbedFormPage} /> },
   { path: '/dashboard',     element: <ProtectedRoute><Lazy component={DashboardPage} /></ProtectedRoute> },
   { path: '/privacy',       element: <Lazy component={PrivacyPage} /> },
   { path: '/terms',         element: <Lazy component={TermsPage} /> },
