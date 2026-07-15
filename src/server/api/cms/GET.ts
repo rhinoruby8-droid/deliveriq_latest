@@ -1,15 +1,16 @@
 import type { Request, Response } from 'express';
 import { supabaseAdmin } from '../../supabase';
-import { cmsCache } from './cache';
+import { getCmsCache } from './cache';
 
 export default async function handler(req: Request, res: Response) {
   try {
-    // Add aggressive caching headers for clients/CDNs
-    res.setHeader('Cache-Control', 'public, max-age=300, s-maxage=300, stale-while-revalidate=86400');
+    // Disable HTTP caching so clients and CDNs always get the fresh data from the Node server
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     
-    // Return fast in-memory cache if it exists
-    if (cmsCache) {
-      return res.status(200).json(cmsCache);
+    // Return fast in-memory cache if it exists and is not expired
+    const cachedData = getCmsCache();
+    if (cachedData) {
+      return res.status(200).json(cachedData);
     }
 
     const [pagesRes, speakersRes, sponsorsRes, sessionsRes, settingsRes, formsRes] = await Promise.all([

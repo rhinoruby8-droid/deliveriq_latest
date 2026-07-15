@@ -65,6 +65,8 @@ const routeTree: RouteObject[] = [
 const router = createBrowserRouter(routeTree);
 
 export default function App() {
+  const isEmbed = typeof window !== 'undefined' && window.location.pathname.startsWith('/embed/');
+
   return (
     <>
       <RouterProvider router={router} />
@@ -73,12 +75,16 @@ export default function App() {
         App.tsx is client-only (entry-server.tsx renders the route tree
         directly without importing App), so no SSR gate is needed here.
       */}
-      <CookieBannerErrorBoundary>
-        <Suspense fallback={null}>
-          <CookieBanner />
-        </Suspense>
-      </CookieBannerErrorBoundary>
-      <InboxChatWidget />
+      {!isEmbed && (
+        <>
+          <CookieBannerErrorBoundary>
+            <Suspense fallback={null}>
+              <CookieBanner />
+            </Suspense>
+          </CookieBannerErrorBoundary>
+          <InboxChatWidget />
+        </>
+      )}
     </>
   );
 }

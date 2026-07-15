@@ -148,6 +148,7 @@ export interface FormDefinition {
   formType?: 'native' | 'embed';
   embedCode?: string;
   customCss?: string;
+  headerHtml?: string;
   fields: FormField[];
   submitButtonText: string;
   successMessage: string;
@@ -1410,8 +1411,8 @@ export function useUpdateCmsContent() {
       }
       return res.json() as Promise<{ ok: boolean }>;
     },
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ['cmsContent'] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['cmsContent'] });
     },
   });
 }

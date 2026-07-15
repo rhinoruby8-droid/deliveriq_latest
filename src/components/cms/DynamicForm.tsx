@@ -46,6 +46,9 @@ function BaseFormInner({ formId, executeRecaptcha }: DynamicFormProps & { execut
     return (
       <div className="deliveriq-embed-wrapper" id={`form-embed-${formId}`}>
         {formDef.customCss && <style>{formDef.customCss}</style>}
+        {formDef.headerHtml && (
+          <div className="deliveriq-form-header" dangerouslySetInnerHTML={{ __html: formDef.headerHtml }} />
+        )}
         <EmbedRenderer html={formDef.embedCode || ''} />
       </div>
     );
@@ -104,6 +107,9 @@ function BaseFormInner({ formId, executeRecaptcha }: DynamicFormProps & { execut
   return (
     <div className="flex flex-col gap-6" id={`form-wrapper-${formId}`}>
       {formDef.customCss && <style>{formDef.customCss}</style>}
+      {formDef.headerHtml && (
+        <div className="deliveriq-form-header" dangerouslySetInnerHTML={{ __html: formDef.headerHtml }} />
+      )}
       {matchedSession && (
         <div className="bg-[#1A1D24] border border-[#2C2F38] rounded-sm p-4 text-xs">
           <span className="text-[9px] font-bold text-[#C79A4E] uppercase tracking-wider block mb-1">{matchedSession.tag}</span>

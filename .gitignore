@@ -82,3 +82,5 @@ pids
 
 # Admin credentials - never commit
 docs/credentials.md
+.vercel
+.env*

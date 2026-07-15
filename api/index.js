@@ -1,25 +1,26 @@
 import { createRequire } from "module";
 const require2 = createRequire(import.meta.url);
 import require$$0$3 from "tty";
-import require$$1$1 from "util";
+import require$$0$4 from "util";
 import * as os from "os";
 import os__default from "os";
-import require$$1$2 from "path";
-import require$$0$4 from "buffer";
-import require$$1$3 from "string_decoder";
+import require$$1$1 from "path";
+import require$$0$5 from "buffer";
+import require$$1$2 from "string_decoder";
 import require$$4$1 from "node:zlib";
-import require$$1$6 from "node:events";
-import require$$0$5 from "url";
-import require$$8 from "node:path";
-import require$$2$1 from "node:fs";
+import require$$1$5 from "node:events";
+import require$$0$6 from "url";
+import require$$8, { normalize, resolve, sep, dirname, join, extname } from "node:path";
+import require$$2$1, { existsSync, readFileSync } from "node:fs";
 import require$$2$2 from "node:http";
 import * as crypto$1 from "crypto";
 import crypto__default from "crypto";
-import require$$1$4 from "fs";
+import require$$1$3 from "fs";
 import require$$6$1 from "node:querystring";
 import require$$7$1 from "node:buffer";
-import require$$1$5 from "node:net";
-import require$$13 from "stream";
+import require$$1$4 from "node:net";
+import require$$5$1 from "stream";
+import { fileURLToPath } from "node:url";
 import require$$4$2 from "net";
 import * as http_ from "http";
 import http___default from "http";
@@ -30,6 +31,30 @@ import crypto$2 from "node:crypto";
 var commonjsGlobal = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
 function getDefaultExportFromCjs(x) {
   return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, "default") ? x["default"] : x;
+}
+function getAugmentedNamespace(n) {
+  if (Object.prototype.hasOwnProperty.call(n, "__esModule")) return n;
+  var f = n.default;
+  if (typeof f == "function") {
+    var a = function a2() {
+      if (this instanceof a2) {
+        return Reflect.construct(f, arguments, this.constructor);
+      }
+      return f.apply(this, arguments);
+    };
+    a.prototype = f.prototype;
+  } else a = {};
+  Object.defineProperty(a, "__esModule", { value: true });
+  Object.keys(n).forEach(function(k) {
+    var d = Object.getOwnPropertyDescriptor(n, k);
+    Object.defineProperty(a, k, d.get ? d : {
+      enumerable: true,
+      get: function() {
+        return n[k];
+      }
+    });
+  });
+  return a;
 }
 var express$2 = { exports: {} };
 var bodyParser = { exports: {} };
@@ -624,7 +649,7 @@ function requireNode$1() {
   hasRequiredNode$1 = 1;
   (function(module, exports$1) {
     const tty = require$$0$3;
-    const util2 = require$$1$1;
+    const util2 = require$$0$4;
     exports$1.init = init;
     exports$1.log = log;
     exports$1.formatArgs = formatArgs;
@@ -816,7 +841,7 @@ var hasRequiredDepd;
 function requireDepd() {
   if (hasRequiredDepd) return depd_1;
   hasRequiredDepd = 1;
-  var relative = require$$1$2.relative;
+  var relative = require$$1$1.relative;
   depd_1 = depd;
   var basePath = process.cwd();
   function containsNamespace(str, namespace) {
@@ -1617,7 +1642,7 @@ var hasRequiredSafer;
 function requireSafer() {
   if (hasRequiredSafer) return safer_1;
   hasRequiredSafer = 1;
-  var buffer = require$$0$4;
+  var buffer = require$$0$5;
   var Buffer2 = buffer.Buffer;
   var safer = {};
   var key;
@@ -1780,7 +1805,7 @@ function requireInternal() {
   }
   InternalCodec.prototype.encoder = InternalEncoder;
   InternalCodec.prototype.decoder = InternalDecoder;
-  var StringDecoder = require$$1$3.StringDecoder;
+  var StringDecoder = require$$1$2.StringDecoder;
   function InternalDecoder(options, codec) {
     this.decoder = new StringDecoder(codec.enc);
   }
@@ -5565,10 +5590,10 @@ function requireRawBody() {
     if (done) {
       return readStream(stream, encoding2, length, limit, wrap(done));
     }
-    return new Promise(function executor(resolve, reject) {
+    return new Promise(function executor(resolve2, reject) {
       readStream(stream, encoding2, length, limit, function onRead(err, buf) {
         if (err) return reject(err);
-        resolve(buf);
+        resolve2(buf);
       });
     });
   }
@@ -8578,7 +8603,7 @@ function requireMimeTypes() {
   hasRequiredMimeTypes = 1;
   (function(exports$1) {
     var db = requireMimeDb();
-    var extname = require$$1$2.extname;
+    var extname2 = require$$1$1.extname;
     var mimeScore2 = requireMimeScore();
     var EXTRACT_TYPE_REGEXP = /^\s*([^;\s]*)(?:;|\s|$)/;
     var TEXT_TYPE_REGEXP = /^text\//i;
@@ -8634,7 +8659,7 @@ function requireMimeTypes() {
       if (!path || typeof path !== "string") {
         return false;
       }
-      var extension2 = extname("x." + path).toLowerCase().slice(1);
+      var extension2 = extname2("x." + path).toLowerCase().slice(1);
       if (!extension2) {
         return false;
       }
@@ -8771,7 +8796,7 @@ function requireTypeIs() {
   typeIs.exports = typeofrequest;
   typeIs.exports.is = typeis;
   typeIs.exports.hasBody = hasbody;
-  typeIs.exports.normalize = normalize;
+  typeIs.exports.normalize = normalize2;
   typeIs.exports.match = mimeMatch;
   function typeis(value, types_) {
     var i;
@@ -8791,7 +8816,7 @@ function requireTypeIs() {
     }
     var type2;
     for (i = 0; i < types.length; i++) {
-      if (mimeMatch(normalize(type2 = types[i]), val)) {
+      if (mimeMatch(normalize2(type2 = types[i]), val)) {
         return type2[0] === "+" || type2.indexOf("*") !== -1 ? val : type2;
       }
     }
@@ -8806,7 +8831,7 @@ function requireTypeIs() {
     var value = req.headers["content-type"];
     return typeis(value, types);
   }
-  function normalize(type2) {
+  function normalize2(type2) {
     if (typeof type2 !== "string") {
       return false;
     }
@@ -9218,7 +9243,7 @@ var hasRequiredUtil_inspect;
 function requireUtil_inspect() {
   if (hasRequiredUtil_inspect) return util_inspect;
   hasRequiredUtil_inspect = 1;
-  util_inspect = require$$1$1.inspect;
+  util_inspect = require$$0$4.inspect;
   return util_inspect;
 }
 var objectInspect;
@@ -11982,7 +12007,7 @@ var hasRequiredParseurl;
 function requireParseurl() {
   if (hasRequiredParseurl) return parseurl.exports;
   hasRequiredParseurl = 1;
-  var url = require$$0$5;
+  var url = require$$0$6;
   var parse2 = url.parse;
   var Url = url.Url;
   parseurl.exports = parseurl$1;
@@ -12211,16 +12236,16 @@ function requireView() {
   var debug2 = requireSrc$1()("express:view");
   var path = require$$8;
   var fs = require$$2$1;
-  var dirname = path.dirname;
+  var dirname2 = path.dirname;
   var basename = path.basename;
-  var extname = path.extname;
-  var join = path.join;
-  var resolve = path.resolve;
+  var extname2 = path.extname;
+  var join2 = path.join;
+  var resolve2 = path.resolve;
   view = View;
   function View(name, options) {
     var opts = options || {};
     this.defaultEngine = opts.defaultEngine;
-    this.ext = extname(name);
+    this.ext = extname2(name);
     this.name = name;
     this.root = opts.root;
     if (!this.ext && !this.defaultEngine) {
@@ -12249,8 +12274,8 @@ function requireView() {
     debug2('lookup "%s"', name);
     for (var i = 0; i < roots.length && !path2; i++) {
       var root = roots[i];
-      var loc = resolve(root, name);
-      var dir = dirname(loc);
+      var loc = resolve2(root, name);
+      var dir = dirname2(loc);
       var file = basename(loc);
       path2 = this.resolve(dir, file);
     }
@@ -12274,14 +12299,14 @@ function requireView() {
     });
     sync = false;
   };
-  View.prototype.resolve = function resolve2(dir, file) {
+  View.prototype.resolve = function resolve3(dir, file) {
     var ext = this.ext;
-    var path2 = join(dir, file);
+    var path2 = join2(dir, file);
     var stat = tryStat(path2);
     if (stat && stat.isFile()) {
       return path2;
     }
-    path2 = join(dir, basename(file, ext), "index" + ext);
+    path2 = join2(dir, basename(file, ext), "index" + ext);
     stat = tryStat(path2);
     if (stat && stat.isFile()) {
       return path2;
@@ -12310,7 +12335,7 @@ function requireEtag() {
   hasRequiredEtag = 1;
   etag_1 = etag;
   var crypto2 = crypto__default;
-  var Stats = require$$1$4.Stats;
+  var Stats = require$$1$3.Stats;
   var toString = Object.prototype.toString;
   function entitytag(entity) {
     if (entity.length === 0) {
@@ -14476,7 +14501,7 @@ function requireApplication() {
     var compileETag = requireUtils().compileETag;
     var compileQueryParser = requireUtils().compileQueryParser;
     var compileTrust = requireUtils().compileTrust;
-    var resolve = require$$8.resolve;
+    var resolve2 = require$$8.resolve;
     var once2 = requireOnce();
     var Router = requireRouter();
     var slice = Array.prototype.slice;
@@ -14530,7 +14555,7 @@ function requireApplication() {
       this.mountpath = "/";
       this.locals.settings = this.settings;
       this.set("view", View);
-      this.set("views", resolve("views"));
+      this.set("views", resolve2("views"));
       this.set("jsonp callback name", "callback");
       if (env === "production") {
         this.enable("view cache");
@@ -15510,7 +15535,7 @@ function requireRequest() {
   if (hasRequiredRequest) return request;
   hasRequiredRequest = 1;
   var accepts2 = requireAccepts();
-  var isIP = require$$1$5.isIP;
+  var isIP = require$$1$4.isIP;
   var typeis = requireTypeIs();
   var http2 = require$$2$2;
   var fresh = requireFresh();
@@ -16076,20 +16101,20 @@ function requireSend() {
   var escapeHtml = requireEscapeHtml();
   var etag = requireEtag();
   var fresh = requireFresh();
-  var fs = require$$1$4;
+  var fs = require$$1$3;
   var mime = requireMimeTypes();
   var ms2 = requireMs$1();
   var onFinished2 = requireOnFinished();
   var parseRange = requireRangeParser();
-  var path = require$$1$2;
+  var path = require$$1$1;
   var statuses2 = requireStatuses();
-  var Stream = require$$13;
-  var util2 = require$$1$1;
-  var extname = path.extname;
-  var join = path.join;
-  var normalize = path.normalize;
-  var resolve = path.resolve;
-  var sep = path.sep;
+  var Stream = require$$5$1;
+  var util2 = require$$0$4;
+  var extname2 = path.extname;
+  var join2 = path.join;
+  var normalize2 = path.normalize;
+  var resolve2 = path.resolve;
+  var sep2 = path.sep;
   var BYTES_RANGE_REGEXP = /^ *bytes=/;
   var MAX_MAXAGE = 60 * 60 * 24 * 365 * 1e3;
   var UP_PATH_REGEXP = /(?:^|[\\/])\.\.(?:[\\/]|$)/;
@@ -16117,7 +16142,7 @@ function requireSend() {
     this._maxage = opts.maxAge || opts.maxage;
     this._maxage = typeof this._maxage === "string" ? ms2(this._maxage) : Number(this._maxage);
     this._maxage = !isNaN(this._maxage) ? Math.min(Math.max(0, this._maxage), MAX_MAXAGE) : 0;
-    this._root = opts.root ? resolve(opts.root) : null;
+    this._root = opts.root ? resolve2(opts.root) : null;
   }
   util2.inherits(SendStream, Stream);
   SendStream.prototype.error = function error(status, err) {
@@ -16250,23 +16275,23 @@ function requireSend() {
     var parts;
     if (root !== null) {
       if (path2) {
-        path2 = normalize("." + sep + path2);
+        path2 = normalize2("." + sep2 + path2);
       }
       if (UP_PATH_REGEXP.test(path2)) {
         debug2('malicious path "%s"', path2);
         this.error(403);
         return res;
       }
-      parts = path2.split(sep);
-      path2 = normalize(join(root, path2));
+      parts = path2.split(sep2);
+      path2 = normalize2(join2(root, path2));
     } else {
       if (UP_PATH_REGEXP.test(path2)) {
         debug2('malicious path "%s"', path2);
         this.error(403);
         return res;
       }
-      parts = normalize(path2).split(sep);
-      path2 = resolve(path2);
+      parts = normalize2(path2).split(sep2);
+      path2 = resolve2(path2);
     }
     if (containsDotFile(parts)) {
       debug2('%s dotfile "%s"', this._dotfiles, path2);
@@ -16359,8 +16384,8 @@ function requireSend() {
     var self2 = this;
     debug2('stat "%s"', path2);
     fs.stat(path2, function onstat(err, stat) {
-      var pathEndsWithSep = path2[path2.length - 1] === sep;
-      if (err && err.code === "ENOENT" && !extname(path2) && !pathEndsWithSep) {
+      var pathEndsWithSep = path2[path2.length - 1] === sep2;
+      if (err && err.code === "ENOENT" && !extname2(path2) && !pathEndsWithSep) {
         return next(err);
       }
       if (err) return self2.onStatError(err);
@@ -16391,7 +16416,7 @@ function requireSend() {
         if (err) return self2.onStatError(err);
         return self2.error(404);
       }
-      var p = join(path2, self2._index[i]);
+      var p = join2(path2, self2._index[i]);
       debug2('stat "%s"', p);
       fs.stat(p, function(err2, stat) {
         if (err2) return next(err2);
@@ -16423,7 +16448,7 @@ function requireSend() {
   SendStream.prototype.type = function type2(path2) {
     var res = this.res;
     if (res.getHeader("Content-Type")) return;
-    var ext = extname(path2);
+    var ext = extname2(path2);
     var type3 = mime.contentType(ext) || "application/octet-stream";
     debug2("content-type %s", type3);
     res.setHeader("Content-Type", type3);
@@ -16654,8 +16679,8 @@ function requireResponse() {
   var setCharset = requireUtils().setCharset;
   var cookie2 = requireCookie();
   var send = requireSend();
-  var extname = path.extname;
-  var resolve = path.resolve;
+  var extname2 = path.extname;
+  var resolve2 = path.resolve;
   var vary2 = requireVary();
   const { Buffer: Buffer2 } = require$$7$1;
   var res = Object.create(http2.ServerResponse.prototype);
@@ -16861,7 +16886,7 @@ function requireResponse() {
     }
     opts = Object.create(opts);
     opts.headers = headers;
-    var fullPath = !opts.root ? resolve(path2) : path2;
+    var fullPath = !opts.root ? resolve2(path2) : path2;
     return this.sendFile(fullPath, opts, done);
   };
   res.contentType = res.type = function contentType2(type2) {
@@ -16892,7 +16917,7 @@ function requireResponse() {
   };
   res.attachment = function attachment(filename) {
     if (filename) {
-      this.type(extname(filename));
+      this.type(extname2(filename));
     }
     this.set("Content-Disposition", contentDisposition2(filename));
     return this;
@@ -17117,9 +17142,9 @@ function requireServeStatic() {
   var encodeUrl = requireEncodeurl();
   var escapeHtml = requireEscapeHtml();
   var parseUrl = requireParseurl();
-  var resolve = require$$1$2.resolve;
+  var resolve2 = require$$1$1.resolve;
   var send = requireSend();
-  var url = require$$0$5;
+  var url = require$$0$6;
   serveStatic_1 = serveStatic;
   function serveStatic(root, options) {
     if (!root) {
@@ -17136,7 +17161,7 @@ function requireServeStatic() {
       throw new TypeError("option setHeaders must be function");
     }
     opts.maxage = opts.maxage || opts.maxAge || 0;
-    opts.root = resolve(root);
+    opts.root = resolve2(root);
     var onDirectory = redirect ? createRedirectDirectoryListener() : createNotFoundDirectoryListener();
     return function serveStatic2(req, res, next) {
       if (req.method !== "GET" && req.method !== "HEAD") {
@@ -17226,7 +17251,7 @@ function requireExpress$1() {
   hasRequiredExpress$1 = 1;
   (function(module, exports$1) {
     var bodyParser2 = requireBodyParser();
-    var EventEmitter2 = require$$1$6.EventEmitter;
+    var EventEmitter2 = require$$1$5.EventEmitter;
     var mixin = /* @__PURE__ */ requireMergeDescriptors();
     var proto = requireApplication();
     var Router = requireRouter();
@@ -17805,7 +17830,7 @@ function requireSafeBuffer() {
   if (hasRequiredSafeBuffer) return safeBuffer.exports;
   hasRequiredSafeBuffer = 1;
   (function(module, exports$1) {
-    var buffer = require$$0$4;
+    var buffer = require$$0$5;
     var Buffer2 = buffer.Buffer;
     function copyProps(src2, dst) {
       for (var key in src2) {
@@ -18198,7 +18223,7 @@ function requireNode() {
   hasRequiredNode = 1;
   (function(module, exports$1) {
     var tty = require$$0$3;
-    var util2 = require$$1$1;
+    var util2 = require$$0$4;
     exports$1 = module.exports = requireDebug();
     exports$1.init = init;
     exports$1.log = log;
@@ -18277,7 +18302,7 @@ function requireNode() {
           }
           break;
         case "FILE":
-          var fs = require$$1$4;
+          var fs = require$$1$3;
           stream2 = new fs.SyncWriteStream(fd2, { autoClose: false });
           stream2._type = "fs";
           break;
@@ -19384,7 +19409,7 @@ class RequestSender {
     }
   }
   _rawRequest(method, path, params, options, usage) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve2, reject) => {
       try {
         const requestMethod = method.toUpperCase();
         if (requestMethod !== "POST" && params && Object.keys(params).length !== 0) {
@@ -19405,7 +19430,7 @@ class RequestSender {
           if (err) {
             reject(err);
           } else {
-            resolve(response2);
+            resolve2(response2);
           }
         });
       } catch (err) {
@@ -20539,7 +20564,7 @@ function makeAutoPagingToArray(autoPagingEach) {
     if (limit > 1e4) {
       throw Error("You cannot specify a limit of more than 10,000 items to fetch in `autoPagingToArray`; use `autoPagingEach` to iterate through longer lists.");
     }
-    const promise = new Promise((resolve, reject) => {
+    const promise = new Promise((resolve2, reject) => {
       const items = [];
       autoPagingEach((item) => {
         items.push(item);
@@ -20547,7 +20572,7 @@ function makeAutoPagingToArray(autoPagingEach) {
           return false;
         }
       }).then(() => {
-        resolve(items);
+        resolve2(items);
       }).catch((err) => {
         attachCallSiteToError(err, callSiteStack);
         reject(err);
@@ -20560,10 +20585,10 @@ function makeAutoPagingToArray(autoPagingEach) {
   };
 }
 function wrapAsyncIteratorWithCallback(asyncIteratorNext, onItem) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve2, reject) => {
     function handleIteration(iterResult) {
       if (iterResult.done) {
-        resolve();
+        resolve2();
         return;
       }
       const item = iterResult.value;
@@ -20623,7 +20648,7 @@ class StripeResource {
       return Promise.reject(err);
     }
     const callSiteStack = new Error().stack;
-    const innerPromise = new Promise((resolve, reject) => {
+    const innerPromise = new Promise((resolve2, reject) => {
       var _a;
       function requestCallback(err, response2) {
         if (err) {
@@ -20634,7 +20659,7 @@ class StripeResource {
             if (spec == null ? void 0 : spec.responseSchema) {
               coerceV2ResponseData(response2, spec.responseSchema);
             }
-            resolve((spec == null ? void 0 : spec.transformResponseData) ? spec.transformResponseData(response2) : response2);
+            resolve2((spec == null ? void 0 : spec.transformResponseData) ? spec.transformResponseData(response2) : response2);
           } catch (e) {
             reject(e);
           }
@@ -20776,7 +20801,7 @@ class NodeHttpClient extends HttpClient {
     if (!agent) {
       agent = isInsecureConnection ? defaultHttpAgent : defaultHttpsAgent;
     }
-    const requestPromise = new Promise((resolve, reject) => {
+    const requestPromise = new Promise((resolve2, reject) => {
       const req = (isInsecureConnection ? http : https).request({
         host,
         port,
@@ -20790,7 +20815,7 @@ class NodeHttpClient extends HttpClient {
         req.destroy(HttpClient.makeTimeoutError());
       });
       req.on("response", (res) => {
-        resolve(new NodeHttpClientResponse(res));
+        resolve2(new NodeHttpClientResponse(res));
       });
       req.on("error", (error) => {
         reject(error);
@@ -20823,7 +20848,7 @@ class NodeHttpClientResponse extends HttpClientResponse {
     return this._res;
   }
   toJSON() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve2, reject) => {
       let response2 = "";
       this._res.setEncoding("utf8");
       this._res.on("data", (chunk) => {
@@ -20831,7 +20856,7 @@ class NodeHttpClientResponse extends HttpClientResponse {
       });
       this._res.once("end", () => {
         try {
-          resolve(JSON.parse(response2));
+          resolve2(JSON.parse(response2));
         } catch (e) {
           if (e instanceof Error) {
             e.rawBody = response2;
@@ -21180,13 +21205,13 @@ class NodePlatformFunctions extends PlatformFunctions {
       return Promise.resolve(data);
     }
     const bufferArray = [];
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve2, reject) => {
       data.file.data.on("data", (line) => {
         bufferArray.push(line);
       }).once("end", () => {
         const bufferData = Object.assign({}, data);
         bufferData.file.data = concat(bufferArray);
-        resolve(bufferData);
+        resolve2(bufferData);
       }).on("error", (err) => {
         reject(new StreamProcessingError({
           message: "An error occurred while attempting to process the file for upload.",
@@ -35958,6 +35983,16 @@ ${message}` : "",
   }
   return res.status(200).json({ ok: true });
 }
+var __assign = function() {
+  __assign = Object.assign || function __assign2(t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+      s = arguments[i];
+      for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+    }
+    return t;
+  };
+  return __assign.apply(this, arguments);
+};
 function __rest(s, e) {
   var t = {};
   for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
@@ -35971,11 +36006,11 @@ function __rest(s, e) {
 }
 function __awaiter$1(thisArg, _arguments, P, generator) {
   function adopt(value) {
-    return value instanceof P ? value : new P(function(resolve) {
-      resolve(value);
+    return value instanceof P ? value : new P(function(resolve2) {
+      resolve2(value);
     });
   }
-  return new (P || (P = Promise))(function(resolve, reject) {
+  return new (P || (P = Promise))(function(resolve2, reject) {
     function fulfilled(value) {
       try {
         step(generator.next(value));
@@ -35991,10 +36026,19 @@ function __awaiter$1(thisArg, _arguments, P, generator) {
       }
     }
     function step(result) {
-      result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+      result.done ? resolve2(result.value) : adopt(result.value).then(fulfilled, rejected);
     }
     step((generator = generator.apply(thisArg, _arguments || [])).next());
   });
+}
+function __spreadArray(to, from, pack) {
+  if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+    if (ar || !(i in from)) {
+      if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+      ar[i] = from[i];
+    }
+  }
+  return to.concat(ar || Array.prototype.slice.call(from));
 }
 typeof SuppressedError === "function" ? SuppressedError : function(error, suppressed, message) {
   var e = new Error(message);
@@ -36359,18 +36403,18 @@ var PostgrestError = class extends Error {
   }
 };
 function sleep$1(ms2, signal) {
-  return new Promise((resolve) => {
+  return new Promise((resolve2) => {
     if (signal === null || signal === void 0 ? void 0 : signal.aborted) {
-      resolve();
+      resolve2();
       return;
     }
     const id = setTimeout(() => {
       signal === null || signal === void 0 || signal.removeEventListener("abort", onAbort);
-      resolve();
+      resolve2();
     }, ms2);
     function onAbort() {
       clearTimeout(id);
-      resolve();
+      resolve2();
     }
     signal === null || signal === void 0 || signal.addEventListener("abort", onAbort);
   });
@@ -43166,15 +43210,15 @@ class RealtimeChannel {
         }
       }
     } else {
-      return new Promise((resolve) => {
+      return new Promise((resolve2) => {
         var _a2, _b2, _c;
         const push = this.channelAdapter.push(args.type, args, opts.timeout || this.timeout);
         if (args.type === "broadcast" && !((_c = (_b2 = (_a2 = this.params) === null || _a2 === void 0 ? void 0 : _a2.config) === null || _b2 === void 0 ? void 0 : _b2.broadcast) === null || _c === void 0 ? void 0 : _c.ack)) {
-          resolve("ok");
+          resolve2("ok");
         }
-        push.receive("ok", () => resolve("ok"));
-        push.receive("error", () => resolve("error"));
-        push.receive("timeout", () => resolve("timed out"));
+        push.receive("ok", () => resolve2("ok"));
+        push.receive("error", () => resolve2("error"));
+        push.receive("timeout", () => resolve2("timed out"));
       });
     }
   }
@@ -43199,8 +43243,8 @@ class RealtimeChannel {
    * @category Realtime
    */
   async unsubscribe(timeout = this.timeout) {
-    return new Promise((resolve) => {
-      this.channelAdapter.unsubscribe(timeout).receive("ok", () => resolve("ok")).receive("timeout", () => resolve("timed out")).receive("error", () => resolve("error"));
+    return new Promise((resolve2) => {
+      this.channelAdapter.unsubscribe(timeout).receive("ok", () => resolve2("ok")).receive("timeout", () => resolve2("timed out")).receive("error", () => resolve2("error"));
     });
   }
   /**
@@ -43285,8 +43329,8 @@ class RealtimeChannel {
   }
   /** @internal */
   _notThisChannelEvent(event, ref2) {
-    const { close, error, leave, join } = CHANNEL_EVENTS$1;
-    const events = [close, error, leave, join];
+    const { close, error, leave, join: join2 } = CHANNEL_EVENTS$1;
+    const events = [close, error, leave, join2];
     return ref2 && events.includes(event) && ref2 !== this.joinPush.ref;
   }
   /** @internal */
@@ -43397,11 +43441,11 @@ class SocketAdapter {
     this.socket.connect();
   }
   disconnect(callback, code, reason, timeout = 1e4) {
-    return new Promise((resolve) => {
-      setTimeout(() => resolve("timeout"), timeout);
+    return new Promise((resolve2) => {
+      setTimeout(() => resolve2("timeout"), timeout);
       this.socket.disconnect(() => {
         callback();
-        resolve("ok");
+        resolve2("ok");
       }, code, reason);
     });
   }
@@ -44794,7 +44838,7 @@ const _getRequestParams$1 = (method, options, parameters, body) => {
   return _objectSpread2$1(_objectSpread2$1({}, params), parameters);
 };
 async function _handleRequest$1(fetcher, method, url, options, parameters, body, namespace) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve2, reject) => {
     fetcher(url, _getRequestParams$1(method, options, parameters, body)).then((result) => {
       if (!result.ok) throw result;
       if (options === null || options === void 0 ? void 0 : options.noResolveJson) return result;
@@ -44804,7 +44848,7 @@ async function _handleRequest$1(fetcher, method, url, options, parameters, body,
         if (!contentType2 || !contentType2.includes("application/json")) return {};
       }
       return result.json();
-    }).then((data) => resolve(data)).catch((error) => handleError$1(error, reject, options, namespace));
+    }).then((data) => resolve2(data)).catch((error) => handleError$1(error, reject, options, namespace));
   });
 }
 function createFetchApi(namespace = "storage") {
@@ -55174,11 +55218,11 @@ const DEFAULT_TRACE_PROPAGATION_OPTIONS = {
 };
 function __awaiter(thisArg, _arguments, P, generator) {
   function adopt(value) {
-    return value instanceof P ? value : new P(function(resolve) {
-      resolve(value);
+    return value instanceof P ? value : new P(function(resolve2) {
+      resolve2(value);
     });
   }
-  return new (P || (P = Promise))(function(resolve, reject) {
+  return new (P || (P = Promise))(function(resolve2, reject) {
     function fulfilled(value) {
       try {
         step(generator.next(value));
@@ -55194,7 +55238,7 @@ function __awaiter(thisArg, _arguments, P, generator) {
       }
     }
     function step(result) {
-      result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+      result.done ? resolve2(result.value) : adopt(result.value).then(fulfilled, rejected);
     }
     step((generator = generator.apply(thisArg, [])).next());
   });
@@ -55871,8 +55915,8 @@ var hasRequiredMain;
 function requireMain() {
   if (hasRequiredMain) return main.exports;
   hasRequiredMain = 1;
-  const fs = require$$1$4;
-  const path = require$$1$2;
+  const fs = require$$1$3;
+  const path = require$$1$1;
   const os2 = os__default;
   const crypto2 = crypto__default;
   const TIPS = [
@@ -56215,9 +56259,18 @@ const supabase = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProp
   __proto__: null,
   supabaseAdmin
 }, Symbol.toStringTag, { value: "Module" }));
+const CACHE_TTL_MS = 5e3;
 let cmsCache = null;
+function getCmsCache() {
+  if (!cmsCache) return null;
+  if (Date.now() - cmsCache.timestamp > CACHE_TTL_MS) {
+    cmsCache = null;
+    return null;
+  }
+  return cmsCache.data;
+}
 function setCmsCache(val) {
-  cmsCache = val;
+  cmsCache = { data: val, timestamp: Date.now() };
 }
 function clearCmsCache() {
   cmsCache = null;
@@ -56225,17 +56278,16 @@ function clearCmsCache() {
 const cache = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   clearCmsCache,
-  get cmsCache() {
-    return cmsCache;
-  },
+  getCmsCache,
   setCmsCache
 }, Symbol.toStringTag, { value: "Module" }));
 async function handler$8(req, res) {
   var _a;
   try {
-    res.setHeader("Cache-Control", "public, max-age=300, s-maxage=300, stale-while-revalidate=86400");
-    if (cmsCache) {
-      return res.status(200).json(cmsCache);
+    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+    const cachedData = getCmsCache();
+    if (cachedData) {
+      return res.status(200).json(cachedData);
     }
     const [pagesRes, speakersRes, sponsorsRes, sessionsRes, settingsRes, formsRes] = await Promise.all([
       supabaseAdmin.from("pages").select("*"),
@@ -60332,8 +60384,75 @@ const seoRoutes = [
   { path: "/privacy", changefreq: "yearly", priority: 0.2 },
   { path: "/terms", changefreq: "yearly", priority: 0.2 }
 ];
+const ADSENSE_MANIFEST_FILENAME = "airo-adsense.json";
+const ADSENSE_PUBLISHER_ID_PATTERN = /^ca-pub-\d{16}$/;
+const EMPTY_ADSENSE_RUNTIME_CONFIG = {
+  publisherId: null,
+  scriptHtml: "",
+  adsTxt: null,
+  appAdsTxt: null
+};
+function buildCanonicalAdSenseScript(publisherId) {
+  if (!ADSENSE_PUBLISHER_ID_PATTERN.test(publisherId)) return "";
+  return `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${publisherId}" crossorigin="anonymous"><\/script>`;
+}
+function loadAdSenseRuntimeConfig(baseDir) {
+  const manifestPath = resolveRuntimeManifestPath(baseDir);
+  if (manifestPath === null) return EMPTY_ADSENSE_RUNTIME_CONFIG;
+  if (!existsSync(manifestPath)) return EMPTY_ADSENSE_RUNTIME_CONFIG;
+  try {
+    const parsed = JSON.parse(readFileSync(manifestPath, "utf8"));
+    return normalizeRuntimeManifest(parsed);
+  } catch (error) {
+    console.error("adsense.manifest.load_failed", {
+      error: error instanceof Error ? error.message : String(error)
+    });
+    return EMPTY_ADSENSE_RUNTIME_CONFIG;
+  }
+}
+function resolveRuntimeManifestPath(baseDir) {
+  if (baseDir.includes("\0")) return null;
+  if (baseDir.split(/[\\/]+/).includes("..")) return null;
+  const normalizedBaseDir = normalize(baseDir);
+  const resolvedBaseDir = resolve(normalizedBaseDir);
+  const resolvedManifestPath = resolve(resolvedBaseDir, ADSENSE_MANIFEST_FILENAME);
+  const basePrefix = resolvedBaseDir.endsWith(sep) ? resolvedBaseDir : `${resolvedBaseDir}${sep}`;
+  if (resolvedManifestPath !== resolvedBaseDir && !resolvedManifestPath.startsWith(basePrefix)) {
+    return null;
+  }
+  return resolvedManifestPath;
+}
 function resolveAdSenseTextFile(config, key) {
   return config[key];
+}
+function normalizeRuntimeManifest(value) {
+  if (!isRuntimeManifestShape(value)) return EMPTY_ADSENSE_RUNTIME_CONFIG;
+  if (!value.enabled) return EMPTY_ADSENSE_RUNTIME_CONFIG;
+  const publisherId = isValidPublisherId(value.publisherId) ? value.publisherId : null;
+  return {
+    publisherId,
+    scriptHtml: publisherId ? buildCanonicalAdSenseScript(publisherId) : "",
+    adsTxt: normalizeTextFile(value.adsTxt),
+    appAdsTxt: normalizeTextFile(value.appAdsTxt)
+  };
+}
+function isRuntimeManifestShape(value) {
+  if (typeof value !== "object" || value === null) return false;
+  const candidate = value;
+  return candidate.version === 1 && typeof candidate.enabled === "boolean" && (candidate.publisherId === null || typeof candidate.publisherId === "string") && typeof candidate.scriptSnippet === "string" && isTextFileManifest(candidate.adsTxt) && isTextFileManifest(candidate.appAdsTxt);
+}
+function isTextFileManifest(value) {
+  if (typeof value !== "object" || value === null) return false;
+  const candidate = value;
+  return typeof candidate.enabled === "boolean" && typeof candidate.content === "string";
+}
+function isValidPublisherId(value) {
+  return typeof value === "string" && ADSENSE_PUBLISHER_ID_PATTERN.test(value);
+}
+function normalizeTextFile(value) {
+  if (!value.enabled) return null;
+  const content = value.content.trim();
+  return content ? value.content : null;
 }
 const SYSTEM_HOST_SUFFIXES = [
   ".airoapp.ai",
@@ -60498,8 +60617,181 @@ ${urls}
   res.type("application/xml").set("Cache-Control", "public, max-age=60, must-revalidate").set("Vary", "Host").send(body);
 });
 app.get("/llms.txt", llmsTxtHandler);
+if (process.env.NODE_ENV !== "development") {
+  const __dirname = dirname(fileURLToPath(import.meta.url));
+  const isApiDir = __dirname.replace(/\\/g, "/").split("/").pop() === "api";
+  const baseDir = isApiDir ? join(__dirname, "..") : __dirname;
+  const clientDir = isApiDir ? join(__dirname, "../dist") : join(__dirname, "dist");
+  console.log("ssr.boot", { __dirname, isApiDir, baseDir, clientDir });
+  const adSenseRuntimeConfig = loadAdSenseRuntimeConfig(baseDir);
+  registerAdSenseTextRoutes(app, adSenseRuntimeConfig);
+  app.use(
+    express.static(clientDir, {
+      index: false,
+      setHeaders(res, filePath) {
+        res.set(
+          "Cache-Control",
+          filePath.includes("/assets/") ? "public, max-age=31536000, immutable" : "no-cache"
+        );
+      }
+    })
+  );
+  app.use((_req, res, next) => {
+    res.set("Cache-Control", "no-cache");
+    next();
+  });
+  let template = "";
+  try {
+    const templatePath = isApiDir ? join(__dirname, "index.html") : join(clientDir, "index.html");
+    template = readFileSync(templatePath, "utf-8");
+  } catch (err) {
+    console.error("ssr.template.load-failed", {
+      path: isApiDir ? join(__dirname, "index.html") : join(clientDir, "index.html"),
+      error: err instanceof Error ? err.message : String(err)
+    });
+    template = "<!DOCTYPE html><html><!--app-head--><body><!--app-html--></body></html>";
+  }
+  if (!template.includes("<!--app-head-->") || !template.includes("<!--app-html-->")) {
+    console.error("ssr.template.markers-missing", {
+      hasHead: template.includes("<!--app-head-->"),
+      hasHtml: template.includes("<!--app-html-->")
+    });
+    template = "<!DOCTYPE html><html><!--app-head--><body><!--app-html--></body></html>";
+  }
+  const fallbackShell = template.replace("<!--app-head-->", "").replace("<!--app-html-->", "");
+  let renderFn = null;
+  const SSR_MODULE_LOAD_TIMEOUT_MS = 3e4;
+  const loadTimeout = setTimeout(() => {
+    if (renderFn !== null) return;
+    console.error("ssr.module.load-timeout", {
+      timeoutMs: SSR_MODULE_LOAD_TIMEOUT_MS
+    });
+    process.exit(1);
+  }, SSR_MODULE_LOAD_TIMEOUT_MS);
+  loadTimeout.unref();
+  import("./bin/entry-server-f1u3uq1V.js").then((n) => n.O).then(
+    (mod) => {
+      clearTimeout(loadTimeout);
+      renderFn = mod.render;
+    },
+    (err) => {
+      clearTimeout(loadTimeout);
+      console.error("ssr.module.load-failed", {
+        error: err instanceof Error ? err.stack : String(err)
+      });
+      renderFn = () => Promise.reject(err);
+    }
+  );
+  app.get(/.*/, async (req, res, next) => { console.log('IN APP.GET', req.path, req.url); 
+    var _a;
+    if (req.method !== "GET") return next();
+    if (req.path.startsWith("/api")) return next();
+    if (extname(req.path)) return next();
+    const sendFallback = () => res.status(503).set("Content-Type", "text/html; charset=utf-8").set("Cache-Control", "no-store").send(fallbackShell);
+    if (renderFn === null) {
+      return sendFallback();
+    }
+    try {
+      const result = await renderFn(req.url);
+      console.log("ssr.render.result", { url: req.url, status: result.status, htmlLength: (_a = result.html) == null ? void 0 : _a.length });
+      if (result.redirect) {
+        res.redirect(result.status, result.redirect);
+        return;
+      }
+      if (!result.html) {
+        console.error("ssr.render.error-response", {
+          url: req.url,
+          status: result.status
+        });
+        res.status(result.status).set("Content-Type", "text/html; charset=utf-8").set("Cache-Control", "no-store").send(fallbackShell);
+        return;
+      }
+      const seoHead = isSystemHost(req) ? `<meta name="robots" content="noindex,nofollow">` : `<link rel="canonical" href="${escapeXml(`${req.protocol}://${req.hostname}${req.path}`)}">`;
+      const out = renderSsrDocument(
+        template,
+        { ...result, head: seoHead + result.head },
+        adSenseRuntimeConfig
+      );
+      res.status(result.status).set("Content-Type", "text/html; charset=utf-8").set("Cache-Control", "no-cache").send(out);
+    } catch (err) {
+      console.error("ssr.render.failed", {
+        url: req.url,
+        // Log the full stack — React's renderToString annotates it with
+        // the failing component's call tree, which the message alone
+        // discards.
+        error: err instanceof Error ? err.stack : String(err)
+      });
+      sendFallback();
+    }
+  });
+  const shutdown = async (signal) => {
+    console.log(`Got ${signal}, shutting down gracefully...`);
+    let mod = null;
+    try {
+      const dbClient = "./db/client.js";
+      mod = await import(
+        /* @vite-ignore */
+        dbClient
+      );
+    } catch (error) {
+      const code = error == null ? void 0 : error.code;
+      if (code !== "ERR_MODULE_NOT_FOUND") {
+        console.error("ssr.shutdown.db-import-failed", {
+          error: error instanceof Error ? error.message : String(error)
+        });
+      }
+    }
+    if (mod && typeof mod.closeConnection === "function") {
+      try {
+        await mod.closeConnection();
+        console.log("Database connections closed");
+      } catch (error) {
+        console.error("ssr.shutdown.db-close-failed", {
+          error: error instanceof Error ? error.message : String(error)
+        });
+      }
+    }
+    process.exit(0);
+  };
+  ["SIGTERM", "SIGINT"].forEach((signal) => {
+    process.once(signal, () => {
+      void shutdown(signal);
+    });
+  });
+  if (process.env.VERCEL) {
+    console.log("Running on Vercel Serverless environment. Skipping app.listen().");
+  } else {
+    const rawPort = process.env.PORT || "3000";
+    const port = parseInt(rawPort, 10);
+    if (!Number.isInteger(port) || port <= 0 || port > 65535) {
+      console.error("ssr.server.invalid-port", { rawPort });
+      process.exit(1);
+    }
+    const host = process.env.HOST || "0.0.0.0";
+    const server = app.listen(port, host, () => {
+      console.log(`Server listening on http://${host}:${port}`);
+    });
+    server.on("error", (err) => {
+      console.error("ssr.server.listen-failed", {
+        port,
+        host,
+        code: err.code,
+        error: err.message
+      });
+      process.exit(1);
+    });
+  }
+}
 export {
+  __assign as _,
+  getAugmentedNamespace as a,
+  __rest as b,
+  __spreadArray as c,
   app as default,
+  getDefaultExportFromCjs as g,
+  objectType as o,
   registerAdSenseTextRoutes,
-  renderSsrDocument
+  renderSsrDocument,
+  stringType as s
 };
+

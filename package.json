@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build && vite build --ssr src/server/entry.ts",
+    "build": "vite build && cross-env VITE_SSR_BUILD=true vite build --ssr src/server/entry.ts && node -e \"require('fs').copyFileSync('dist/index.html', 'api/shell.html')\"",
     "start": "node serve.mjs",
     "preview": "vite preview",
     "test": "vitest",
@@ -117,6 +117,8 @@
     "@vitest/ui": "^4.1.9",
     "autoprefixer": "^10.4.27",
     "baseline-browser-mapping": "^2.10.0",
+    "cpx": "^1.5.0",
+    "cross-env": "^10.1.0",
     "eslint": "^9.16.0",
     "eslint-plugin-no-unsanitized": "^4.1.2",
     "eslint-plugin-react": "^7.37.2",

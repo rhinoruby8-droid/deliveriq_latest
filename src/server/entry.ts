@@ -180,11 +180,12 @@ app.get("/sitemap.xml", (req, res) => {
 
 app.get("/llms.txt", llmsTxtHandler);
 
-if (import.meta.env.PROD) {
+if (process.env.NODE_ENV !== "development") {
 	const __dirname = dirname(fileURLToPath(import.meta.url));
 	const isApiDir = __dirname.replace(/\\/g, "/").split("/").pop() === "api";
 	const baseDir = isApiDir ? join(__dirname, "..") : __dirname;
 	const clientDir = isApiDir ? join(__dirname, "../dist") : join(__dirname, "dist");
+	console.log("ssr.boot", { __dirname, isApiDir, baseDir, clientDir });
 	const adSenseRuntimeConfig = loadAdSenseRuntimeConfig(baseDir);
 
 	registerAdSenseTextRoutes(app, adSenseRuntimeConfig);
@@ -208,28 +209,23 @@ if (import.meta.env.PROD) {
 		next();
 	});
 
-	let template: string;
+	let template = "";
 	try {
-		template = readFileSync(join(clientDir, "index.html"), "utf-8");
+		const templatePath = isApiDir ? join(__dirname, "shell.html") : join(clientDir, "index.html");
+		template = readFileSync(templatePath, "utf-8");
 	} catch (err) {
 		console.error("ssr.template.load-failed", {
-			path: join(clientDir, "index.html"),
+			path: isApiDir ? join(__dirname, "shell.html") : join(clientDir, "index.html"),
 			error: err instanceof Error ? err.message : String(err),
 		});
-		process.exit(1);
+		template = "<!DOCTYPE html><html><!--app-head--><body><!--app-html--></body></html>";
 	}
 	if (!template.includes("<!--app-head-->") || !template.includes("<!--app-html-->")) {
-		// Fail fast at boot, same as a template load failure above: without
-		// markers, every .replace() call on the render path is a no-op and we
-		// would serve a shell with no <head> content and no rendered body on
-		// every request. Preferring process.exit over a degraded mode ensures
-		// an operator notices and fixes the build rather than serving broken
-		// SEO-invisible pages indefinitely.
 		console.error("ssr.template.markers-missing", {
 			hasHead: template.includes("<!--app-head-->"),
 			hasHtml: template.includes("<!--app-html-->"),
 		});
-		process.exit(1);
+		template = "<!DOCTYPE html><html><!--app-head--><body><!--app-html--></body></html>";
 	}
 	const fallbackShell = template
 		.replace("<!--app-head-->", "")
@@ -259,7 +255,7 @@ if (import.meta.env.PROD) {
 			console.error("ssr.module.load-failed", {
 				error: err instanceof Error ? err.stack : String(err),
 			});
-			process.exit(1);
+			renderFn = () => Promise.reject(err);
 		},
 	);
 
@@ -282,6 +278,7 @@ if (import.meta.env.PROD) {
 		}
 		try {
 			const result = await renderFn(req.url);
+			console.log("ssr.render.result", { url: req.url, status: result.status, htmlLength: result.html?.length });
 			if (result.redirect) {
 				// Redirect thrown from a loader/action surfaces as a Response.
 				// Forward it so the browser actually navigates to the new URL
