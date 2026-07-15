@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react';
+import React, { lazy, Suspense } from 'react';
 import { RouteObject } from 'react-router-dom';
 import Spinner from './components/Spinner';
 import { ProtectedRoute } from './components/ProtectedRoute';

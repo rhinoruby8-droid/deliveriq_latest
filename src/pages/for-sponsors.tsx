@@ -3,7 +3,6 @@ import { motion } from 'motion/react';
 import { useCmsContent, FALLBACK_CMS_CONTENT } from '@/lib/cms-client';
 import { PageHtmlRenderer } from '@/components/PageHtmlRenderer';
 import { SponsorsVisual } from '@/components/page-renderers/SponsorsVisual';
-import { SponsorIntakeForm } from '@/components/SponsorIntakeForm';
 import CheckoutButton from '@/components/CheckoutButton';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from '@/components/ui/card';
 import { Check } from 'lucide-react';
@@ -179,25 +178,6 @@ export default function ForSponsorsPage() {
                       <CheckoutButton sessionTitle="Sponsor Package: Lead Generation" amount={250000} className="w-full" label="Purchase Package" />
                     </CardFooter>
                   </Card>
-                </div>
-              </div>
-            </section>
-
-            <section id="apply" className="py-20 lg:py-28 bg-[#1A1D24] border-t border-[#2C2F38]">
-              <div className="container mx-auto px-6 lg:px-8">
-                <div className="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-16 lg:gap-20 items-start">
-                  <div>
-                    <div className="mb-10">
-                      <h2 className="text-3xl font-bold text-[#F0EDE8] mb-3">Custom Partnerships & Inquiries</h2>
-                      <p className="text-sm text-[#8A8D96]">
-                        Looking for something specific? Fill out the form below and our team will get in touch to design a custom package for your needs.
-                      </p>
-                    </div>
-                    <SponsorIntakeForm />
-                  </div>
-                  <div className="lg:sticky lg:top-32">
-                    {widgets.SponsorStats}
-                  </div>
                 </div>
               </div>
             </section>
