@@ -1,6 +1,6 @@
 import { Helmet } from '@dr.pogodin/react-helmet';
 import { type ReactElement } from 'react';
-import { ScrollRestoration } from 'react-router-dom';
+import { ScrollRestoration, useLocation } from 'react-router-dom';
 import { useCmsContent } from '@/lib/cms-client';
 
 import Footer from '@/layouts/parts/Footer';
@@ -22,6 +22,20 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   const { data: cms } = useCmsContent();
+  const location = useLocation();
+  const isEmbed = location.pathname.startsWith('/embed/');
+
+  if (isEmbed) {
+    return (
+      <>
+        {cms?.globalCss ? (
+          <style id="global-css-override" dangerouslySetInnerHTML={{ __html: cms.globalCss }} />
+        ) : null}
+        {children}
+      </>
+    );
+  }
+
   return (
     <Website>
       {cms?.globalCss ? (
