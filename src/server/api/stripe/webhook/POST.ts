@@ -43,6 +43,30 @@ export default async function handler(req: Request, res: Response) {
         currency: session.currency,
         metadata: session.metadata,
       });
+
+      // Auto-tag sponsor records if it's a sponsor package
+      if (session.metadata?.sessionTitle?.startsWith('Sponsor Package:')) {
+        const packageName = session.metadata.sessionTitle.replace('Sponsor Package:', '').trim();
+        const sponsorEmail = session.customer_details?.email || 'unknown';
+        const sponsorName = session.customer_details?.name || sponsorEmail.split('@')[0];
+        
+        try {
+          const { supabaseAdmin } = await import('../../../supabase');
+          if (supabaseAdmin) {
+            await supabaseAdmin.from('sponsors').upsert({
+              id: session.id, // using stripe session id as unique id for now
+              name: sponsorName,
+              tier: packageName,
+              website_url: '',
+              logo_url: ''
+            });
+            console.log(`Successfully recorded sponsor: ${sponsorName} for tier: ${packageName}`);
+          }
+        } catch (dbErr) {
+          console.error('Failed to update sponsor record in DB', dbErr);
+        }
+      }
+
       break;
     }
     case 'payment_intent.payment_failed': {

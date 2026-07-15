@@ -3,7 +3,10 @@ import { motion } from 'motion/react';
 import { useCmsContent, FALLBACK_CMS_CONTENT } from '@/lib/cms-client';
 import { PageHtmlRenderer } from '@/components/PageHtmlRenderer';
 import { SponsorsVisual } from '@/components/page-renderers/SponsorsVisual';
-import { DynamicForm } from '@/components/cms/DynamicForm';
+import { SponsorIntakeForm } from '@/components/SponsorIntakeForm';
+import CheckoutButton from '@/components/CheckoutButton';
+import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from '@/components/ui/card';
+import { Check } from 'lucide-react';
 
 export default function ForSponsorsPage() {
   const { data: cms = FALLBACK_CMS_CONTENT } = useCmsContent();
@@ -27,37 +30,52 @@ export default function ForSponsorsPage() {
 
   const widgets = {
     SponsorStats: (
-      <div className="border border-[#2C2F38] bg-[#21242C] rounded-sm overflow-hidden">
-        <div className="px-6 py-4 border-b border-[#2C2F38]">
-          <p className="text-[10px] font-semibold tracking-widest text-[#C79A4E] uppercase">Who attends DeliverIQ</p>
-        </div>
-        <div className="divide-y divide-[#2C2F38]">
-          {[
-            { role: 'Project Managers', pct: 42 },
-            { role: 'Project Controls Professionals', pct: 31 },
-            { role: 'Delivery Leaders & PMO', pct: 18 },
-            { role: 'Other Project Professionals', pct: 9 },
-          ].map((row) => (
-            <div key={row.role} className="px-6 py-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-[#F0EDE8] font-medium">{row.role}</span>
-                <span className="text-sm font-bold text-[#C79A4E]">{row.pct}%</span>
+      <Card className="border-[#2C2F38] bg-[#21242C] shadow-xl">
+        <CardHeader className="border-b border-[#2C2F38] pb-4">
+          <CardTitle className="text-[10px] font-semibold tracking-widest text-[#C79A4E] uppercase">
+            Audience Demographics
+          </CardTitle>
+          <CardDescription className="text-sm text-[#8A8D96]">
+            Who attends DeliverIQ live sessions
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <div className="space-y-6">
+            {[
+              { role: 'Project Managers', pct: 42 },
+              { role: 'Project Controls Professionals', pct: 31 },
+              { role: 'Delivery Leaders & PMO', pct: 18 },
+              { role: 'Other Project Professionals', pct: 9 },
+            ].map((row, i) => (
+              <div key={row.role}>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm text-[#F0EDE8] font-medium">{row.role}</span>
+                  <motion.span 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.8 + (i * 0.1) }}
+                    className="text-sm font-bold text-[#C79A4E]"
+                  >
+                    {row.pct}%
+                  </motion.span>
+                </div>
+                <div className="h-2 bg-[#2C2F38] rounded-full overflow-hidden">
+                  <motion.div
+                    className="h-full bg-gradient-to-r from-[#C79A4E] to-[#e0bc7f] rounded-full"
+                    initial={{ width: 0 }}
+                    whileInView={{ width: `${row.pct}%` }}
+                    viewport={{ once: true, margin: "-50px" }}
+                    transition={{ duration: 1, delay: 0.2 + (i * 0.1), ease: 'easeOut' }}
+                  />
+                </div>
               </div>
-              <div className="h-1 bg-[#2C2F38] rounded-full overflow-hidden">
-                <motion.div
-                  className="h-full bg-[#C79A4E] rounded-full"
-                  initial={{ width: 0 }}
-                  animate={{ width: `${row.pct}%` }}
-                  transition={{ duration: 0.8, delay: 0.3, ease: 'easeOut' as const }}
-                />
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
+        </CardContent>
+        <div className="px-6 py-4 border-t border-[#2C2F38] bg-[#1A1D24] rounded-b-lg">
+          <p className="text-[11px] text-[#8A8D96]">Based on registration data across 50+ live sessions.</p>
         </div>
-        <div className="px-6 py-4 border-t border-[#2C2F38] bg-[#1A1D24]">
-          <p className="text-[11px] text-[#8A8D96]">Audience breakdown based on registration data across disciplines.</p>
-        </div>
-      </div>
+      </Card>
     )
   };
 
@@ -81,15 +99,101 @@ export default function ForSponsorsPage() {
         {cms.sponsorsContent?.visualMode ? (
           <>
             <SponsorsVisual data={cms.sponsorsContent} />
+            
+            {/* Reach Packages / Pricing Tier Section */}
+            <section className="py-20 bg-[#15171C]">
+              <div className="container mx-auto px-6 lg:px-8">
+                <div className="text-center mb-16">
+                  <h2 className="text-3xl font-bold text-[#F0EDE8] mb-4">Reach Packages</h2>
+                  <p className="text-[#8A8D96] max-w-2xl mx-auto">
+                    Select a standard package to immediately secure your placement, or contact us for custom opportunities.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                  {/* Tier 1: Logo Placement */}
+                  <Card className="bg-[#1A1D24] border-[#2C2F38] flex flex-col">
+                    <CardHeader>
+                      <CardTitle className="text-xl text-[#F0EDE8]">Brand Visibility</CardTitle>
+                      <CardDescription>Logo Placement</CardDescription>
+                      <div className="mt-4 text-3xl font-bold text-[#F0EDE8]">$500</div>
+                    </CardHeader>
+                    <CardContent className="flex-1">
+                      <ul className="space-y-3">
+                        {['Logo on all session pages', 'Logo on newsletter (1 month)', 'Social media mention'].map((benefit, i) => (
+                          <li key={i} className="flex items-start text-sm text-[#8A8D96]">
+                            <Check className="h-4 w-4 text-[#C79A4E] mr-3 mt-0.5 shrink-0" />
+                            {benefit}
+                          </li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                    <CardFooter>
+                      <CheckoutButton sessionTitle="Sponsor Package: Brand Visibility" amount={50000} className="w-full" label="Purchase Package" />
+                    </CardFooter>
+                  </Card>
+
+                  {/* Tier 2: Dedicated Session */}
+                  <Card className="bg-[#21242C] border-[#C79A4E] flex flex-col relative scale-105 shadow-2xl">
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#C79A4E] text-[#1A1D24] px-3 py-1 text-xs font-bold rounded-full uppercase tracking-wider">
+                      Most Popular
+                    </div>
+                    <CardHeader>
+                      <CardTitle className="text-xl text-[#F0EDE8]">Dedicated Session</CardTitle>
+                      <CardDescription>Hosted Webinar Slot</CardDescription>
+                      <div className="mt-4 text-3xl font-bold text-[#F0EDE8]">$1,500</div>
+                    </CardHeader>
+                    <CardContent className="flex-1">
+                      <ul className="space-y-3">
+                        {['45-minute dedicated live session', 'Full lead generation & registration list', 'Branded waiting room', 'Recording hosted on platform'].map((benefit, i) => (
+                          <li key={i} className="flex items-start text-sm text-[#8A8D96]">
+                            <Check className="h-4 w-4 text-[#C79A4E] mr-3 mt-0.5 shrink-0" />
+                            {benefit}
+                          </li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                    <CardFooter>
+                      <CheckoutButton sessionTitle="Sponsor Package: Dedicated Session" amount={150000} className="w-full" label="Purchase Package" />
+                    </CardFooter>
+                  </Card>
+
+                  {/* Tier 3: Registration List */}
+                  <Card className="bg-[#1A1D24] border-[#2C2F38] flex flex-col">
+                    <CardHeader>
+                      <CardTitle className="text-xl text-[#F0EDE8]">Lead Generation</CardTitle>
+                      <CardDescription>Registration List Sharing</CardDescription>
+                      <div className="mt-4 text-3xl font-bold text-[#F0EDE8]">$2,500</div>
+                    </CardHeader>
+                    <CardContent className="flex-1">
+                      <ul className="space-y-3">
+                        {['Opt-in registration list for 3 sessions', 'Post-event email blast to attendees', 'Prominent logo placement', 'Pre-roll video ad (30s)'].map((benefit, i) => (
+                          <li key={i} className="flex items-start text-sm text-[#8A8D96]">
+                            <Check className="h-4 w-4 text-[#C79A4E] mr-3 mt-0.5 shrink-0" />
+                            {benefit}
+                          </li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                    <CardFooter>
+                      <CheckoutButton sessionTitle="Sponsor Package: Lead Generation" amount={250000} className="w-full" label="Purchase Package" />
+                    </CardFooter>
+                  </Card>
+                </div>
+              </div>
+            </section>
+
             <section id="apply" className="py-20 lg:py-28 bg-[#1A1D24] border-t border-[#2C2F38]">
               <div className="container mx-auto px-6 lg:px-8">
-                <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-16 lg:gap-20 items-start">
+                <div className="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-16 lg:gap-20 items-start">
                   <div>
                     <div className="mb-10">
-                      <h2 className="text-3xl font-bold text-[#F0EDE8] mb-3">Partner with Us</h2>
-                      <p className="text-sm text-[#8A8D96]">Reach a highly target audience of active project professionals applying AI techniques.</p>
+                      <h2 className="text-3xl font-bold text-[#F0EDE8] mb-3">Custom Partnerships & Inquiries</h2>
+                      <p className="text-sm text-[#8A8D96]">
+                        Looking for something specific? Fill out the form below and our team will get in touch to design a custom package for your needs.
+                      </p>
                     </div>
-                    <DynamicForm formId="sponsor" />
+                    <SponsorIntakeForm />
                   </div>
                   <div className="lg:sticky lg:top-32">
                     {widgets.SponsorStats}

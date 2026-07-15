@@ -42,8 +42,8 @@ export function UserNav() {
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="text-[#8A8D96] hover:text-[#F0EDE8] hover:bg-[#2C2F38]/50">
-            Sign In
+          <Button variant="default">
+            Register
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56 bg-[#1A1D24] border-[#2C2F38] text-[#F0EDE8]" align="end" forceMount>
@@ -93,9 +93,9 @@ export function UserNav() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator className="bg-[#2C2F38]" />
         <DropdownMenuItem asChild className="focus:bg-[#2C2F38] focus:text-[#C79A4E] cursor-pointer">
-          <Link to="/dashboard" className="flex w-full items-center">
+          <Link to={user.role === 'admin' ? '/admin' : '/dashboard'} className="flex w-full items-center">
             <LayoutDashboard className="mr-2 h-4 w-4" />
-            <span>Dashboard</span>
+            <span>{user.role === 'admin' ? 'Admin Panel' : 'Dashboard'}</span>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator className="bg-[#2C2F38]" />

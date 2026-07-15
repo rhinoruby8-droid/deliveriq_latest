@@ -2,7 +2,6 @@ import type { Request, Response } from 'express';
 import { supabaseAdmin } from '../../../supabase';
 import { hashPassword, generateToken } from '../../../auth';
 import { RegisterSchema } from '../../../../lib/schemas/validation';
-import crypto from 'crypto';
 
 export default async function handler(req: Request, res: Response) {
   try {
@@ -10,7 +9,7 @@ export default async function handler(req: Request, res: Response) {
     if (!parseResult.success) {
       return res.status(400).json({ error: parseResult.error.errors[0].message });
     }
-    const { email, name } = parseResult.data;
+    const { email, name, password } = parseResult.data;
 
     // Check if email already exists
     const { data: existingUser } = await supabaseAdmin
@@ -23,10 +22,8 @@ export default async function handler(req: Request, res: Response) {
       return res.status(400).json({ error: 'An account with this email already exists' });
     }
 
-    // Generate a secure random password since we've removed the password field from registration
-    // This allows the schema to remain intact while we transition to a passwordless flow
-    const generatedPassword = crypto.randomBytes(32).toString('hex');
-    const password_hash = hashPassword(generatedPassword);
+    // Hash the user-provided password
+    const password_hash = hashPassword(password);
 
     const { data: newUser, error } = await supabaseAdmin
       .from('users')

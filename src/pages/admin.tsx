@@ -28,7 +28,7 @@ export default function AdminPage() {
 
   const handleLogout = () => {
     removeUserToken();
-    window.location.href = '/login?mode=login';
+    window.location.href = '/admin/login';
   };
 
   const [activeTab, setActiveTab] = useState<ActiveTabType>('home');

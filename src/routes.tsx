@@ -20,6 +20,7 @@ const RegisterPage    = lazy(() => import('./pages/register'));
 const LoginPage       = lazy(() => import('./pages/login'));
 const DashboardPage   = lazy(() => import('./pages/dashboard'));
 const AdminPage       = lazy(() => import('./pages/admin')); // isolated — carries editor libs
+const AdminLoginPage  = lazy(() => import('./pages/admin-login'));
 const NotFoundPage    = lazy(() => import('./pages/_404'));
 
 const PageFallback = () => (
@@ -50,6 +51,7 @@ export const routes: RouteObject[] = [
   { path: '/dashboard',     element: <ProtectedRoute><Lazy component={DashboardPage} /></ProtectedRoute> },
   { path: '/privacy',       element: <Lazy component={PrivacyPage} /> },
   { path: '/terms',         element: <Lazy component={TermsPage} /> },
+  { path: '/admin/login',   element: <Lazy component={AdminLoginPage} /> },
   { path: '/admin',         element: <ProtectedRoute allowedRoles={['admin']}><Lazy component={AdminPage} /></ProtectedRoute> },
   { path: '*',              element: <Lazy component={NotFoundPage} /> },
 ];

@@ -142,6 +142,7 @@ export default defineConfig(({ mode, isSsrBuild }) => ({
 				outDir: "dist",
 				emptyOutDir: true,
 				copyPublicDir: true,
+				sourcemap: true,
 				rollupOptions: {
 					output: {
 							manualChunks: (id: string) => {

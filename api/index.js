@@ -35751,7 +35751,7 @@ function getStripe() {
   return new Stripe(key, { apiVersion: "2026-06-24.dahlia" });
 }
 async function handler$a(req, res) {
-  var _a;
+  var _a, _b, _c, _d, _e;
   const sig = req.headers["stripe-signature"];
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
   if (!sig || !webhookSecret) {
@@ -35782,6 +35782,27 @@ async function handler$a(req, res) {
         currency: session.currency,
         metadata: session.metadata
       });
+      if ((_c = (_b = session.metadata) == null ? void 0 : _b.sessionTitle) == null ? void 0 : _c.startsWith("Sponsor Package:")) {
+        const packageName = session.metadata.sessionTitle.replace("Sponsor Package:", "").trim();
+        const sponsorEmail = ((_d = session.customer_details) == null ? void 0 : _d.email) || "unknown";
+        const sponsorName = ((_e = session.customer_details) == null ? void 0 : _e.name) || sponsorEmail.split("@")[0];
+        try {
+          const { supabaseAdmin: supabaseAdmin2 } = await Promise.resolve().then(() => supabase);
+          if (supabaseAdmin2) {
+            await supabaseAdmin2.from("sponsors").upsert({
+              id: session.id,
+              // using stripe session id as unique id for now
+              name: sponsorName,
+              tier: packageName,
+              website_url: "",
+              logo_url: ""
+            });
+            console.log(`Successfully recorded sponsor: ${sponsorName} for tier: ${packageName}`);
+          }
+        } catch (dbErr) {
+          console.error("Failed to update sponsor record in DB", dbErr);
+        }
+      }
       break;
     }
     case "payment_intent.payment_failed": {
@@ -56190,6 +56211,10 @@ const supabaseAdmin = new Proxy({}, {
     return value;
   }
 });
+const supabase = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  supabaseAdmin
+}, Symbol.toStringTag, { value: "Module" }));
 let cmsCache = null;
 function setCmsCache(val) {
   cmsCache = val;
@@ -60110,7 +60135,8 @@ ZodOptional.create;
 ZodNullable.create;
 const RegisterSchema = objectType({
   name: stringType().min(2, { message: "Name must be at least 2 characters long" }),
-  email: stringType().email({ message: "Invalid email address" })
+  email: stringType().email({ message: "Invalid email address" }),
+  password: stringType().min(6, { message: "Password must be at least 6 characters long" }).regex(/[a-zA-Z]/, { message: "Password must contain at least one letter" }).regex(/[0-9]/, { message: "Password must contain at least one number" }).regex(/[^a-zA-Z0-9]/, { message: "Password must contain at least one special character" })
 });
 const LoginSchema = objectType({
   email: stringType().email({ message: "Invalid email address" }),
@@ -60122,13 +60148,12 @@ async function handler$5(req, res) {
     if (!parseResult.success) {
       return res.status(400).json({ error: parseResult.error.errors[0].message });
     }
-    const { email, name } = parseResult.data;
+    const { email, name, password } = parseResult.data;
     const { data: existingUser } = await supabaseAdmin.from("users").select("id").eq("email", email).maybeSingle();
     if (existingUser) {
       return res.status(400).json({ error: "An account with this email already exists" });
     }
-    const generatedPassword = crypto__default.randomBytes(32).toString("hex");
-    const password_hash = hashPassword(generatedPassword);
+    const password_hash = hashPassword(password);
     const { data: newUser, error } = await supabaseAdmin.from("users").insert({
       email,
       password_hash,
