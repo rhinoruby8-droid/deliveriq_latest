@@ -3,10 +3,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
 import type { Session, Speaker, Sponsor } from '@/lib/cms-client';
 import { useCmsContent } from '@/lib/cms-client';
+import { getUserToken } from '@/lib/user-auth';
+import AuthDialog from './AuthDialog';
+import SpeakerDialog from './SpeakerDialog';
 
-// TODO [FUTURE ROADMAP]: Replace "Register Interest" with full multi-gateway payment flow.
-// Gateways: Stripe, PayPal, Razorpay. Logged: 2026-07-13.
-// TODO [PAYMENT GATEWAY]: Activate when pricing fields are added to Session in cms-client.ts
 
 /** Returns true if the session's date is strictly before today */
 function isSessionPast(dateStr: string): boolean {
@@ -19,8 +19,9 @@ function isSessionPast(dateStr: string): boolean {
 }
 
 // ── Session Detail Modal (ARIA-compliant) ─────────────────────────────────
-function SessionModal({ session, speakers, sponsors, isPast, onClose }: {
+function SessionModal({ session, speakers, sponsors, isPast, onClose, onWatchReplay, onSpeakerClick }: {
   session: Session; speakers: Speaker[]; sponsors: Sponsor[]; isPast: boolean; onClose: () => void;
+  onWatchReplay: (sessionId: string) => void; onSpeakerClick: (speaker: Speaker) => void;
 }) {
   const navigate = useNavigate();
   const titleId = `session-modal-title-${session.id}`;
@@ -46,11 +47,11 @@ function SessionModal({ session, speakers, sponsors, isPast, onClose }: {
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
-      <div className="relative w-full max-w-2xl bg-[#21242C] border border-[#2C2F38] rounded-sm shadow-2xl max-h-[90vh] overflow-y-auto">
+      <div className="relative w-full max-w-2xl bg-card border border-border rounded-sm shadow-2xl max-h-[90vh] overflow-y-auto">
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-10 p-1.5 rounded text-[#8A8D96] hover:text-[#F0EDE8] hover:bg-[#2C2F38] transition-colors"
+          className="absolute top-4 right-4 z-10 p-1.5 rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
           aria-label="Close"
           ref={firstFocusRef}
         >
@@ -60,62 +61,66 @@ function SessionModal({ session, speakers, sponsors, isPast, onClose }: {
         <div className="p-6">
           {/* Tag + status */}
           <div className="flex flex-wrap items-center gap-2 mb-4">
-            <span className="inline-flex items-center gap-1.5 text-[10px] font-bold tracking-widest text-[#C79A4E] uppercase bg-[#C79A4E]/5 border border-[#C79A4E]/20 px-2.5 py-0.5 rounded-full">
+            <span className="inline-flex items-center gap-1.5 text-[10px] font-bold tracking-widest text-primary uppercase bg-primary/5 border border-primary/20 px-2.5 py-0.5 rounded-full">
               <Tag size={9} /> {session.tag}
             </span>
             {isPast ? (
-              <span className="text-[10px] font-bold text-[#8A8D96] uppercase tracking-wider bg-[#2C2F38]/60 border border-[#2C2F38] px-2.5 py-0.5 rounded-full">Past Session</span>
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider bg-muted/60 border border-border px-2.5 py-0.5 rounded-full">Past Session</span>
             ) : (
               <span className="text-[10px] font-bold text-green-400 uppercase tracking-wider bg-green-950/30 border border-green-900/30 px-2.5 py-0.5 rounded-full">Upcoming</span>
             )}
           </div>
 
           {/* Title */}
-          <h2 id={titleId} className="text-2xl font-bold text-[#F0EDE8] leading-tight mb-4">{session.title}</h2>
+          <h2 id={titleId} className="text-2xl font-bold text-foreground leading-tight mb-4">{session.title}</h2>
 
           {/* Schedule */}
           <div className="flex flex-wrap gap-5 mb-5">
-            <div className="flex items-center gap-2 text-sm text-[#8A8D96]">
-              <Calendar size={13} className="text-[#C79A4E] shrink-0" />
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Calendar size={13} className="text-primary shrink-0" />
               <span className="font-semibold">{session.date || 'Date TBC'}</span>
             </div>
-            <div className="flex items-center gap-2 text-sm text-[#8A8D96]">
-              <Clock size={13} className="text-[#C79A4E] shrink-0" />
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Clock size={13} className="text-primary shrink-0" />
               <span className="font-semibold">{session.time || 'Time TBC'} · {session.duration}</span>
             </div>
           </div>
 
           {/* Description */}
-          <p className="text-sm text-[#8A8D96] leading-relaxed mb-6">{session.description}</p>
+          <p className="text-sm text-muted-foreground leading-relaxed mb-6">{session.description}</p>
 
           {/* Speakers */}
           {speakers.length > 0 && (
             <div className="mb-6">
-              <h3 className="text-[10px] font-bold text-[#8A8D96] uppercase tracking-widest mb-3 flex items-center gap-1.5">
+              <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-3 flex items-center gap-1.5">
                 <Users size={11} /> Presenters
               </h3>
               <div className="flex flex-col gap-3">
                 {speakers.map(sp => (
-                  <div key={sp.id} className="flex items-start gap-3 bg-[#1A1D24] border border-[#2C2F38] rounded-sm p-3">
+                  <button
+                    key={sp.id}
+                    onClick={(e) => { e.stopPropagation(); onSpeakerClick(sp); }}
+                    className="flex items-start gap-3 bg-background border border-border hover:border-primary/30 rounded-sm p-3 text-left w-full cursor-pointer transition-colors"
+                  >
                     <img
                       src={sp.avatarUrl}
                       alt={sp.name}
                       loading="lazy"
                       decoding="async"
                       onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=48&h=48'; }}
-                      className="w-9 h-9 rounded-full object-cover border border-[#2C2F38] shrink-0"
+                      className="w-9 h-9 rounded-full object-cover border border-border shrink-0"
                     />
                     <div className="flex-1 min-w-0">
-                      <p className="font-bold text-[#F0EDE8] text-xs">{sp.name}</p>
-                      <p className="text-[10px] text-[#C79A4E]">{sp.role} · {sp.organisation}</p>
-                      {sp.bio && <p className="text-[10px] text-[#8A8D96] mt-1 leading-relaxed line-clamp-2">{sp.bio}</p>}
+                      <p className="font-bold text-foreground text-xs">{sp.name}</p>
+                      <p className="text-[10px] text-primary">{sp.role} · {sp.organisation}</p>
+                      {sp.bio && <p className="text-[10px] text-muted-foreground mt-1 leading-relaxed line-clamp-2">{sp.bio}</p>}
                     </div>
                     {sp.socialUrl && (
-                      <a href={sp.socialUrl} target="_blank" rel="noreferrer" className="text-[#8A8D96] hover:text-[#C79A4E] transition-colors shrink-0">
+                      <a href={sp.socialUrl} target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-primary transition-colors shrink-0">
                         <Globe size={12} />
                       </a>
                     )}
-                  </div>
+                  </button>
                 ))}
               </div>
             </div>
@@ -124,7 +129,7 @@ function SessionModal({ session, speakers, sponsors, isPast, onClose }: {
           {/* Sponsors */}
           {sponsors.length > 0 && (
             <div className="mb-6">
-              <h3 className="text-[10px] font-bold text-[#8A8D96] uppercase tracking-widest mb-3">Sponsors</h3>
+              <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-3">Sponsors</h3>
               <div className="flex flex-wrap gap-2">
                 {sponsors.map(sp => (
                   <a
@@ -132,7 +137,7 @@ function SessionModal({ session, speakers, sponsors, isPast, onClose }: {
                     href={sp.websiteUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="flex items-center gap-2 bg-[#1A1D24] border border-[#2C2F38] px-3 py-2 rounded hover:border-[#C79A4E]/30 transition-colors"
+                    className="flex items-center gap-2 bg-background border border-border px-3 py-2 rounded hover:border-primary/30 transition-colors"
                     title={sp.name}
                   >
                     <img
@@ -143,7 +148,7 @@ function SessionModal({ session, speakers, sponsors, isPast, onClose }: {
                       onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=48&h=48'; }}
                       className="h-5 max-w-[60px] object-contain filter brightness-90"
                     />
-                    <span className="text-[10px] font-semibold text-[#8A8D96]">{sp.name}</span>
+                    <span className="text-[10px] font-semibold text-muted-foreground">{sp.name}</span>
                   </a>
                 ))}
               </div>
@@ -151,27 +156,26 @@ function SessionModal({ session, speakers, sponsors, isPast, onClose }: {
           )}
 
           {/* CTA buttons */}
-          <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-[#2C2F38]">
+          <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-border">
             {isPast ? (
-              <Link
-                to="/replays"
-                onClick={onClose}
-                className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 bg-[#2C2F38] border border-[#2C2F38] text-[#8A8D96] hover:bg-[#C79A4E]/10 hover:border-[#C79A4E]/30 hover:text-[#C79A4E] text-sm font-semibold rounded-sm transition-all"
+              <button
+                onClick={() => { onClose(); onWatchReplay(session.id); }}
+                className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 bg-muted border border-border text-muted-foreground hover:bg-primary/10 hover:border-primary/30 hover:text-primary text-sm font-semibold rounded-sm transition-all cursor-pointer"
               >
                 <PlayCircle size={14} /> View Replay
-              </Link>
+              </button>
             ) : (
-              // TODO [PAYMENT GATEWAY]: Replace with paid registration flow when implemented.
+
               <button
-                onClick={() => { onClose(); navigate(`/sessions/${session.id}`); }}
-                className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 bg-[#C79A4E] text-[#1A1D24] hover:brightness-110 text-sm font-bold rounded-sm transition-all"
+                onClick={() => { onClose(); navigate(`/register?session=${session.id}`); }}
+                className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 bg-primary text-[#1A1D24] hover:brightness-110 text-sm font-bold rounded-sm transition-all"
               >
-                Register Interest <ArrowRight size={14} />
+                {session.isFree ? 'Register for Free' : 'Register & Pay'} <ArrowRight size={14} />
               </button>
             )}
             <button
               onClick={() => { onClose(); navigate(`/sessions/${session.id}`); }}
-              className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 border border-[#2C2F38] text-[#8A8D96] hover:border-[#C79A4E]/30 hover:text-[#F0EDE8] text-sm font-semibold rounded-sm transition-all"
+              className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 border border-border text-muted-foreground hover:border-primary/30 hover:text-foreground text-sm font-semibold rounded-sm transition-all"
             >
               Full Session Details <ArrowRight size={13} />
             </button>
@@ -183,83 +187,89 @@ function SessionModal({ session, speakers, sponsors, isPast, onClose }: {
 }
 
 // ── Session Card ───────────────────────────────────────────────────────────
-function SessionCard({ session, speakers, sponsors, isPast, onTitleClick }: {
-  session: Session; speakers: Speaker[]; sponsors: Sponsor[]; isPast: boolean; onTitleClick: () => void;
+function SessionCard({ session, speakers, sponsors, isPast, currency, onTitleClick, onWatchReplay, onSpeakerClick }: {
+  session: Session; speakers: Speaker[]; sponsors: Sponsor[]; isPast: boolean; currency: string; onTitleClick: () => void;
+  onWatchReplay: (sessionId: string) => void; onSpeakerClick: (speaker: Speaker) => void;
 }) {
   return (
-    <div className={`group border rounded-sm p-6 transition-all duration-200 ${
+    <div className={`group border rounded-sm p-6 transition-all duration-200 flex flex-col diq-session-card ${
       isPast
-        ? 'border-[#2C2F38]/60 bg-[#1A1D24]/60 opacity-80 hover:opacity-100 hover:border-[#2C2F38]'
-        : 'border-[#2C2F38] bg-[#21242C]/40 hover:border-[#C79A4E]/30'
+        ? 'border-border/60 bg-background/60 opacity-80 hover:opacity-100 hover:border-border'
+        : 'border-border bg-card/40 hover:border-primary/30'
     }`}>
       {/* Header: tag, duration, date */}
-      <div className="flex flex-wrap items-center justify-between gap-4 mb-4 border-b border-[#2C2F38]/40 pb-4">
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-4 border-b border-border/40 pb-4 diq-card-header">
         <div className="flex items-center gap-2">
-          <span className={`text-[10px] font-semibold tracking-widest uppercase px-2.5 py-0.5 rounded-sm border ${
-            isPast ? 'text-[#8A8D96] bg-[#2C2F38]/20 border-[#2C2F38]/40' : 'text-[#C79A4E] bg-[#C79A4E]/5 border-[#C79A4E]/20'
+          <span className={`text-[10px] font-semibold tracking-widest uppercase px-2.5 py-0.5 rounded-sm border diq-card-tag ${
+            isPast ? 'text-muted-foreground bg-muted/20 border-border/40' : 'text-primary bg-primary/5 border-primary/20'
           }`}>
             {session.tag}
           </span>
-          <span className="text-xs text-[#8A8D96] font-medium flex items-center gap-1">
-            <Clock size={12} className={isPast ? 'text-[#8A8D96]' : 'text-[#C79A4E]'} />
+
+          <span className="text-xs text-muted-foreground font-medium flex items-center gap-1 diq-card-duration">
+            <Clock size={12} className={isPast ? 'text-muted-foreground' : 'text-primary'} />
             {session.duration}
           </span>
         </div>
-        <div className="text-xs text-[#8A8D96] font-semibold flex items-center gap-1.5">
-          <Calendar size={13} className={isPast ? 'text-[#8A8D96]' : 'text-[#C79A4E]'} />
+        <div className="text-xs text-muted-foreground font-semibold flex items-center gap-1.5 diq-card-date-time">
+          <Calendar size={13} className={isPast ? 'text-muted-foreground' : 'text-primary'} />
           {session.date} @ {session.time}
         </div>
       </div>
 
       {/* Body: Title (clickable) and Description */}
-      <div className="mb-6">
+      <div className="mb-6 flex-1 diq-card-body">
         <button
           onClick={onTitleClick}
-          className={`text-left text-xl font-bold leading-tight mb-3 transition-colors underline-offset-4 hover:underline cursor-pointer ${
-            isPast ? 'text-[#8A8D96] hover:text-[#F0EDE8]' : 'text-[#F0EDE8] hover:text-[#C79A4E]'
+          className={`text-left text-xl font-bold leading-tight mb-3 transition-colors underline-offset-4 hover:underline cursor-pointer diq-card-title ${
+            isPast ? 'text-muted-foreground hover:text-foreground' : 'text-foreground hover:text-primary'
           }`}
         >
           {session.title}
         </button>
-        <p className="text-sm text-[#8A8D96] leading-relaxed max-w-3xl line-clamp-2">{session.description}</p>
+        <p className="text-sm text-muted-foreground leading-relaxed max-w-xl mb-5 diq-card-description">{session.description}</p>
       </div>
 
       {/* Footer: Speakers, Sponsors, Action */}
-      <div className="flex flex-col gap-4 pt-4 border-t border-[#2C2F38]/40">
+      <div className="flex flex-col gap-4 pt-4 border-t border-border/40 mt-auto diq-card-footer">
         {/* Row 1: Metadata (Speakers & Sponsors) */}
-        <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex flex-wrap items-center justify-between gap-4 diq-card-metadata-row">
           {/* Speakers */}
-          <div className="flex flex-wrap gap-2 items-center">
-            <span className="text-[9px] font-bold text-[#8A8D96] uppercase tracking-wider">Presenters:</span>
-            <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap gap-2 items-center diq-card-presenters-col">
+            <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider diq-card-presenters-label">Presenters:</span>
+            <div className="flex flex-wrap gap-1.5 diq-card-presenters-list">
               {speakers.map(sp => (
-                <div key={sp.id} className="flex items-center gap-1.5 bg-[#1A1D24] border border-[#2C2F38] pl-1 pr-2 py-0.5 rounded-full text-[10px]">
+                <button
+                  key={sp.id}
+                  onClick={(e) => { e.stopPropagation(); onSpeakerClick(sp); }}
+                  className="flex items-center gap-1.5 bg-background border border-border hover:border-primary/30 pl-1 pr-2 py-0.5 rounded-full text-[10px] diq-card-presenter-badge cursor-pointer transition-colors"
+                >
                   <img
                     src={sp.avatarUrl} alt={sp.name}
                     loading="lazy"
                     decoding="async"
                     onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=32&h=32'; }}
-                    className="w-4 h-4 rounded-full object-cover bg-[#21242C] border border-[#2C2F38]"
+                    className="w-4 h-4 rounded-full object-cover bg-card border border-border diq-card-presenter-avatar"
                   />
-                  <span className="font-semibold text-[#F0EDE8]">{sp.name}</span>
-                </div>
+                  <span className="font-semibold text-foreground diq-card-presenter-name">{sp.name}</span>
+                </button>
               ))}
-              {speakers.length === 0 && <span className="text-[10px] text-[#8A8D96] italic">TBA</span>}
+              {speakers.length === 0 && <span className="text-[10px] text-muted-foreground italic">TBA</span>}
             </div>
           </div>
 
           {/* Sponsors */}
           {sponsors.length > 0 && (
-            <div className="flex flex-wrap gap-2 items-center">
-              <span className="text-[9px] font-bold text-[#8A8D96] uppercase tracking-wider">Sponsors:</span>
+            <div className="flex flex-wrap gap-2 items-center diq-card-sponsors-col">
+              <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider diq-card-sponsors-label">Sponsors:</span>
               {sponsors.map(sp => (
                 <a key={sp.id} href={sp.websiteUrl} target="_blank" rel="noreferrer"
-                  className="h-6 px-1.5 py-0.5 rounded bg-[#1A1D24] border border-[#2C2F38] flex items-center justify-center hover:border-[#C79A4E]/30 transition-colors" title={sp.name}>
+                  className="h-6 px-1.5 py-0.5 rounded bg-background border border-border flex items-center justify-center hover:border-primary/30 transition-colors diq-card-sponsor-link" title={sp.name}>
                   <img src={sp.logoUrl} alt={sp.name}
                     loading="lazy"
                     decoding="async"
                     onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=48&h=48'; }}
-                    className="max-h-full max-w-[50px] object-contain filter brightness-90 shrink-0" />
+                    className="max-h-full max-w-[50px] object-contain filter brightness-90 shrink-0 diq-card-sponsor-logo" />
                 </a>
               ))}
             </div>
@@ -267,28 +277,33 @@ function SessionCard({ session, speakers, sponsors, isPast, onTitleClick }: {
         </div>
 
         {/* Row 2: Action Buttons */}
-        <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#2C2F38]/20">
+        <div className="flex items-center justify-between pt-3 border-t border-border/20 diq-card-actions-row">
+          <div className="font-bold text-foreground text-sm">
+            {session.isFree ? 'FREE' : new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(session.price || 0)}
+          </div>
+          <div className="flex items-center justify-end gap-2">
           <button
             onClick={onTitleClick}
-            className="text-[11px] font-semibold text-[#8A8D96] hover:text-[#F0EDE8] border border-[#2C2F38] hover:border-[#2C2F38] px-3.5 py-2 rounded-sm transition-all"
+            className="text-[11px] font-semibold text-muted-foreground hover:text-foreground border border-border hover:border-border px-3.5 py-2 rounded-sm transition-all diq-card-details-btn"
           >
             Details
           </button>
           {isPast ? (
-            <Link
-              to="/replays"
-              className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#2C2F38] border border-[#2C2F38] text-[#8A8D96] hover:bg-[#C79A4E]/10 hover:border-[#C79A4E]/30 hover:text-[#C79A4E] text-[11px] font-semibold rounded-sm transition-all whitespace-nowrap"
+            <button
+              onClick={() => onWatchReplay(session.id)}
+              className="inline-flex items-center gap-1.5 px-4 py-2 bg-muted border border-border text-muted-foreground hover:bg-primary/10 hover:border-primary/30 hover:text-primary text-[11px] font-semibold rounded-sm transition-all whitespace-nowrap diq-card-replay-btn cursor-pointer"
             >
               <PlayCircle size={12} /> View Replay
-            </Link>
+            </button>
           ) : (
             <Link
-              to={`/sessions/${session.id}`}
-              className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#C79A4E] text-[#1A1D24] hover:brightness-110 text-[11px] font-semibold rounded-sm transition-all whitespace-nowrap"
+              to={`/register?session=${session.id}`}
+              className="inline-flex items-center gap-1.5 px-4 py-2 bg-primary text-[#1A1D24] hover:brightness-110 text-[11px] font-semibold rounded-sm transition-all whitespace-nowrap diq-card-register-btn"
             >
-              Register Interest <ArrowRight size={11} />
+              {session.isFree ? 'Register for Free' : 'Register & Pay'} <ArrowRight size={11} />
             </Link>
           )}
+          </div>
         </div>
       </div>
     </div>
@@ -297,9 +312,32 @@ function SessionCard({ session, speakers, sponsors, isPast, onTitleClick }: {
 
 // ── Main Export ────────────────────────────────────────────────────────────
 export function SessionsList() {
+  const navigate = useNavigate();
   const { data: cms } = useCmsContent();
   const [activeModal, setActiveModal] = useState<string | null>(null);
   const [showAllPast, setShowAllPast] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showAuthDialog, setShowAuthDialog] = useState(false);
+  const [selectedSpeaker, setSelectedSpeaker] = useState<Speaker | null>(null);
+  const [isSpeakerDialogOpen, setIsSpeakerDialogOpen] = useState(false);
+
+  useEffect(() => {
+    const token = getUserToken();
+    setIsAuthenticated(!!token);
+  }, []);
+
+  const handleWatchReplay = (sessionId: string) => {
+    if (!isAuthenticated) {
+      setShowAuthDialog(true);
+    } else {
+      navigate(`/dashboard/replays/${sessionId}`);
+    }
+  };
+
+  const handleSpeakerClick = (speaker: Speaker) => {
+    setSelectedSpeaker(speaker);
+    setIsSpeakerDialogOpen(true);
+  };
 
   if (!cms) return null;
 
@@ -333,29 +371,31 @@ export function SessionsList() {
           sponsors={resolveSponsors(modalSession)}
           isPast={isSessionPast(modalSession.date)}
           onClose={() => setActiveModal(null)}
+          onWatchReplay={handleWatchReplay}
+          onSpeakerClick={handleSpeakerClick}
         />
       )}
 
       <div className="flex flex-col gap-12">
         {/* ── UPCOMING SESSIONS ── */}
         <section>
-          <div className="flex items-center gap-3 mb-6">
-            <span className="w-1.5 h-5 bg-[#C79A4E] rounded-full shrink-0" />
-            <h2 className="text-lg font-bold text-[#F0EDE8] tracking-tight">Upcoming Sessions</h2>
+          <div className="flex items-center gap-3 mb-6 upcoming-session">
+            <span className="w-1.5 h-5 bg-primary rounded-full shrink-0 -ml-[18px]" />
+            <h2 className="text-lg font-bold text-foreground tracking-tight">Upcoming Sessions</h2>
             {upcomingSessions.length > 0 && (
-              <span className="ml-auto text-[10px] font-semibold text-[#C79A4E] bg-[#C79A4E]/10 border border-[#C79A4E]/20 px-2.5 py-1 rounded-full">
+              <span className="ml-auto text-[10px] font-semibold text-primary bg-primary/10 border border-primary/20 px-2.5 py-1 rounded-full">
                 {upcomingSessions.length} scheduled
               </span>
             )}
           </div>
 
           {upcomingSessions.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 border border-dashed border-[#2C2F38] rounded-sm text-center">
-              <p className="text-sm font-semibold text-[#F0EDE8] mb-1">No sessions scheduled yet.</p>
-              <p className="text-xs text-[#8A8D96] max-w-xs leading-relaxed">Check back soon — new live sessions are added regularly.</p>
+            <div className="flex flex-col items-center justify-center py-16 border border-dashed border-border rounded-sm text-center">
+              <p className="text-sm font-semibold text-foreground mb-1">No sessions scheduled yet.</p>
+              <p className="text-xs text-muted-foreground max-w-xs leading-relaxed">Check back soon — new live sessions are added regularly.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sessions-grid">
               {upcomingSessions.map(session => (
                 <SessionCard
                   key={session.id}
@@ -363,7 +403,10 @@ export function SessionsList() {
                   speakers={resolveSpeakers(session)}
                   sponsors={resolveSponsors(session)}
                   isPast={false}
+                  currency={cms?.paymentConfig?.currency || 'USD'}
                   onTitleClick={() => setActiveModal(session.id)}
+                  onWatchReplay={handleWatchReplay}
+                  onSpeakerClick={handleSpeakerClick}
                 />
               ))}
             </div>
@@ -373,15 +416,15 @@ export function SessionsList() {
         {/* ── PAST SESSIONS ── */}
         {pastSessions.length > 0 && (
           <section>
-            <div className="flex items-center gap-3 mb-6">
-              <span className="w-1.5 h-5 bg-[#2C2F38] rounded-full shrink-0" />
-              <h2 className="text-lg font-bold text-[#8A8D96] tracking-tight">Past Sessions</h2>
-              <span className="ml-auto text-[10px] font-semibold text-[#8A8D96] bg-[#2C2F38]/40 border border-[#2C2F38] px-2.5 py-1 rounded-full">
+            <div className="flex items-center gap-3 mb-6 upcoming-session">
+              <span className="w-1.5 h-5 bg-muted rounded-full shrink-0 -ml-[18px]" />
+              <h2 className="text-lg font-bold text-muted-foreground tracking-tight">Past Sessions</h2>
+              <span className="ml-auto text-[10px] font-semibold text-muted-foreground bg-muted/40 border border-border px-2.5 py-1 rounded-full">
                 {pastSessions.length} completed
               </span>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sessions-grid">
               {visiblePast.map(session => (
                 <SessionCard
                   key={session.id}
@@ -389,7 +432,10 @@ export function SessionsList() {
                   speakers={resolveSpeakers(session)}
                   sponsors={resolveSponsors(session)}
                   isPast={true}
+                  currency={cms?.paymentConfig?.currency || 'USD'}
                   onTitleClick={() => setActiveModal(session.id)}
+                  onWatchReplay={handleWatchReplay}
+                  onSpeakerClick={handleSpeakerClick}
                 />
               ))}
             </div>
@@ -397,7 +443,7 @@ export function SessionsList() {
             {pastSessions.length > 3 && (
               <button
                 onClick={() => setShowAllPast(v => !v)}
-                className="mt-5 flex items-center gap-2 text-xs font-semibold text-[#8A8D96] hover:text-[#F0EDE8] transition-colors mx-auto"
+                className="mt-5 flex items-center gap-2 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors mx-auto"
               >
                 <ChevronDown size={14} className={`transition-transform duration-300 ${showAllPast ? 'rotate-180' : ''}`} />
                 {showAllPast ? 'Show less' : `Show ${pastSessions.length - 3} more past sessions`}
@@ -406,6 +452,22 @@ export function SessionsList() {
           </section>
         )}
       </div>
+
+      <AuthDialog
+        isOpen={showAuthDialog}
+        onClose={() => setShowAuthDialog(false)}
+        onSuccess={() => {
+          setShowAuthDialog(false);
+          setIsAuthenticated(true);
+          navigate('/dashboard');
+        }}
+      />
+
+      <SpeakerDialog
+        speaker={selectedSpeaker}
+        isOpen={isSpeakerDialogOpen}
+        onClose={() => setIsSpeakerDialogOpen(false)}
+      />
     </>
   );
 }

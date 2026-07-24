@@ -10,8 +10,8 @@ const EMPTY_HERO: HeroBlock = {
 interface Props { value: HeroBlock; onChange: (v: HeroBlock) => void; }
 
 const field = 'flex flex-col gap-1.5';
-const label = 'text-[10px] font-bold text-[#8A8D96] uppercase tracking-wider';
-const input = 'bg-[#1A1D24] border border-[#2C2F38] rounded-sm px-3 py-2 text-sm text-[#F0EDE8] placeholder-[#4A4D56] focus:outline-none focus:border-[#C79A4E]/60 transition-colors w-full';
+const label = 'text-[10px] font-bold text-muted-foreground uppercase tracking-wider';
+const input = 'bg-background border border-border rounded-sm px-3 py-2 text-sm text-foreground placeholder-[#4A4D56] focus:outline-none focus:border-primary/60 transition-colors w-full';
 
 export function HeroEditor({ value, onChange }: Props) {
   // Defensively merge with empty defaults so no property is ever undefined
@@ -24,8 +24,8 @@ export function HeroEditor({ value, onChange }: Props) {
   const headlineLen = safe.headline?.length ?? 0;
 
   return (
-    <div className="flex flex-col gap-5 p-5 bg-[#1A1D24]/60 border border-[#2C2F38] rounded-sm">
-      <p className="text-[10px] font-bold text-[#C79A4E] uppercase tracking-widest">Hero Section</p>
+    <div className="flex flex-col gap-5 p-5 bg-background/60 border border-border rounded-sm">
+      <p className="text-[10px] font-bold text-primary uppercase tracking-widest">Hero Section</p>
 
       <div className={field}>
         <label className={label}>Eyebrow label</label>
@@ -33,7 +33,7 @@ export function HeroEditor({ value, onChange }: Props) {
       </div>
 
       <div className={field}>
-        <label className={label}>Headline <span className="text-[#C79A4E]">*</span></label>
+        <label className={label}>Headline <span className="text-primary">*</span></label>
         <input className={input} value={safe.headline} onChange={e => set('headline', e.target.value)} placeholder="Main heading" />
         <span className={`text-[10px] ${headlineLen > 60 ? 'text-yellow-400' : 'text-[#4A4D56]'}`}>{headlineLen}/60 chars recommended</span>
       </div>

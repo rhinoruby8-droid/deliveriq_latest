@@ -1,5 +1,7 @@
 import type { Request, Response } from 'express';
 import { z } from 'zod';
+import { sendEmail } from '../../../email';
+import { sendTemplatedEmail } from '../../../email-template-compiler';
 
 const inquirySchema = z.object({
   companyName: z.string().min(2, 'Company name is required'),
@@ -12,9 +14,24 @@ export default async function handler(req: Request, res: Response) {
   try {
     const validatedData = inquirySchema.parse(req.body);
 
-    // Send email via internal loopback proxy
-    const emailPayload = {
+    // Check if custom email template exists in Supabase for this form
+    const didSendCustom = await sendTemplatedEmail({
+      formIdentifier: 'static:sponsors',
+      formName: 'Sponsor Enquiry Form',
+      recipientEmail: 'sales@deliveriq.live',
+      replyTo: validatedData.email,
+      payload: validatedData,
+    });
+
+    if (didSendCustom) {
+      return res.status(200).json({ success: true });
+    }
+
+    // Default email payload fallback
+    await sendEmail({
       to: 'sales@deliveriq.live',
+      replyTo: validatedData.email,
+      fromName: 'DeliverIQ',
       subject: `New Sponsor Inquiry from ${validatedData.companyName}`,
       html: `
         <h2>New Sponsor Inquiry</h2>
@@ -23,18 +40,7 @@ export default async function handler(req: Request, res: Response) {
         <p><strong>Package of Interest:</strong> ${validatedData.packageInterest}</p>
         <p><strong>Message:</strong><br/>${validatedData.message || 'N/A'}</p>
       `,
-    };
-
-    const emailResponse = await fetch('http://127.0.0.1:2525/api/email/send', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(emailPayload),
     });
-
-    if (!emailResponse.ok) {
-      console.error('Failed to send internal email notification', await emailResponse.text());
-      // Proceed anyway as we might still want to log it to DB (if we were saving to DB)
-    }
 
     return res.status(200).json({ success: true });
   } catch (err) {

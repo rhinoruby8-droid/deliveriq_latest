@@ -33,25 +33,25 @@ export function LivePreviewPanel({ page, content }: Props) {
       case '404':
         return (
           <section className="pt-20 pb-16 container mx-auto px-6">
-            <h1 className="text-4xl font-bold text-[#F0EDE8] mb-4">{(content as GenericPageContent).hero?.title || ''}</h1>
-            <p className="text-[#8A8D96]">{(content as GenericPageContent).hero?.subtitle || ''}</p>
+            <h1 className="text-4xl font-bold text-foreground mb-4">{(content as GenericPageContent).hero?.title || ''}</h1>
+            <p className="text-muted-foreground">{(content as GenericPageContent).hero?.subtitle || ''}</p>
           </section>
         );
-      default: return <div className="p-8 text-[#8A8D96] text-sm">No preview available</div>;
+      default: return <div className="p-8 text-muted-foreground text-sm">No preview available</div>;
     }
   };
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex items-center gap-2 px-4 py-2.5 border-b border-[#2C2F38] bg-[#1A1D24]/60">
-        <Monitor size={12} className="text-[#C79A4E]" />
-        <span className="text-[10px] font-bold text-[#8A8D96] uppercase tracking-widest">Live Preview</span>
+      <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border bg-background/60">
+        <Monitor size={12} className="text-primary" />
+        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Live Preview</span>
         <span className="ml-auto text-[10px] text-[#4A4D56]">Updates as you type</span>
       </div>
-      <div className="flex-1 overflow-hidden relative bg-[#1A1D24]">
+      <div className="flex-1 overflow-hidden relative bg-background">
         {/* Scale the preview to fit the panel */}
         <div
-          className="absolute origin-top-left bg-[#1A1D24]"
+          className="absolute origin-top-left bg-background"
           style={{
             width: '1200px',
             transform: 'scale(0.42)',

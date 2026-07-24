@@ -14,6 +14,7 @@ import {
 import RootLayout from './layouts/RootLayout';
 import Spinner from './components/Spinner';
 import { routes } from './routes';
+import { ThemeProvider } from './components/ThemeProvider';
 
 export interface RenderResult {
   html: string;
@@ -82,7 +83,9 @@ export async function render(url: string): Promise<RenderResult> {
     <StrictMode>
       <HelmetProvider context={helmetContext}>
         <QueryClientProvider client={queryClient}>
-          <StaticRouterProvider router={router} context={context} />
+          <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+            <StaticRouterProvider router={router} context={context} />
+          </ThemeProvider>
         </QueryClientProvider>
       </HelmetProvider>
     </StrictMode>

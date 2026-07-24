@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express';
 import { getSecret } from '#airo/secrets';
 import { sendEmail } from '../../email';
+import { sendTemplatedEmail } from '../../email-template-compiler';
 
 interface NotifyPayload {
   source: string;
@@ -29,6 +30,19 @@ export default async function handler(req: Request, res: Response) {
 
   const recipient = getSecret('NOTIFICATION_RECIPIENT_EMAIL') ?? 'info@deliveriq.live';
   const sourceLabel = SOURCE_LABELS[source] ?? source;
+
+  // Check if custom email template exists in Supabase for this form
+  const didSendCustom = await sendTemplatedEmail({
+    formIdentifier: `static:${source}`,
+    formName: sourceLabel,
+    recipientEmail: String(recipient),
+    replyTo: email,
+    payload: { source, name, email, discipline, message, extra },
+  });
+
+  if (didSendCustom) {
+    return res.status(200).json({ ok: true });
+  }
 
   const rows = [
     name       ? `<tr><td style="padding:6px 0;color:#8A8D96;width:140px;vertical-align:top">Name</td><td style="padding:6px 0;color:#F0EDE8">${name}</td></tr>` : '',

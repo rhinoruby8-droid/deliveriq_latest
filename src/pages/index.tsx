@@ -2,6 +2,8 @@ import { Helmet } from '@dr.pogodin/react-helmet';
 import { useCmsContent, FALLBACK_CMS_CONTENT } from '@/lib/cms-client';
 import { PageHtmlRenderer } from '@/components/PageHtmlRenderer';
 import { SessionsList } from '@/components/SessionsList';
+import { TopicsList } from '@/components/TopicsList';
+import { MarqueeTicker } from '@/components/MarqueeTicker';
 import { HomepageVisual } from '@/components/page-renderers/HomepageVisual';
 
 export default function HomePage() {
@@ -39,7 +41,9 @@ export default function HomePage() {
   };
 
   const widgets = {
-    SessionsList: <SessionsList />
+    SessionsList: <SessionsList />,
+    TopicsList: <TopicsList />,
+    MarqueeTicker: <MarqueeTicker />
   };
 
   return (
@@ -65,7 +69,7 @@ export default function HomePage() {
         {cms.homepageContent?.visualMode ? (
           <>
             <HomepageVisual data={cms.homepageContent} />
-            <section className="py-20 lg:py-28 bg-[#1A1D24] border-t border-[#2C2F38]">
+            <section className="py-20 lg:py-28 bg-background border-t border-border">
               <div className="container mx-auto px-6 lg:px-8 max-w-4xl">
                 {widgets.SessionsList}
               </div>

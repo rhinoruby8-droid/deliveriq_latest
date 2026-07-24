@@ -7,6 +7,7 @@
 import type {
   HomepageContent, SpeakersPageContent, SponsorsPageContent,
   ContactPageContent, DocumentPageContent, GenericPageContent,
+  StatBlock, BenefitItem, SponsorTier
 } from './cms-client';
 
 export type PageKey = 'homepage' | 'sessions' | 'speakers' | 'sponsors' | 'contact' | 'privacy' | 'terms' | 'register' | 'replays' | 'session-detail' | '404';
@@ -29,6 +30,127 @@ export function parseHtmlToBlocks(page: PageKey, html: string): unknown | null {
     if (page === 'privacy' || page === 'terms') {
       return parseDocumentPage(body);
     }
+
+    if (page === 'homepage') {
+      const heroSec = body.querySelector('.hero');
+      const statsSec = body.querySelector('.stats');
+      const introSec = body.querySelector('.intro');
+
+      if (!heroSec) return null;
+
+      const eyebrow = heroSec.querySelector('.eyebrow')?.textContent?.trim() || '';
+      const headline = heroSec.querySelector('h1')?.textContent?.trim() || '';
+      const subheadline = heroSec.querySelector('.subheadline')?.textContent?.trim() || '';
+      
+      const primaryBtn = heroSec.querySelector('.btn-primary');
+      const secondaryBtn = heroSec.querySelector('.btn-secondary');
+
+      const primaryCta = {
+        label: primaryBtn?.textContent?.trim() || 'View sessions',
+        href: primaryBtn?.getAttribute('href') || '/sessions'
+      };
+
+      const secondaryCta = secondaryBtn ? {
+        label: secondaryBtn.textContent?.trim() || '',
+        href: secondaryBtn.getAttribute('href') || ''
+      } : undefined;
+
+      const stats: StatBlock[] = [];
+      if (statsSec) {
+        statsSec.querySelectorAll('.stat-item').forEach(item => {
+          const value = item.querySelector('.stat-value')?.textContent?.trim() || '';
+          const label = item.querySelector('.stat-label')?.textContent?.trim() || '';
+          if (value || label) {
+            stats.push({ value, label });
+          }
+        });
+      }
+
+      const introParagraph = introSec?.querySelector('p')?.textContent?.trim() || '';
+
+      return {
+        visualMode: true,
+        hero: { eyebrow, headline, subheadline, primaryCta, secondaryCta },
+        stats,
+        introParagraph
+      } satisfies HomepageContent;
+    }
+
+    if (page === 'speakers') {
+      const heroSec = body.querySelector('.hero');
+      const benefitsSec = body.querySelector('.benefits');
+      const ctaSec = body.querySelector('.cta');
+
+      if (!heroSec) return null;
+
+      const headline = heroSec.querySelector('h1')?.textContent?.trim() || '';
+      const subheadline = heroSec.querySelector('p')?.textContent?.trim() || '';
+
+      const benefits: BenefitItem[] = [];
+      if (benefitsSec) {
+        benefitsSec.querySelectorAll('.benefit').forEach(item => {
+          const title = item.querySelector('strong')?.textContent?.trim() || '';
+          const description = item.querySelector('p')?.textContent?.trim() || '';
+          if (title || description) {
+            benefits.push({ icon: 'Zap', title, description });
+          }
+        });
+      }
+
+      const ctaHeadline = ctaSec?.querySelector('h2')?.textContent?.trim() || '';
+      const ctaSubtext = ctaSec?.querySelector('p')?.textContent?.trim() || '';
+      const ctaBtn = ctaSec?.querySelector('a');
+
+      return {
+        visualMode: true,
+        hero: { headline, subheadline, primaryCta: { label: 'Apply', href: '#apply' } },
+        benefits,
+        cta: {
+          headline: ctaHeadline,
+          subtext: ctaSubtext,
+          buttonLabel: ctaBtn?.textContent?.trim() || 'Apply',
+          buttonHref: ctaBtn?.getAttribute('href') || '#apply'
+        }
+      } satisfies SpeakersPageContent;
+    }
+
+    if (page === 'sponsors') {
+      const heroSec = body.querySelector('.hero');
+      const tiersSec = body.querySelector('.tiers');
+      const ctaSec = body.querySelector('.cta');
+
+      if (!heroSec) return null;
+
+      const headline = heroSec.querySelector('h1')?.textContent?.trim() || '';
+      const subheadline = heroSec.querySelector('p')?.textContent?.trim() || '';
+
+      const tiers: SponsorTier[] = [];
+      if (tiersSec) {
+        tiersSec.querySelectorAll('.tier').forEach(item => {
+          const name = item.querySelector('h3')?.textContent?.trim() || '';
+          const priceLabel = item.querySelector('.price')?.textContent?.trim() || '';
+          const benefits = Array.from(item.querySelectorAll('ul li')).map(li => li.textContent?.trim() || '').filter(Boolean);
+          if (name) {
+            tiers.push({ name, priceLabel, benefits });
+          }
+        });
+      }
+
+      const ctaHeadline = ctaSec?.querySelector('h2')?.textContent?.trim() || '';
+      const ctaBtn = ctaSec?.querySelector('a');
+
+      return {
+        visualMode: true,
+        hero: { headline, subheadline, primaryCta: { label: 'Enquire', href: '#enquire' } },
+        tiers,
+        cta: {
+          headline: ctaHeadline,
+          buttonLabel: ctaBtn?.textContent?.trim() || 'Enquire',
+          buttonHref: ctaBtn?.getAttribute('href') || '#enquire'
+        }
+      } satisfies SponsorsPageContent;
+    }
+
     // For other pages, best-effort extraction of h1/h2 + paragraphs
     const h1 = body.querySelector('h1')?.textContent?.trim() || '';
     const h2 = body.querySelector('h2')?.textContent?.trim() || '';
@@ -87,17 +209,20 @@ function esc(s: string) {
 }
 
 function homepageToHtml(c: HomepageContent): string {
-  const { hero, stats, introParagraph } = c;
+  if (!c) return '';
+  const hero = c.hero || { headline: '', subheadline: '', primaryCta: { label: '', href: '' } };
+  const stats = c.stats || [];
+  const introParagraph = c.introParagraph || '';
   const statsHtml = stats.map(s =>
-    `<div class="stat-item"><span class="stat-value">${esc(s.value)}</span><span class="stat-label">${esc(s.label)}</span></div>`
+    `<div class="stat-item"><span class="stat-value">${esc(s.value || '')}</span><span class="stat-label">${esc(s.label || '')}</span></div>`
   ).join('\n  ');
   return `<section class="hero">
   <p class="eyebrow">${esc(hero.eyebrow || '')}</p>
-  <h1>${esc(hero.headline)}</h1>
-  <p class="subheadline">${esc(hero.subheadline)}</p>
+  <h1>${esc(hero.headline || '')}</h1>
+  <p class="subheadline">${esc(hero.subheadline || '')}</p>
   <div class="cta-group">
-    <a href="${esc(hero.primaryCta.href)}" class="btn-primary">${esc(hero.primaryCta.label)}</a>
-    ${hero.secondaryCta ? `<a href="${esc(hero.secondaryCta.href)}" class="btn-secondary">${esc(hero.secondaryCta.label)}</a>` : ''}
+    <a href="${esc(hero.primaryCta?.href || '')}" class="btn-primary">${esc(hero.primaryCta?.label || '')}</a>
+    ${hero.secondaryCta ? `<a href="${esc(hero.secondaryCta.href || '')}" class="btn-secondary">${esc(hero.secondaryCta.label || '')}</a>` : ''}
   </div>
 </section>
 <section class="stats">
@@ -109,69 +234,84 @@ function homepageToHtml(c: HomepageContent): string {
 }
 
 function speakersToHtml(c: SpeakersPageContent): string {
-  const { hero, benefits, cta } = c;
+  if (!c) return '';
+  const hero = c.hero || { headline: '', subheadline: '', primaryCta: { label: '', href: '' } };
+  const benefits = c.benefits || [];
+  const cta = c.cta || { headline: '', buttonLabel: '', buttonHref: '' };
   const bHtml = benefits.map(b =>
-    `<div class="benefit"><strong>${esc(b.title)}</strong><p>${esc(b.description)}</p></div>`
+    `<div class="benefit"><strong>${esc(b.title || '')}</strong><p>${esc(b.description || '')}</p></div>`
   ).join('\n  ');
   return `<section class="hero">
-  <h1>${esc(hero.headline)}</h1>
-  <p>${esc(hero.subheadline)}</p>
+  <h1>${esc(hero.headline || '')}</h1>
+  <p>${esc(hero.subheadline || '')}</p>
 </section>
 <section class="benefits">
   ${bHtml}
 </section>
 <section class="cta">
-  <h2>${esc(cta.headline)}</h2>
+  <h2>${esc(cta.headline || '')}</h2>
   ${cta.subtext ? `<p>${esc(cta.subtext)}</p>` : ''}
-  <a href="${esc(cta.buttonHref)}">${esc(cta.buttonLabel)}</a>
+  <a href="${esc(cta.buttonHref || '')}">${esc(cta.buttonLabel || '')}</a>
 </section>`;
 }
 
 function sponsorsToHtml(c: SponsorsPageContent): string {
-  const { hero, tiers, cta } = c;
+  if (!c) return '';
+  const hero = c.hero || { headline: '', subheadline: '', primaryCta: { label: '', href: '' } };
+  const tiers = c.tiers || [];
+  const cta = c.cta || { headline: '', buttonLabel: '', buttonHref: '' };
   const tiersHtml = tiers.map(t =>
-    `<div class="tier tier-${esc(t.name.toLowerCase())}">
-  <h3>${esc(t.name)}</h3>
-  <p class="price">${esc(t.priceLabel)}</p>
-  <ul>${t.benefits.map(b => `<li>${esc(b)}</li>`).join('')}</ul>
+    `<div class="tier tier-${esc((t.name || '').toLowerCase())}">
+  <h3>${esc(t.name || '')}</h3>
+  <p class="price">${esc(t.priceLabel || '')}</p>
+  <ul>${(t.benefits || []).map(b => `<li>${esc(b)}</li>`).join('')}</ul>
 </div>`
   ).join('\n');
   return `<section class="hero">
-  <h1>${esc(hero.headline)}</h1>
-  <p>${esc(hero.subheadline)}</p>
+  <h1>${esc(hero.headline || '')}</h1>
+  <p>${esc(hero.subheadline || '')}</p>
 </section>
 <section class="tiers">
 ${tiersHtml}
 </section>
 <section class="cta">
-  <h2>${esc(cta.headline)}</h2>
-  <a href="${esc(cta.buttonHref)}">${esc(cta.buttonLabel)}</a>
+  <h2>${esc(cta.headline || '')}</h2>
+  <a href="${esc(cta.buttonHref || '')}">${esc(cta.buttonLabel || '')}</a>
 </section>`;
 }
 
 function contactToHtml(c: ContactPageContent): string {
+  if (!c) return '';
+  const hero = c.hero || { title: '', subtitle: '' };
   return `<section class="hero">
-  <h1>${esc(c.hero.title)}</h1>
-  <p>${esc(c.hero.subtitle)}</p>
+  <h1>${esc(hero.title || '')}</h1>
+  <p>${esc(hero.subtitle || '')}</p>
 </section>${c.email ? `\n<p>Email: <a href="mailto:${esc(c.email)}">${esc(c.email)}</a></p>` : ''}${c.phone ? `\n<p>Phone: ${esc(c.phone)}</p>` : ''}${c.address ? `\n<address>${esc(c.address)}</address>` : ''}${c.formIntro ? `\n<p class="form-intro">${esc(c.formIntro)}</p>` : ''}`;
 }
 
 function documentToHtml(c: DocumentPageContent): string {
-  const sectionsHtml = c.sections.map(s =>
-    `<section>\n  <h2>${esc(s.title)}</h2>\n  <p>${esc(s.body)}</p>\n</section>`
+  if (!c) return '';
+  const title = c.title || '';
+  const lastUpdated = c.lastUpdated || '';
+  const sections = c.sections || [];
+  const sectionsHtml = sections.map(s =>
+    `<section>\n  <h2>${esc(s.title || '')}</h2>\n  <p>${esc(s.body || '')}</p>\n</section>`
   ).join('\n');
-  return `<h1>${esc(c.title)}</h1>
-<p class="last-updated">Last updated: ${esc(c.lastUpdated)}</p>
+  return `<h1>${esc(title)}</h1>
+<p class="last-updated">Last updated: ${esc(lastUpdated)}</p>
 ${sectionsHtml}`;
 }
 
 function genericToHtml(c: GenericPageContent): string {
-  const sectionsHtml = c.sections.map(s =>
-    s.title ? `<section>\n  <h2>${esc(s.title)}</h2>\n  <p>${esc(s.body)}</p>\n</section>` : `<p>${esc(s.body)}</p>`
+  if (!c) return '';
+  const hero = c.hero || { title: '', subtitle: '' };
+  const sections = c.sections || [];
+  const sectionsHtml = sections.map(s =>
+    s.title ? `<section>\n  <h2>${esc(s.title || '')}</h2>\n  <p>${esc(s.body || '')}</p>\n</section>` : `<p>${esc(s.body || '')}</p>`
   ).join('\n');
   return `<section class="hero">
-  <h1>${esc(c.hero.title)}</h1>
-  <p>${esc(c.hero.subtitle)}</p>
+  <h1>${esc(hero.title || '')}</h1>
+  <p>${esc(hero.subtitle || '')}</p>
 </section>
 ${sectionsHtml}`;
 }

@@ -5,7 +5,7 @@ import { hashPassword } from './src/server/auth';
 
 async function setup() {
   const email = 'admin@deliveriq.live';
-  const password = 'AdminPassword123!';
+  const password = 'DeliverIQ#Admin2026!';
   const name = 'System Administrator';
 
   const { data: existing } = await supabaseAdmin.from('users').select('*').eq('email', email).maybeSingle();

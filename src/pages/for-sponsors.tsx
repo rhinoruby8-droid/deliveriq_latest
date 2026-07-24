@@ -29,12 +29,12 @@ export default function ForSponsorsPage() {
 
   const widgets = {
     SponsorStats: (
-      <Card className="border-[#2C2F38] bg-[#21242C] shadow-xl">
-        <CardHeader className="border-b border-[#2C2F38] pb-4">
-          <CardTitle className="text-[10px] font-semibold tracking-widest text-[#C79A4E] uppercase">
+      <Card className="border-border bg-card shadow-xl">
+        <CardHeader className="border-b border-border pb-4">
+          <CardTitle className="text-[10px] font-semibold tracking-widest text-primary uppercase">
             Audience Demographics
           </CardTitle>
-          <CardDescription className="text-sm text-[#8A8D96]">
+          <CardDescription className="text-sm text-muted-foreground">
             Who attends DeliverIQ live sessions
           </CardDescription>
         </CardHeader>
@@ -48,17 +48,17 @@ export default function ForSponsorsPage() {
             ].map((row, i) => (
               <div key={row.role}>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm text-[#F0EDE8] font-medium">{row.role}</span>
+                  <span className="text-sm text-foreground font-medium">{row.role}</span>
                   <motion.span 
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.8 + (i * 0.1) }}
-                    className="text-sm font-bold text-[#C79A4E]"
+                    className="text-sm font-bold text-primary"
                   >
                     {row.pct}%
                   </motion.span>
                 </div>
-                <div className="h-2 bg-[#2C2F38] rounded-full overflow-hidden">
+                <div className="h-2 bg-muted rounded-full overflow-hidden">
                   <motion.div
                     className="h-full bg-gradient-to-r from-[#C79A4E] to-[#e0bc7f] rounded-full"
                     initial={{ width: 0 }}
@@ -71,8 +71,8 @@ export default function ForSponsorsPage() {
             ))}
           </div>
         </CardContent>
-        <div className="px-6 py-4 border-t border-[#2C2F38] bg-[#1A1D24] rounded-b-lg">
-          <p className="text-[11px] text-[#8A8D96]">Based on registration data across 50+ live sessions.</p>
+        <div className="px-6 py-4 border-t border-border bg-background rounded-b-lg">
+          <p className="text-[11px] text-muted-foreground">Based on registration data across 50+ live sessions.</p>
         </div>
       </Card>
     )
@@ -100,28 +100,28 @@ export default function ForSponsorsPage() {
             <SponsorsVisual data={cms.sponsorsContent} />
             
             {/* Reach Packages / Pricing Tier Section */}
-            <section className="py-20 bg-[#15171C]">
+            <section className="py-20 bg-muted">
               <div className="container mx-auto px-6 lg:px-8">
                 <div className="text-center mb-16">
-                  <h2 className="text-3xl font-bold text-[#F0EDE8] mb-4">Reach Packages</h2>
-                  <p className="text-[#8A8D96] max-w-2xl mx-auto">
+                  <h2 className="text-3xl font-bold text-foreground mb-4">Reach Packages</h2>
+                  <p className="text-muted-foreground max-w-2xl mx-auto">
                     Select a standard package to immediately secure your placement, or contact us for custom opportunities.
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
                   {/* Tier 1: Logo Placement */}
-                  <Card className="bg-[#1A1D24] border-[#2C2F38] flex flex-col">
+                  <Card className="bg-background border-border flex flex-col">
                     <CardHeader>
-                      <CardTitle className="text-xl text-[#F0EDE8]">Brand Visibility</CardTitle>
+                      <CardTitle className="text-xl text-foreground">Brand Visibility</CardTitle>
                       <CardDescription>Logo Placement</CardDescription>
-                      <div className="mt-4 text-3xl font-bold text-[#F0EDE8]">$500</div>
+                      <div className="mt-4 text-3xl font-bold text-foreground">$500</div>
                     </CardHeader>
                     <CardContent className="flex-1">
                       <ul className="space-y-3">
                         {['Logo on all session pages', 'Logo on newsletter (1 month)', 'Social media mention'].map((benefit, i) => (
-                          <li key={i} className="flex items-start text-sm text-[#8A8D96]">
-                            <Check className="h-4 w-4 text-[#C79A4E] mr-3 mt-0.5 shrink-0" />
+                          <li key={i} className="flex items-start text-sm text-muted-foreground">
+                            <Check className="h-4 w-4 text-primary mr-3 mt-0.5 shrink-0" />
                             {benefit}
                           </li>
                         ))}
@@ -133,20 +133,20 @@ export default function ForSponsorsPage() {
                   </Card>
 
                   {/* Tier 2: Dedicated Session */}
-                  <Card className="bg-[#21242C] border-[#C79A4E] flex flex-col relative scale-105 shadow-2xl">
-                    <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#C79A4E] text-[#1A1D24] px-3 py-1 text-xs font-bold rounded-full uppercase tracking-wider">
+                  <Card className="bg-card border-primary flex flex-col relative scale-105 shadow-2xl">
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-[#1A1D24] px-3 py-1 text-xs font-bold rounded-full uppercase tracking-wider">
                       Most Popular
                     </div>
                     <CardHeader>
-                      <CardTitle className="text-xl text-[#F0EDE8]">Dedicated Session</CardTitle>
+                      <CardTitle className="text-xl text-foreground">Dedicated Session</CardTitle>
                       <CardDescription>Hosted Webinar Slot</CardDescription>
-                      <div className="mt-4 text-3xl font-bold text-[#F0EDE8]">$1,500</div>
+                      <div className="mt-4 text-3xl font-bold text-foreground">$1,500</div>
                     </CardHeader>
                     <CardContent className="flex-1">
                       <ul className="space-y-3">
                         {['45-minute dedicated live session', 'Full lead generation & registration list', 'Branded waiting room', 'Recording hosted on platform'].map((benefit, i) => (
-                          <li key={i} className="flex items-start text-sm text-[#8A8D96]">
-                            <Check className="h-4 w-4 text-[#C79A4E] mr-3 mt-0.5 shrink-0" />
+                          <li key={i} className="flex items-start text-sm text-muted-foreground">
+                            <Check className="h-4 w-4 text-primary mr-3 mt-0.5 shrink-0" />
                             {benefit}
                           </li>
                         ))}
@@ -158,17 +158,17 @@ export default function ForSponsorsPage() {
                   </Card>
 
                   {/* Tier 3: Registration List */}
-                  <Card className="bg-[#1A1D24] border-[#2C2F38] flex flex-col">
+                  <Card className="bg-background border-border flex flex-col">
                     <CardHeader>
-                      <CardTitle className="text-xl text-[#F0EDE8]">Lead Generation</CardTitle>
+                      <CardTitle className="text-xl text-foreground">Lead Generation</CardTitle>
                       <CardDescription>Registration List Sharing</CardDescription>
-                      <div className="mt-4 text-3xl font-bold text-[#F0EDE8]">$2,500</div>
+                      <div className="mt-4 text-3xl font-bold text-foreground">$2,500</div>
                     </CardHeader>
                     <CardContent className="flex-1">
                       <ul className="space-y-3">
                         {['Opt-in registration list for 3 sessions', 'Post-event email blast to attendees', 'Prominent logo placement', 'Pre-roll video ad (30s)'].map((benefit, i) => (
-                          <li key={i} className="flex items-start text-sm text-[#8A8D96]">
-                            <Check className="h-4 w-4 text-[#C79A4E] mr-3 mt-0.5 shrink-0" />
+                          <li key={i} className="flex items-start text-sm text-muted-foreground">
+                            <Check className="h-4 w-4 text-primary mr-3 mt-0.5 shrink-0" />
                             {benefit}
                           </li>
                         ))}

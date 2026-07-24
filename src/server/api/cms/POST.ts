@@ -56,6 +56,38 @@ export default async function handler(req: AuthRequest, res: Response) {
         }))
       );
       if (error) throw new Error(`Sessions upsert failed: ${error.message}`);
+
+      // Store pricing config in settings to avoid schema changes
+      const sessionPricing: Record<string, any> = {};
+      data.sessions.forEach((s: any) => {
+        sessionPricing[s.id] = {
+          price: s.price !== undefined ? s.price : 0,
+          isFree: s.isFree !== undefined ? s.isFree : false
+        };
+      });
+      const { error: pricingErr } = await supabaseAdmin.from('settings').upsert({
+        id: 'session_pricing',
+        value: sessionPricing
+      });
+      if (pricingErr) throw new Error(`Pricing config upsert failed: ${pricingErr.message}`);
+    }
+
+    // Save coupons to settings to avoid schema changes
+    if (data.coupons) {
+      const { error: couponsErr } = await supabaseAdmin.from('settings').upsert({
+        id: 'coupons',
+        value: data.coupons
+      });
+      if (couponsErr) throw new Error(`Coupons upsert failed: ${couponsErr.message}`);
+    }
+
+    // Save topics to settings to avoid schema changes
+    if (data.topics) {
+      const { error: topicsErr } = await supabaseAdmin.from('settings').upsert({
+        id: 'topics',
+        value: data.topics
+      });
+      if (topicsErr) throw new Error(`Topics upsert failed: ${topicsErr.message}`);
     }
 
     // Upsert Forms

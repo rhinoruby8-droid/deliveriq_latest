@@ -2,8 +2,8 @@ import type { ContactPageContent } from '@/lib/cms-client';
 
 interface Props { value: ContactPageContent; onChange: (v: ContactPageContent) => void; }
 
-const input = 'bg-[#1A1D24] border border-[#2C2F38] rounded-sm px-3 py-2 text-sm text-[#F0EDE8] placeholder-[#4A4D56] focus:outline-none focus:border-[#C79A4E]/60 transition-colors w-full';
-const lbl = 'text-[10px] font-bold text-[#8A8D96] uppercase tracking-wider';
+const input = 'bg-background border border-border rounded-sm px-3 py-2 text-sm text-foreground placeholder-[#4A4D56] focus:outline-none focus:border-primary/60 transition-colors w-full';
+const lbl = 'text-[10px] font-bold text-muted-foreground uppercase tracking-wider';
 const field = 'flex flex-col gap-1.5';
 
 export function ContactEditor({ value, onChange }: Props) {
@@ -12,13 +12,13 @@ export function ContactEditor({ value, onChange }: Props) {
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="flex flex-col gap-4 p-5 bg-[#1A1D24]/60 border border-[#2C2F38] rounded-sm">
-        <p className="text-[10px] font-bold text-[#C79A4E] uppercase tracking-widest">Page Header</p>
+      <div className="flex flex-col gap-4 p-5 bg-background/60 border border-border rounded-sm">
+        <p className="text-[10px] font-bold text-primary uppercase tracking-widest">Page Header</p>
         <div className={field}><label className={lbl}>Title</label><input className={input} value={value.hero.title} onChange={e => setHero('title', e.target.value)} placeholder="Get in Touch" /></div>
         <div className={field}><label className={lbl}>Subtitle</label><textarea className={`${input} resize-none`} rows={2} value={value.hero.subtitle} onChange={e => setHero('subtitle', e.target.value)} placeholder="We'd love to hear from you." /></div>
       </div>
-      <div className="flex flex-col gap-4 p-5 bg-[#1A1D24]/60 border border-[#2C2F38] rounded-sm">
-        <p className="text-[10px] font-bold text-[#C79A4E] uppercase tracking-widest">Contact Details</p>
+      <div className="flex flex-col gap-4 p-5 bg-background/60 border border-border rounded-sm">
+        <p className="text-[10px] font-bold text-primary uppercase tracking-widest">Contact Details</p>
         <div className={field}><label className={lbl}>Email</label><input type="email" className={input} value={value.email || ''} onChange={e => set('email', e.target.value)} placeholder="hello@deliveriq.live" /></div>
         <div className={field}><label className={lbl}>Phone <span className="text-[#4A4D56] font-normal">(optional)</span></label><input type="tel" className={input} value={value.phone || ''} onChange={e => set('phone', e.target.value)} placeholder="+44 20 1234 5678" /></div>
         <div className={field}><label className={lbl}>Office Address <span className="text-[#4A4D56] font-normal">(optional)</span></label><textarea className={`${input} resize-none`} rows={2} value={value.address || ''} onChange={e => set('address', e.target.value)} placeholder="123 Street, City, Country" /></div>

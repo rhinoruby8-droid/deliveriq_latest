@@ -10,8 +10,13 @@ export function EmbedRenderer({ html }: EmbedRendererProps) {
   useEffect(() => {
     if (!containerRef.current) return;
     
+    // Automatically normalize hardcoded local host ports (e.g. localhost:5173, 3000) to current origin
+    const processedHtml = typeof window !== 'undefined'
+      ? html.replace(/(https?:)?\/\/(localhost|127\.0\.0\.1):\d+(\/embed\/form\/)/gi, `${window.location.origin}$3`)
+      : html;
+
     // Set the HTML content
-    containerRef.current.innerHTML = html;
+    containerRef.current.innerHTML = processedHtml;
 
     // React dangerouslySetInnerHTML does not execute <script> tags.
     // We need to manually extract and recreate them to execute third-party embeds (like HubSpot).

@@ -7,26 +7,27 @@ import { EmbedRenderer } from './EmbedRenderer';
 
 interface DynamicFormProps {
   formId: string;
+  forceNative?: boolean;
 }
 
-export function DynamicForm({ formId }: DynamicFormProps) {
+export function DynamicForm({ formId, forceNative }: DynamicFormProps) {
   const siteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
   if (siteKey && siteKey !== 'dummy-key') {
     return (
       <GoogleReCaptchaProvider reCaptchaKey={siteKey}>
-        <RecaptchaFormInner formId={formId} />
+        <RecaptchaFormInner formId={formId} forceNative={forceNative} />
       </GoogleReCaptchaProvider>
     );
   }
-  return <BaseFormInner formId={formId} executeRecaptcha={undefined} />;
+  return <BaseFormInner formId={formId} forceNative={forceNative} executeRecaptcha={undefined} />;
 }
 
-function RecaptchaFormInner({ formId }: DynamicFormProps) {
+function RecaptchaFormInner({ formId, forceNative }: DynamicFormProps) {
   const { executeRecaptcha } = useGoogleReCaptcha();
-  return <BaseFormInner formId={formId} executeRecaptcha={executeRecaptcha} />;
+  return <BaseFormInner formId={formId} forceNative={forceNative} executeRecaptcha={executeRecaptcha} />;
 }
 
-function BaseFormInner({ formId, executeRecaptcha }: DynamicFormProps & { executeRecaptcha?: (action: string) => Promise<string> }) {
+function BaseFormInner({ formId, forceNative, executeRecaptcha }: DynamicFormProps & { executeRecaptcha?: (action: string) => Promise<string> }) {
   const { data: cms } = useCmsContent();
   const [searchParams] = useSearchParams();
   const sessionSlug = searchParams.get('session');
@@ -41,8 +42,8 @@ function BaseFormInner({ formId, executeRecaptcha }: DynamicFormProps & { execut
     return null; // Or a loading skeleton
   }
 
-  // If this is an embed code form, bypass standard native rendering
-  if (formDef.formType === 'embed') {
+  // If this is an embed code form (and not forced native via /embed/form route), render embed code
+  if (formDef.formType === 'embed' && !forceNative) {
     return (
       <div className="deliveriq-embed-wrapper" id={`form-embed-${formId}`}>
         {formDef.customCss && <style>{formDef.customCss}</style>}
@@ -86,17 +87,17 @@ function BaseFormInner({ formId, executeRecaptcha }: DynamicFormProps & { execut
 
   if (success) {
     return (
-      <div className="bg-[#1A1D24] p-8 border border-[#2C2F38] rounded-sm text-center">
-        <div className="text-[#C79A4E] mb-4">
+      <div className="bg-background p-8 border border-border rounded-sm text-center">
+        <div className="text-primary mb-4">
           <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h3 className="text-xl font-bold text-[#F0EDE8] mb-2">Success</h3>
-        <p className="text-sm text-[#8A8D96]">{formDef.successMessage}</p>
+        <h3 className="text-xl font-bold text-foreground mb-2">Success</h3>
+        <p className="text-sm text-muted-foreground">{formDef.successMessage}</p>
         <button 
           onClick={() => setSuccess(false)}
-          className="mt-6 text-sm text-[#C79A4E] hover:underline"
+          className="mt-6 text-sm text-primary hover:underline"
         >
           Submit another response
         </button>
@@ -105,17 +106,17 @@ function BaseFormInner({ formId, executeRecaptcha }: DynamicFormProps & { execut
   }
 
   return (
-    <div className="flex flex-col gap-6" id={`form-wrapper-${formId}`}>
+    <div className="w-full max-w-2xl mx-auto flex flex-col gap-6" id={`form-wrapper-${formId}`}>
       {formDef.customCss && <style>{formDef.customCss}</style>}
       {formDef.headerHtml && (
         <div className="deliveriq-form-header" dangerouslySetInnerHTML={{ __html: formDef.headerHtml }} />
       )}
       {matchedSession && (
-        <div className="bg-[#1A1D24] border border-[#2C2F38] rounded-sm p-4 text-xs">
-          <span className="text-[9px] font-bold text-[#C79A4E] uppercase tracking-wider block mb-1">{matchedSession.tag}</span>
-          <h4 className="font-bold text-[#F0EDE8] mb-1 leading-snug">{matchedSession.title}</h4>
-          <p className="text-[#8A8D96] mb-3 leading-relaxed">{matchedSession.description}</p>
-          <span className="text-[10px] text-[#8A8D96] block">Schedule: {matchedSession.date} @ {matchedSession.time} ({matchedSession.duration})</span>
+        <div className="bg-background border border-border rounded-sm p-4 text-xs">
+          <span className="text-[9px] font-bold text-primary uppercase tracking-wider block mb-1">{matchedSession.tag}</span>
+          <h4 className="font-bold text-foreground mb-1 leading-snug">{matchedSession.title}</h4>
+          <p className="text-muted-foreground mb-3 leading-relaxed">{matchedSession.description}</p>
+          <span className="text-[10px] text-muted-foreground block">Schedule: {matchedSession.date} @ {matchedSession.time} ({matchedSession.duration})</span>
         </div>
       )}
       
@@ -130,8 +131,8 @@ function BaseFormInner({ formId, executeRecaptcha }: DynamicFormProps & { execut
         const hasError = !!errors[field.id];
         return (
           <div key={field.id} className="flex flex-col gap-1.5">
-            <label htmlFor={field.id} className="text-[10px] font-bold text-[#8A8D96] uppercase tracking-wider">
-              {field.label} {field.required && <span className="text-[#C79A4E]" aria-hidden="true">*</span>}
+            <label htmlFor={field.id} className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+              {field.label} {field.required && <span className="text-primary" aria-hidden="true">*</span>}
             </label>
             
             {field.type === 'textarea' ? (
@@ -142,7 +143,7 @@ function BaseFormInner({ formId, executeRecaptcha }: DynamicFormProps & { execut
                 aria-invalid={hasError}
                 aria-required={field.required}
                 {...register(field.id, { required: field.required })}
-                className="px-4 py-2.5 bg-[#1A1D24] border border-[#2C2F38] rounded-sm text-sm text-[#F0EDE8] placeholder:text-[#8A8D96]/50 focus:outline-none focus:border-[#C79A4E]/60 transition-colors resize-none"
+                className="h-auto w-full rounded-[10px] border border-border bg-muted px-4 py-3 text-sm text-foreground transition-colors placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary resize-none"
               />
             ) : field.type === 'select' ? (
               <select
@@ -150,7 +151,7 @@ function BaseFormInner({ formId, executeRecaptcha }: DynamicFormProps & { execut
                 aria-invalid={hasError}
                 aria-required={field.required}
                 {...register(field.id, { required: field.required })}
-                className="px-4 py-2.5 bg-[#1A1D24] border border-[#2C2F38] rounded-sm text-sm text-[#F0EDE8] focus:outline-none focus:border-[#C79A4E]/60 transition-colors appearance-none cursor-pointer"
+                className="h-12 w-full rounded-[10px] border border-border bg-muted px-4 py-2 text-sm text-foreground transition-colors placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary appearance-none cursor-pointer"
               >
                 <option value="">Select an option...</option>
                 {field.options?.map(opt => (
@@ -165,9 +166,9 @@ function BaseFormInner({ formId, executeRecaptcha }: DynamicFormProps & { execut
                     aria-invalid={hasError}
                     aria-required={field.required}
                     {...register(field.id, { required: field.required })}
-                    className="w-5 h-5 bg-[#1A1D24] border-[#2C2F38] rounded-sm text-[#C79A4E] focus:ring-[#C79A4E] focus:ring-offset-[#21242C]"
+                    className="w-5 h-5 border-border bg-muted rounded text-primary focus:ring-primary"
                   />
-                  <span className="text-sm text-[#8A8D96]">{field.placeholder || field.label}</span>
+                  <span className="text-sm text-muted-foreground">{field.placeholder || field.label}</span>
                </div>
             ) : (
               <input
@@ -177,7 +178,7 @@ function BaseFormInner({ formId, executeRecaptcha }: DynamicFormProps & { execut
                 aria-invalid={hasError}
                 aria-required={field.required}
                 {...register(field.id, { required: field.required })}
-                className="px-4 py-2.5 bg-[#1A1D24] border border-[#2C2F38] rounded-sm text-sm text-[#F0EDE8] placeholder:text-[#8A8D96]/50 focus:outline-none focus:border-[#C79A4E]/60 transition-colors"
+                className="h-12 w-full rounded-[10px] border border-border bg-muted px-4 py-2 text-sm text-foreground transition-colors placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
               />
             )}
             {hasError && (
@@ -191,14 +192,14 @@ function BaseFormInner({ formId, executeRecaptcha }: DynamicFormProps & { execut
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full inline-flex justify-center items-center gap-2 px-5 py-3 text-sm font-bold bg-[#C79A4E] text-[#1A1D24] rounded-sm hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full inline-flex items-center justify-center gap-2 px-5 py-4 bg-[#d7c2b0] text-[#1a1a1a] text-base font-bold rounded-full hover:brightness-105 transition-all cursor-pointer shadow-lg active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isSubmitting ? 'Submitting...' : formDef.submitButtonText}
         </button>
       </div>
       
-      <p className="text-[10px] text-[#8A8D96] text-center mt-2">
-        Protected by reCAPTCHA. <a href="https://policies.google.com/privacy" target="_blank" rel="noreferrer" className="hover:text-[#C79A4E] underline">Privacy</a> &amp; <a href="https://policies.google.com/terms" target="_blank" rel="noreferrer" className="hover:text-[#C79A4E] underline">Terms</a> apply.
+      <p className="text-[10px] text-muted-foreground text-center mt-2">
+        Protected by reCAPTCHA. <a href="https://policies.google.com/privacy" target="_blank" rel="noreferrer" className="hover:text-primary underline">Privacy</a> &amp; <a href="https://policies.google.com/terms" target="_blank" rel="noreferrer" className="hover:text-primary underline">Terms</a> apply.
       </p>
     </form>
     </div>

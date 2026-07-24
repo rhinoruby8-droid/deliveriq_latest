@@ -18,7 +18,7 @@ export function RichTextEditor({ value, onChange, label }: RichTextEditorProps) 
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {
-          class: 'text-[#C79A4E] hover:underline cursor-pointer',
+          class: 'text-primary hover:underline cursor-pointer',
         },
       }),
     ],
@@ -28,7 +28,7 @@ export function RichTextEditor({ value, onChange, label }: RichTextEditorProps) 
     },
     editorProps: {
       attributes: {
-        class: 'prose prose-invert focus:outline-none max-w-none text-xs text-[#F0EDE8] min-h-[120px] p-4 bg-[#1A1D24] border border-[#2C2F38] border-t-0 rounded-b font-sans',
+        class: 'prose prose-invert focus:outline-none max-w-none text-xs text-foreground min-h-[120px] p-4 bg-background border border-border border-t-0 rounded-b font-sans',
       },
     },
   });
@@ -71,16 +71,16 @@ export function RichTextEditor({ value, onChange, label }: RichTextEditorProps) 
 
   return (
     <div className="flex flex-col w-full">
-      {label && <label className="text-[10px] text-[#8A8D96] font-semibold mb-1 uppercase tracking-wider">{label}</label>}
+      {label && <label className="text-[10px] text-muted-foreground font-semibold mb-1 uppercase tracking-wider">{label}</label>}
       
       {/* Editor Toolbar */}
-      <div className="flex flex-wrap items-center gap-1 p-2 bg-[#21242C] border border-[#2C2F38] rounded-t">
+      <div className="flex flex-wrap items-center gap-1 p-2 bg-card border border-border rounded-t">
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleBold().run()}
           disabled={!editor.can().chain().focus().toggleBold().run()}
           className={`p-1.5 rounded transition-colors ${
-            editor.isActive('bold') ? 'bg-[#C79A4E] text-[#1A1D24]' : 'text-[#8A8D96] hover:bg-[#2C2F38] hover:text-[#F0EDE8]'
+            editor.isActive('bold') ? 'bg-primary text-[#1A1D24]' : 'text-muted-foreground hover:bg-muted hover:text-foreground'
           }`}
           title="Bold"
         >
@@ -92,20 +92,20 @@ export function RichTextEditor({ value, onChange, label }: RichTextEditorProps) 
           onClick={() => editor.chain().focus().toggleItalic().run()}
           disabled={!editor.can().chain().focus().toggleItalic().run()}
           className={`p-1.5 rounded transition-colors ${
-            editor.isActive('italic') ? 'bg-[#C79A4E] text-[#1A1D24]' : 'text-[#8A8D96] hover:bg-[#2C2F38] hover:text-[#F0EDE8]'
+            editor.isActive('italic') ? 'bg-primary text-[#1A1D24]' : 'text-muted-foreground hover:bg-muted hover:text-foreground'
           }`}
           title="Italic"
         >
           <Italic size={13} />
         </button>
 
-        <div className="w-px h-5 bg-[#2C2F38] mx-1" />
+        <div className="w-px h-5 bg-muted mx-1" />
 
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
           className={`p-1.5 rounded transition-colors ${
-            editor.isActive('heading', { level: 1 }) ? 'bg-[#C79A4E] text-[#1A1D24]' : 'text-[#8A8D96] hover:bg-[#2C2F38] hover:text-[#F0EDE8]'
+            editor.isActive('heading', { level: 1 }) ? 'bg-primary text-[#1A1D24]' : 'text-muted-foreground hover:bg-muted hover:text-foreground'
           }`}
           title="Heading 1"
         >
@@ -116,7 +116,7 @@ export function RichTextEditor({ value, onChange, label }: RichTextEditorProps) 
           type="button"
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
           className={`p-1.5 rounded transition-colors ${
-            editor.isActive('heading', { level: 2 }) ? 'bg-[#C79A4E] text-[#1A1D24]' : 'text-[#8A8D96] hover:bg-[#2C2F38] hover:text-[#F0EDE8]'
+            editor.isActive('heading', { level: 2 }) ? 'bg-primary text-[#1A1D24]' : 'text-muted-foreground hover:bg-muted hover:text-foreground'
           }`}
           title="Heading 2"
         >
@@ -127,20 +127,20 @@ export function RichTextEditor({ value, onChange, label }: RichTextEditorProps) 
           type="button"
           onClick={() => editor.chain().focus().setParagraph().run()}
           className={`p-1.5 rounded transition-colors ${
-            editor.isActive('paragraph') ? 'bg-[#C79A4E] text-[#1A1D24]' : 'text-[#8A8D96] hover:bg-[#2C2F38] hover:text-[#F0EDE8]'
+            editor.isActive('paragraph') ? 'bg-primary text-[#1A1D24]' : 'text-muted-foreground hover:bg-muted hover:text-foreground'
           }`}
           title="Paragraph"
         >
           <span className="text-[10px] font-bold px-0.5">P</span>
         </button>
 
-        <div className="w-px h-5 bg-[#2C2F38] mx-1" />
+        <div className="w-px h-5 bg-muted mx-1" />
 
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           className={`p-1.5 rounded transition-colors ${
-            editor.isActive('bulletList') ? 'bg-[#C79A4E] text-[#1A1D24]' : 'text-[#8A8D96] hover:bg-[#2C2F38] hover:text-[#F0EDE8]'
+            editor.isActive('bulletList') ? 'bg-primary text-[#1A1D24]' : 'text-muted-foreground hover:bg-muted hover:text-foreground'
           }`}
           title="Bullet List"
         >
@@ -151,20 +151,20 @@ export function RichTextEditor({ value, onChange, label }: RichTextEditorProps) 
           type="button"
           onClick={setLink}
           className={`p-1.5 rounded transition-colors ${
-            editor.isActive('link') ? 'bg-[#C79A4E] text-[#1A1D24]' : 'text-[#8A8D96] hover:bg-[#2C2F38] hover:text-[#F0EDE8]'
+            editor.isActive('link') ? 'bg-primary text-[#1A1D24]' : 'text-muted-foreground hover:bg-muted hover:text-foreground'
           }`}
           title="Link"
         >
           <LinkIcon size={13} />
         </button>
 
-        <div className="w-px h-5 bg-[#2C2F38] mx-1" />
+        <div className="w-px h-5 bg-muted mx-1" />
 
         <button
           type="button"
           onClick={() => editor.chain().focus().undo().run()}
           disabled={!editor.can().chain().focus().undo().run()}
-          className="p-1.5 rounded text-[#8A8D96] hover:bg-[#2C2F38] hover:text-[#F0EDE8] disabled:opacity-30"
+          className="p-1.5 rounded text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-30"
           title="Undo"
         >
           <RotateCcw size={13} />
@@ -174,7 +174,7 @@ export function RichTextEditor({ value, onChange, label }: RichTextEditorProps) 
           type="button"
           onClick={() => editor.chain().focus().redo().run()}
           disabled={!editor.can().chain().focus().redo().run()}
-          className="p-1.5 rounded text-[#8A8D96] hover:bg-[#2C2F38] hover:text-[#F0EDE8] disabled:opacity-30"
+          className="p-1.5 rounded text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-30"
           title="Redo"
         >
           <RotateCw size={13} />
@@ -189,13 +189,13 @@ export function RichTextEditor({ value, onChange, label }: RichTextEditorProps) 
           <Trash2 size={13} />
         </button>
 
-        <div className="w-px h-5 bg-[#2C2F38] mx-1" />
+        <div className="w-px h-5 bg-muted mx-1" />
 
         <button
           type="button"
           onClick={toggleSource}
           className={`p-1.5 rounded transition-colors ${
-            showSource ? 'bg-[#C79A4E] text-[#1A1D24]' : 'text-[#8A8D96] hover:bg-[#2C2F38] hover:text-[#F0EDE8]'
+            showSource ? 'bg-primary text-[#1A1D24]' : 'text-muted-foreground hover:bg-muted hover:text-foreground'
           }`}
           title="Source Code"
         >
@@ -208,13 +208,13 @@ export function RichTextEditor({ value, onChange, label }: RichTextEditorProps) 
         <textarea
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="w-full font-mono text-[11px] bg-[#1A1D24] border border-[#2C2F38] border-t-0 rounded-b p-4 text-[#F0EDE8] min-h-[300px] focus:outline-none focus:border-[#C79A4E] leading-relaxed resize-y"
+          className="w-full font-mono text-[11px] bg-background border border-border border-t-0 rounded-b p-4 text-foreground min-h-[300px] focus:outline-none focus:border-primary leading-relaxed resize-y"
           placeholder="Write raw HTML code here..."
         />
       ) : (
         <div className="flex flex-col">
           <EditorContent editor={editor} />
-          <div className="flex items-center gap-2 px-3 py-2 bg-yellow-950/20 border border-[#2C2F38] border-t-0 text-yellow-500 text-[10px] rounded-b font-medium">
+          <div className="flex items-center gap-2 px-3 py-2 bg-yellow-950/20 border border-border border-t-0 text-yellow-500 text-[10px] rounded-b font-medium">
             <AlertTriangle size={12} className="shrink-0" />
             <span>Warning: Visual mode can simplify complex Tailwind layout containers. Use Source Code view to preserve raw structures.</span>
           </div>

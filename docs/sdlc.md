@@ -32,23 +32,30 @@ graph TD
 
 ### Phase 3: Backend API & Payment Integration
 - **Framework**: Node.js v22+ running an Express server.
+- **Database**: **Supabase** (managed PostgreSQL) — accessed via the Supabase client SDK on the client side (`VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY`) and the service role key on the server side (`SUPABASE_SERVICE_ROLE_KEY`).
 - **Core Integrations**:
   - **Stripe**: Handlers for checkout sessions (`/api/stripe/checkout`) and webhook verification (`/api/stripe/webhook`).
+  - **Razorpay**: Payment processing via Razorpay API (`RAZORPAY_KEY_ID` / `RAZORPAY_KEY_SECRET`) with a client-side checkout widget (`VITE_RAZORPAY_KEY_ID`).
+  - **Supabase Auth & Data**: User authentication and real-time database operations via the Supabase JS client.
   - **Transactional Mail**: Communicates via loopback gateway (`127.0.0.1:2525`) for reliable SMTP delivery.
 
 ### Phase 4: Verification (Testing & Linting)
 - Before code is merged:
   - **Type Checking**: Run `npm run type-check` to verify TypeScript compiler correctness.
   - **Linting**: Run `npm run lint` to enforce formatting and prevent security risks (e.g., using `eslint-plugin-security`).
-  - **Unit Testing**: Run `npm run test` using **Vitest** to run unit and integration tests.
+  - **Unit Testing**: Run `npm run test` using **Vitest** to run unit and integration tests. Test files follow the `*.test.ts` / `*.test.tsx` naming convention and are co-located with the source files they test.
 
 ### Phase 5: Production Build and SSR Verification
-- **SSR Compilation**: DeliverIQ compiles both a client bundle and an Express SSR bundle (`vite build && vite build --ssr src/server/entry.ts`).
+- **Build Command**: `npm run build` executes a two-stage Vite build:
+  1. **Client Build** — Bundles the React SPA into `dist/` with hashed static assets.
+  2. **SSR Build** — Compiles the Express server entry (`vite build --ssr src/server/entry.ts`) into the `api/` directory.
+  3. **Shell Copy** — The build script copies `dist/index.html` to `api/shell.html` for the SSR renderer to use as a template.
 - **Asset Optimization**: Static assets under `/assets/` are marked as public, immutable, and cached for 1 year.
 - **Fail-Safe Checks**: In production boot, the server checks for template injection markers (`<!--app-head-->` and `<!--app-html-->`). If missing, it fails fast (`process.exit(1)`) to avoid deploying un-indexable shells.
 
 ### Phase 6: Deployment & Monitoring
-- **Hosting**: Containerized deployment (e.g., Docker, Railway, or Render) to host the Express SSR server.
+- **Vercel Serverless**: The primary deployment target is **Vercel**. When `process.env.VERCEL` is set, the Express server skips `app.listen()` and instead exports the Express app as a serverless function handler. The `VERCEL_OIDC_TOKEN` environment variable is automatically injected by the Vercel platform.
+- **Containerized Fallback**: For non-Vercel environments, the app can be deployed as a containerized Express SSR server (e.g., Docker, Railway, or Render) where `app.listen(PORT)` starts the server normally.
 - **Observability**: SSR failures, Express route errors, and email gateway failures are logged via `console.error` at production levels to hook into monitoring dashboards.
 
 ---
@@ -60,8 +67,8 @@ graph TD
 | **Linter** | `npm run lint` | ESLint checks, security alerts, and React Hook rules. | Blocking |
 | **Formatter** | `npm run format` | Prettier formats `.ts`, `.tsx`, `.json`, and `.md` files. | Warn |
 | **Compiler** | `npm run type-check` | TypeScript compiler runs in non-emitting mode (`tsc --noEmit`). | Blocking |
-| **Unit Tests** | `npm run test` | Executes Vitest runner on component/helper specs. | Blocking |
-| **Build Test** | `npm run build` | Builds client assets and backend SSR entry. | Blocking |
+| **Unit Tests** | `npm run test` | Executes Vitest runner on `*.test.ts` / `*.test.tsx` specs. | Blocking |
+| **Build Test** | `npm run build` | Builds client assets and backend SSR entry into `dist/` and `api/`. | Blocking |
 
 ---
 
@@ -69,5 +76,11 @@ graph TD
 1. **Branch Out**: Create feature branch from `main`.
 2. **Implement**: Code the changes, updating components or server endpoints.
 3. **Verify Locally**: Run local dev environment via `npm run dev` and test runner via `npm run test`.
-4. **Compile production build**: Run `npm run build` to verify webpack/vite output compiles cleanly.
-5. **Merge & Deploy**: Merging to `main` triggers auto-deployment to staging or production, which boots the Node v22 environment and starts the Express server listening on the designated `PORT`.
+4. **Compile production build**: Run `npm run build` to verify Vite output compiles cleanly (client → `dist/`, SSR → `api/`).
+5. **Merge & Deploy**: Merging to `main` triggers auto-deployment:
+   - **Vercel**: Builds and deploys as serverless functions automatically. The Express app is exported as a handler (no `app.listen()`).
+   - **Containerized**: Boots the Node v22 environment and starts the Express server listening on the designated `PORT`.
+
+---
+
+*Last updated: 2026-07-18*

@@ -24,6 +24,11 @@ const getClient = () => {
     );
   }
 
+  console.log('Supabase initialized on server:');
+  console.log('  URL:', supabaseUrl);
+  console.log('  Key Type:', process.env.SUPABASE_SERVICE_ROLE_KEY ? 'SERVICE_ROLE_KEY' : 'ANON_KEY');
+  console.log('  Key Start:', supabaseServiceKey.substring(0, 15) + '...');
+
   clientInstance = createClient(supabaseUrl, supabaseServiceKey);
   return clientInstance;
 };

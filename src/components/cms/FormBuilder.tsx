@@ -65,11 +65,11 @@ export function FormBuilder({ forms, onChange }: FormBuilderProps) {
   return (
     <div className="space-y-8">
       {activeForm ? (
-        <div className="bg-[#21242C] p-6 border border-[#2C2F38] rounded-sm">
+        <div className="bg-card p-6 border border-border rounded-sm">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold text-[#F0EDE8]">Editing: {activeForm.name}</h2>
+            <h2 className="text-xl font-bold text-foreground">Editing: {activeForm.name}</h2>
             <div className="flex gap-3">
-              <button onClick={() => setEditingFormId(null)} className="px-4 py-2 text-sm bg-[#2C2F38] text-[#F0EDE8] rounded hover:brightness-110 font-medium">
+              <button onClick={() => setEditingFormId(null)} className="px-4 py-2 text-sm bg-muted text-foreground rounded hover:brightness-110 font-medium">
                 &larr; Back to Forms
               </button>
             </div>
@@ -78,20 +78,20 @@ export function FormBuilder({ forms, onChange }: FormBuilderProps) {
           <div className="space-y-6 mb-8">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-[#8A8D96] mb-1">Form Name (Internal)</label>
+                <label className="block text-sm font-semibold text-muted-foreground mb-1">Form Name (Internal)</label>
                 <input 
                   type="text" 
                   value={activeForm.name}
                   onChange={(e) => updateActiveForm({name: e.target.value})}
-                  className="w-full px-3 py-2 bg-[#1A1D24] border border-[#2C2F38] rounded text-[#F0EDE8] focus:border-[#C79A4E] outline-none"
+                  className="w-full px-3 py-2 bg-background border border-border rounded text-foreground focus:border-primary outline-none"
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-[#8A8D96] mb-1">Form Type</label>
+                <label className="block text-sm font-semibold text-muted-foreground mb-1">Form Type</label>
                 <select 
                   value={activeForm.formType || 'native'}
                   onChange={(e) => updateActiveForm({formType: e.target.value as 'native' | 'embed'})}
-                  className="w-full px-3 py-2 bg-[#1A1D24] border border-[#2C2F38] rounded text-[#F0EDE8] focus:border-[#C79A4E] outline-none"
+                  className="w-full px-3 py-2 bg-background border border-border rounded text-foreground focus:border-primary outline-none"
                 >
                   <option value="native">Native React Form</option>
                   <option value="embed">External Embed Code</option>
@@ -103,21 +103,21 @@ export function FormBuilder({ forms, onChange }: FormBuilderProps) {
               <>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-semibold text-[#8A8D96] mb-1">Submit Button Text</label>
+                    <label className="block text-sm font-semibold text-muted-foreground mb-1">Submit Button Text</label>
                     <input 
                       type="text" 
                       value={activeForm.submitButtonText}
                       onChange={(e) => updateActiveForm({submitButtonText: e.target.value})}
-                      className="w-full px-3 py-2 bg-[#1A1D24] border border-[#2C2F38] rounded text-[#F0EDE8] focus:border-[#C79A4E] outline-none"
+                      className="w-full px-3 py-2 bg-background border border-border rounded text-foreground focus:border-primary outline-none"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-[#8A8D96] mb-1">Success Message</label>
+                    <label className="block text-sm font-semibold text-muted-foreground mb-1">Success Message</label>
                     <input 
                       type="text" 
                       value={activeForm.successMessage}
                       onChange={(e) => updateActiveForm({successMessage: e.target.value})}
-                      className="w-full px-3 py-2 bg-[#1A1D24] border border-[#2C2F38] rounded text-[#F0EDE8] focus:border-[#C79A4E] outline-none"
+                      className="w-full px-3 py-2 bg-background border border-border rounded text-foreground focus:border-primary outline-none"
                     />
                   </div>
                 </div>
@@ -126,51 +126,51 @@ export function FormBuilder({ forms, onChange }: FormBuilderProps) {
 
             {activeForm.formType === 'embed' && (
               <div>
-                <label className="block text-sm font-semibold text-[#8A8D96] mb-1">Raw Embed HTML / Script</label>
+                <label className="block text-sm font-semibold text-muted-foreground mb-1">Raw Embed HTML / Script</label>
                 <textarea 
                   value={activeForm.embedCode || ''}
                   onChange={(e) => updateActiveForm({embedCode: e.target.value})}
-                  className="w-full px-3 py-2 bg-[#1A1D24] border border-[#2C2F38] rounded text-[#F0EDE8] focus:border-[#C79A4E] outline-none min-h-[150px] font-mono text-xs"
+                  className="w-full px-3 py-2 bg-background border border-border rounded text-foreground focus:border-primary outline-none min-h-[150px] font-mono text-xs"
                   placeholder="Paste your Hubspot, Typeform, or raw HTML embed code here..."
                 />
               </div>
             )}
 
             <div>
-              <label className="block text-sm font-semibold text-[#8A8D96] mb-1">Header HTML</label>
+              <label className="block text-sm font-semibold text-muted-foreground mb-1">Header HTML</label>
               <textarea 
                 value={activeForm.headerHtml || ''}
                 onChange={(e) => updateActiveForm({headerHtml: e.target.value})}
-                className="w-full px-3 py-2 bg-[#1A1D24] border border-[#2C2F38] rounded text-[#F0EDE8] focus:border-[#C79A4E] outline-none min-h-[80px] font-mono text-xs"
+                className="w-full px-3 py-2 bg-background border border-border rounded text-foreground focus:border-primary outline-none min-h-[80px] font-mono text-xs"
                 placeholder="<h2>Apply Now</h2><p>Please fill out the form below.</p>"
               />
-              <p className="text-[10px] text-[#8A8D96] mt-1">This raw HTML will be rendered directly above the form fields.</p>
+              <p className="text-[10px] text-muted-foreground mt-1">This raw HTML will be rendered directly above the form fields.</p>
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-[#8A8D96] mb-1">Custom CSS Overrides</label>
+              <label className="block text-sm font-semibold text-muted-foreground mb-1">Custom CSS Overrides</label>
               <textarea 
                 value={activeForm.customCss || ''}
                 onChange={(e) => updateActiveForm({customCss: e.target.value})}
-                className="w-full px-3 py-2 bg-[#1A1D24] border border-[#2C2F38] rounded text-[#F0EDE8] focus:border-[#C79A4E] outline-none min-h-[80px] font-mono text-xs"
+                className="w-full px-3 py-2 bg-background border border-border rounded text-foreground focus:border-primary outline-none min-h-[80px] font-mono text-xs"
                 placeholder={`#form-embed-${activeForm.id} input { height: 60px; }`}
               />
-              <p className="text-[10px] text-[#8A8D96] mt-1">This CSS will be injected only when this form is rendered.</p>
+              <p className="text-[10px] text-muted-foreground mt-1">This CSS will be injected only when this form is rendered.</p>
             </div>
           </div>
 
           {(!activeForm.formType || activeForm.formType === 'native') && (
             <>
-              <div className="flex justify-between items-center mb-4 pt-6 border-t border-[#2C2F38]">
-            <h3 className="text-lg font-bold text-[#F0EDE8]">Fields</h3>
-            <button onClick={addField} className="text-sm text-[#C79A4E] hover:underline">
+              <div className="flex justify-between items-center mb-4 pt-6 border-t border-border">
+            <h3 className="text-lg font-bold text-foreground">Fields</h3>
+            <button onClick={addField} className="text-sm text-primary hover:underline">
               + Add Field
             </button>
           </div>
 
           <div className="space-y-4">
             {activeForm.fields.map((field, idx) => (
-              <div key={idx} className="p-4 bg-[#1A1D24] border border-[#2C2F38] rounded-sm relative group">
+              <div key={idx} className="p-4 bg-background border border-border rounded-sm relative group">
                 <button 
                   onClick={() => removeField(idx)}
                   className="absolute top-4 right-4 text-red-500 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
@@ -180,20 +180,20 @@ export function FormBuilder({ forms, onChange }: FormBuilderProps) {
                 </button>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-semibold text-[#8A8D96] mb-1">Label</label>
+                    <label className="block text-xs font-semibold text-muted-foreground mb-1">Label</label>
                     <input 
                       type="text" 
                       value={field.label}
                       onChange={(e) => updateField(idx, { label: e.target.value })}
-                      className="w-full px-2 py-1.5 bg-[#21242C] border border-[#2C2F38] rounded text-sm text-[#F0EDE8] focus:border-[#C79A4E] outline-none"
+                      className="w-full px-2 py-1.5 bg-card border border-border rounded text-sm text-foreground focus:border-primary outline-none"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-[#8A8D96] mb-1">Type</label>
+                    <label className="block text-xs font-semibold text-muted-foreground mb-1">Type</label>
                     <select 
                       value={field.type}
                       onChange={(e) => updateField(idx, { type: e.target.value as any })}
-                      className="w-full px-2 py-1.5 bg-[#21242C] border border-[#2C2F38] rounded text-sm text-[#F0EDE8] focus:border-[#C79A4E] outline-none"
+                      className="w-full px-2 py-1.5 bg-card border border-border rounded text-sm text-foreground focus:border-primary outline-none"
                     >
                       <option value="text">Text</option>
                       <option value="email">Email</option>
@@ -203,32 +203,32 @@ export function FormBuilder({ forms, onChange }: FormBuilderProps) {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-[#8A8D96] mb-1">Field ID</label>
+                    <label className="block text-xs font-semibold text-muted-foreground mb-1">Field ID</label>
                     <input 
                       type="text" 
                       value={field.id}
                       onChange={(e) => updateField(idx, { id: e.target.value })}
-                      className="w-full px-2 py-1.5 bg-[#21242C] border border-[#2C2F38] rounded text-sm text-[#8A8D96] focus:border-[#C79A4E] outline-none"
+                      className="w-full px-2 py-1.5 bg-card border border-border rounded text-sm text-muted-foreground focus:border-primary outline-none"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-[#8A8D96] mb-1">Placeholder</label>
+                    <label className="block text-xs font-semibold text-muted-foreground mb-1">Placeholder</label>
                     <input 
                       type="text" 
                       value={field.placeholder || ''}
                       onChange={(e) => updateField(idx, { placeholder: e.target.value })}
-                      className="w-full px-2 py-1.5 bg-[#21242C] border border-[#2C2F38] rounded text-sm text-[#F0EDE8] focus:border-[#C79A4E] outline-none"
+                      className="w-full px-2 py-1.5 bg-card border border-border rounded text-sm text-foreground focus:border-primary outline-none"
                     />
                   </div>
                 </div>
                 {field.type === 'select' && (
                   <div className="mt-4">
-                    <label className="block text-xs font-semibold text-[#8A8D96] mb-1">Options (Comma separated)</label>
+                    <label className="block text-xs font-semibold text-muted-foreground mb-1">Options (Comma separated)</label>
                     <input 
                       type="text" 
                       value={(field.options || []).join(', ')}
                       onChange={(e) => updateField(idx, { options: e.target.value.split(',').map(s => s.trim()).filter(Boolean) })}
-                      className="w-full px-2 py-1.5 bg-[#21242C] border border-[#2C2F38] rounded text-sm text-[#F0EDE8] focus:border-[#C79A4E] outline-none"
+                      className="w-full px-2 py-1.5 bg-card border border-border rounded text-sm text-foreground focus:border-primary outline-none"
                     />
                   </div>
                 )}
@@ -238,9 +238,9 @@ export function FormBuilder({ forms, onChange }: FormBuilderProps) {
                     id={`req_${idx}`}
                     checked={field.required}
                     onChange={(e) => updateField(idx, { required: e.target.checked })}
-                    className="w-4 h-4 bg-[#21242C] border-[#2C2F38] text-[#C79A4E] rounded"
+                    className="w-4 h-4 bg-card border-border text-primary rounded"
                   />
-                  <label htmlFor={`req_${idx}`} className="text-sm text-[#8A8D96] select-none">Required Field</label>
+                  <label htmlFor={`req_${idx}`} className="text-sm text-muted-foreground select-none">Required Field</label>
                 </div>
               </div>
             ))}
@@ -251,7 +251,7 @@ export function FormBuilder({ forms, onChange }: FormBuilderProps) {
       ) : (
         <div className="grid grid-cols-1 gap-4">
           <div className="flex justify-between items-center mb-4">
-            <p className="text-sm text-[#8A8D96]">Select a form below to edit its fields, buttons, and success messages.</p>
+            <p className="text-sm text-muted-foreground">Select a form below to edit its fields, buttons, and success messages.</p>
             <button 
               onClick={() => {
                 const newForm = {
@@ -264,41 +264,41 @@ export function FormBuilder({ forms, onChange }: FormBuilderProps) {
                 onChange([...forms, newForm]);
                 setEditingFormId(newForm.id);
               }}
-              className="px-4 py-2 text-sm bg-[#1A1D24] text-[#F0EDE8] border border-[#2C2F38] rounded hover:border-[#C79A4E] hover:text-[#C79A4E] transition-colors font-medium flex items-center gap-2"
+              className="px-4 py-2 text-sm bg-background text-foreground border border-border rounded hover:border-primary hover:text-primary transition-colors font-medium flex items-center gap-2"
             >
               + Create New Form
             </button>
           </div>
           {forms.map(form => (
-            <div key={form.id} className="flex justify-between items-center p-4 bg-[#21242C] border border-[#2C2F38] rounded-sm hover:border-[#C79A4E]/50 transition-colors">
+            <div key={form.id} className="flex justify-between items-center p-4 bg-card border border-border rounded-sm hover:border-primary/50 transition-colors">
               <div>
-                <h3 className="text-[#F0EDE8] font-bold">{form.name}</h3>
-                <p className="text-sm text-[#8A8D96]">{form.fields.length} fields</p>
+                <h3 className="text-foreground font-bold">{form.name}</h3>
+                <p className="text-sm text-muted-foreground">{form.fields.length} fields</p>
               </div>
               <div className="flex gap-2">
                 <button 
                   onClick={() => copyEmbedCode(form.id)}
-                  className="px-3 py-1.5 text-xs bg-[#1A1D24] text-[#8A8D96] border border-[#2C2F38] rounded hover:text-[#C79A4E] hover:border-[#C79A4E] transition-colors"
+                  className="px-3 py-1.5 text-xs bg-background text-muted-foreground border border-border rounded hover:text-primary hover:border-primary transition-colors"
                   title="Copy Embed Code"
                 >
                   Embed Code
                 </button>
                 <button 
                   onClick={() => cloneForm(form)}
-                  className="px-3 py-1.5 text-xs bg-[#1A1D24] text-[#8A8D96] border border-[#2C2F38] rounded hover:text-[#C79A4E] hover:border-[#C79A4E] transition-colors"
+                  className="px-3 py-1.5 text-xs bg-background text-muted-foreground border border-border rounded hover:text-primary hover:border-primary transition-colors"
                   title="Clone Form"
                 >
                   Clone
                 </button>
                 <button 
                   onClick={() => setEditingFormId(form.id)}
-                  className="px-4 py-1.5 text-xs bg-[#1A1D24] text-[#C79A4E] border border-[#2C2F38] rounded hover:bg-[#C79A4E] hover:text-[#1A1D24] transition-colors font-medium"
+                  className="px-4 py-1.5 text-xs bg-background text-primary border border-border rounded hover:bg-primary hover:text-[#1A1D24] transition-colors font-medium"
                 >
                   Edit
                 </button>
                 <button 
                   onClick={() => deleteForm(form.id)}
-                  className="px-3 py-1.5 text-xs bg-[#1A1D24] text-[#8A8D96] border border-[#2C2F38] rounded hover:text-red-400 hover:border-red-400 transition-colors"
+                  className="px-3 py-1.5 text-xs bg-background text-muted-foreground border border-border rounded hover:text-red-400 hover:border-red-400 transition-colors"
                   title="Delete Form"
                 >
                   Delete

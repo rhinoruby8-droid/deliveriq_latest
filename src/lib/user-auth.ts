@@ -8,13 +8,16 @@ export interface User {
   registered_session_ids?: string[];
   minutes_attended?: number;
   hours_watched?: number;
+  subscription_tier?: string;
+  subscription_expires_at?: string;
+  session_access?: Record<string, { tier: string; expires_at?: string }>;
 }
 
 export type Delegate = User; // For backwards compatibility
 
 export function getUserToken(): string | null {
   if (typeof window === 'undefined') return null;
-  return localStorage.getItem('deliveriq_delegate_token');
+  return localStorage.getItem('deliveriq_delegate_token') || localStorage.getItem('deliveriq_cms_token');
 }
 
 export function setUserToken(token: string) {

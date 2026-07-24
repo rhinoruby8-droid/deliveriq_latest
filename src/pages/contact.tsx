@@ -45,11 +45,11 @@ export default function ContactPage() {
         {cms.contactContent?.visualMode ? (
           <>
             <ContactVisual data={cms.contactContent} />
-            <section id="form" className="py-16 lg:py-20 border-t border-[#2C2F38] bg-[#1A1D24]">
+            <section id="form" className="py-16 lg:py-20 border-t border-border bg-background">
               <div className="container mx-auto px-6 lg:px-8 max-w-2xl">
                 <div className="text-center mb-10">
-                  <h2 className="text-3xl font-bold text-[#F0EDE8] mb-3">Send a Message</h2>
-                  <p className="text-sm text-[#8A8D96]">Fill out the form below and we will get back to you shortly.</p>
+                  <h2 className="text-3xl font-bold text-foreground mb-3">Send a Message</h2>
+                  <p className="text-sm text-muted-foreground">Fill out the form below and we will get back to you shortly.</p>
                 </div>
                 <DynamicForm formId="contact" />
               </div>

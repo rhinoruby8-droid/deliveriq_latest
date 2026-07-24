@@ -34,7 +34,7 @@ describe('PageHtmlRenderer', () => {
   it('completely ignores Tailwind CSS arbitrary bracket values in class attributes', () => {
     const html = `
       <section class="relative pt-20 lg:pt-28">
-        <h1 class="text-5xl lg:text-[5rem] font-bold text-[#F0EDE8] leading-[1.0] tracking-[0.2em] mb-0">
+        <h1 class="text-5xl lg:text-[5rem] font-bold text-foreground leading-[1.0] tracking-[0.2em] mb-0">
           AI Skills
         </h1>
       </section>
@@ -53,7 +53,7 @@ describe('PageHtmlRenderer', () => {
     expect(h1).not.toBeNull();
     expect(h1).toHaveClass('text-5xl');
     expect(h1).toHaveClass('lg:text-[5rem]');
-    expect(h1).toHaveClass('text-[#F0EDE8]');
+    expect(h1).toHaveClass('text-foreground');
     expect(h1).toHaveClass('leading-[1.0]');
     expect(h1).toHaveClass('tracking-[0.2em]');
   });

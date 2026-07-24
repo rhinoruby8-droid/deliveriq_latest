@@ -21,7 +21,9 @@
       ],
       "sponsorIds": [
         "aecom"
-      ]
+      ],
+      "price": 49.99,
+      "isFree": false
     },
     {
       "id": "pm-prompting",
@@ -37,7 +39,9 @@
       ],
       "sponsorIds": [
         "microsoft"
-      ]
+      ],
+      "price": 99,
+      "isFree": false
     },
     {
       "id": "evm-ai",
@@ -53,7 +57,9 @@
       ],
       "sponsorIds": [
         "slack"
-      ]
+      ],
+      "price": 0,
+      "isFree": true
     },
     {
       "id": "abc",
@@ -71,7 +77,9 @@
         "Test"
       ],
       "registrationUrl": "Understand Project Contols",
-      "videoUrl": "https://imgs.search.brave.com/_0JYrKtg_vP4PdDbHS0RBR9BZP6I5lgXOZ8Yvho-DB0/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9tZWRp/YS5tYWduaWZpYy5j/b20vcGhvdG9zL2hv/bWUvaW1hZ2UtZ2Vu/ZXJhdG9yLndlYnA"
+      "videoUrl": "https://imgs.search.brave.com/_0JYrKtg_vP4PdDbHS0RBR9BZP6I5lgXOZ8Yvho-DB0/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9tZWRp/YS5tYWduaWZpYy5j/b20vcGhvdG9zL2hv/bWUvaW1hZ2UtZ2Vu/ZXJhdG9yLndlYnA",
+      "price": 0,
+      "isFree": true
     },
     {
       "id": "abc-de",
@@ -87,7 +95,9 @@
       ],
       "sponsorIds": [
         "Test"
-      ]
+      ],
+      "price": 0,
+      "isFree": true
     }
   ],
   "speakers": [
@@ -166,9 +176,27 @@
       "submitButtonText": "Send Message",
       "successMessage": "Thank you for your message. We will get back to you shortly.",
       "fields": [
-        { "id": "name", "type": "text", "label": "Name", "required": true, "placeholder": "Jane Doe" },
-        { "id": "email", "type": "email", "label": "Email", "required": true, "placeholder": "jane@example.com" },
-        { "id": "message", "type": "textarea", "label": "Message", "required": true, "placeholder": "How can we help?" }
+        {
+          "id": "name",
+          "type": "text",
+          "label": "Name",
+          "required": true,
+          "placeholder": "Jane Doe"
+        },
+        {
+          "id": "email",
+          "type": "email",
+          "label": "Email",
+          "required": true,
+          "placeholder": "jane@example.com"
+        },
+        {
+          "id": "message",
+          "type": "textarea",
+          "label": "Message",
+          "required": true,
+          "placeholder": "How can we help?"
+        }
       ]
     },
     {
@@ -177,9 +205,27 @@
       "submitButtonText": "Register",
       "successMessage": "Thank you for registering. We will notify you when sessions open.",
       "fields": [
-        { "id": "name", "type": "text", "label": "Name", "required": true, "placeholder": "Jane Doe" },
-        { "id": "email", "type": "email", "label": "Email", "required": true, "placeholder": "jane@example.com" },
-        { "id": "role", "type": "text", "label": "Role", "required": true, "placeholder": "Project Manager" }
+        {
+          "id": "name",
+          "type": "text",
+          "label": "Name",
+          "required": true,
+          "placeholder": "Jane Doe"
+        },
+        {
+          "id": "email",
+          "type": "email",
+          "label": "Email",
+          "required": true,
+          "placeholder": "jane@example.com"
+        },
+        {
+          "id": "role",
+          "type": "text",
+          "label": "Role",
+          "required": true,
+          "placeholder": "Project Manager"
+        }
       ]
     },
     {
@@ -188,10 +234,34 @@
       "submitButtonText": "Submit Application",
       "successMessage": "Thank you for applying. We will review your application and get back to you.",
       "fields": [
-        { "id": "name", "type": "text", "label": "Name", "required": true, "placeholder": "Jane Doe" },
-        { "id": "email", "type": "email", "label": "Email", "required": true, "placeholder": "jane@example.com" },
-        { "id": "topic", "type": "text", "label": "Proposed Topic", "required": true, "placeholder": "AI in Risk Management" },
-        { "id": "experience", "type": "textarea", "label": "Relevant Experience", "required": true, "placeholder": "Describe your practical experience." }
+        {
+          "id": "name",
+          "type": "text",
+          "label": "Name",
+          "required": true,
+          "placeholder": "Jane Doe"
+        },
+        {
+          "id": "email",
+          "type": "email",
+          "label": "Email",
+          "required": true,
+          "placeholder": "jane@example.com"
+        },
+        {
+          "id": "topic",
+          "type": "text",
+          "label": "Proposed Topic",
+          "required": true,
+          "placeholder": "AI in Risk Management"
+        },
+        {
+          "id": "experience",
+          "type": "textarea",
+          "label": "Relevant Experience",
+          "required": true,
+          "placeholder": "Describe your practical experience."
+        }
       ]
     },
     {
@@ -200,10 +270,39 @@
       "submitButtonText": "Enquire Now",
       "successMessage": "Thank you for your enquiry. Our team will reach out soon.",
       "fields": [
-        { "id": "name", "type": "text", "label": "Name", "required": true, "placeholder": "Jane Doe" },
-        { "id": "email", "type": "email", "label": "Work Email", "required": true, "placeholder": "jane@company.com" },
-        { "id": "company", "type": "text", "label": "Company", "required": true, "placeholder": "Acme Corp" },
-        { "id": "interest", "type": "select", "label": "Sponsorship Interest", "required": true, "options": ["Session Sponsor", "Series Sponsor", "Platform Partner", "Other"] }
+        {
+          "id": "name",
+          "type": "text",
+          "label": "Name",
+          "required": true,
+          "placeholder": "Jane Doe"
+        },
+        {
+          "id": "email",
+          "type": "email",
+          "label": "Work Email",
+          "required": true,
+          "placeholder": "jane@company.com"
+        },
+        {
+          "id": "company",
+          "type": "text",
+          "label": "Company",
+          "required": true,
+          "placeholder": "Acme Corp"
+        },
+        {
+          "id": "interest",
+          "type": "select",
+          "label": "Sponsorship Interest",
+          "required": true,
+          "options": [
+            "Session Sponsor",
+            "Series Sponsor",
+            "Platform Partner",
+            "Other"
+          ]
+        }
       ]
     },
     {
@@ -212,8 +311,26 @@
       "submitButtonText": "Join the List",
       "successMessage": "You are on the list! We will notify you.",
       "fields": [
-        { "id": "email", "type": "email", "label": "Email", "required": true, "placeholder": "jane@example.com" }
+        {
+          "id": "email",
+          "type": "email",
+          "label": "Email",
+          "required": true,
+          "placeholder": "jane@example.com"
+        }
       ]
+    }
+  ],
+  "coupons": [
+    {
+      "id": "save20",
+      "code": "SAVE20",
+      "discountPercentage": 20
+    },
+    {
+      "id": "free100",
+      "code": "FREE100",
+      "discountPercentage": 100
     }
   ]
 }

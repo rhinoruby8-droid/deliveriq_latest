@@ -1,15 +1,24 @@
 import type { Request, Response } from 'express';
 import Stripe from 'stripe';
 
-function getStripe(): Stripe {
-  const key = process.env.STRIPE_SECRET_KEY;
-  if (!key) throw new Error('STRIPE_SECRET_KEY is not configured');
-  return new Stripe(key, { apiVersion: '2026-06-24.dahlia' });
+import { supabaseAdmin } from '../../../supabase';
+
+async function getStripeKeys() {
+  const { data } = await supabaseAdmin.from('settings').select('value').eq('id', 'gateway_api_keys').maybeSingle();
+  const keys = data?.value || {};
+  const secretKey = keys.stripe_secret_key || process.env.STRIPE_SECRET_KEY;
+  const webhookSecret = keys.stripe_webhook_secret || process.env.STRIPE_WEBHOOK_SECRET;
+  return { secretKey, webhookSecret };
+}
+
+function getStripe(key: string): Stripe {
+  if (!key) throw new Error('Stripe Secret Key is not configured');
+  return new Stripe(key, { apiVersion: '2023-10-16' as any });
 }
 
 export default async function handler(req: Request, res: Response) {
   const sig = req.headers['stripe-signature'];
-  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  const { secretKey, webhookSecret } = await getStripeKeys();
 
   if (!sig || !webhookSecret) {
     console.warn('stripe.webhook: no signature or secret configured');
@@ -18,7 +27,7 @@ export default async function handler(req: Request, res: Response) {
 
   let stripe: Stripe;
   try {
-    stripe = getStripe();
+    stripe = getStripe(secretKey || '');
   } catch (err) {
     console.error('stripe.webhook.init-failed', err);
     return res.status(500).json({ error: 'Stripe not configured' });
@@ -64,6 +73,103 @@ export default async function handler(req: Request, res: Response) {
           }
         } catch (dbErr) {
           console.error('Failed to update sponsor record in DB', dbErr);
+        }
+      }
+
+      // Handle subscription tiers and session registration
+      const tier = session.metadata?.tier;
+      const userId = session.metadata?.userId;
+      const sessionId = session.metadata?.sessionId;
+
+      if (tier && userId) {
+        try {
+          const { supabaseAdmin } = await import('../../../supabase');
+          if (supabaseAdmin) {
+            if (tier === 'tier3') {
+              const expiresAt = new Date();
+              expiresAt.setFullYear(expiresAt.getFullYear() + 1);
+              await supabaseAdmin.from('users').update({
+                subscription_tier: 'tier3',
+                subscription_expires_at: expiresAt.toISOString()
+              }).eq('id', userId);
+              console.log(`Successfully granted Pro Tier to user ${userId}`);
+            } else if (tier === 'tier2' && sessionId) {
+              const { data: user } = await supabaseAdmin.from('users').select('session_access, registered_session_ids').eq('id', userId).single();
+              const sessionAccess = user?.session_access || {};
+              const registeredIds = user?.registered_session_ids || [];
+
+              const expiresAt = new Date();
+              expiresAt.setMonth(expiresAt.getMonth() + 3);
+
+              sessionAccess[sessionId] = {
+                tier: 'tier2',
+                expires_at: expiresAt.toISOString()
+              };
+              if (!registeredIds.includes(sessionId)) {
+                registeredIds.push(sessionId);
+              }
+
+              await supabaseAdmin.from('users').update({
+                registered_session_ids: registeredIds,
+                session_access: sessionAccess
+              }).eq('id', userId);
+              console.log(`Successfully granted Tier 2 for session ${sessionId} to user ${userId}`);
+            } else if (tier === 'tier1' && sessionId) {
+              const { data: user } = await supabaseAdmin.from('users').select('session_access, registered_session_ids').eq('id', userId).single();
+              const sessionAccess = user?.session_access || {};
+              const registeredIds = user?.registered_session_ids || [];
+
+              sessionAccess[sessionId] = {
+                tier: 'tier1'
+              };
+              if (!registeredIds.includes(sessionId)) {
+                registeredIds.push(sessionId);
+              }
+
+              await supabaseAdmin.from('users').update({
+                registered_session_ids: registeredIds,
+                session_access: sessionAccess
+              }).eq('id', userId);
+              console.log(`Successfully granted Tier 1 for session ${sessionId} to user ${userId}`);
+            }
+
+            // Log purchase to settings database
+            try {
+              const { data: userProfile } = await supabaseAdmin
+                .from('users')
+                .select('email, name')
+                .eq('id', userId)
+                .maybeSingle();
+
+              const userEmail = session.customer_details?.email || userProfile?.email || '';
+              const userName = session.customer_details?.name || userProfile?.name || userEmail.split('@')[0];
+
+              const { logPurchase } = await import('../../../purchases-logger');
+              await logPurchase({
+                id: session.id,
+                userId,
+                userEmail,
+                userName,
+                sessionId: sessionId || 'pro_yearly',
+                sessionTitle: session.metadata?.sessionTitle || 'DeliverIQ Pro Yearly Subscription',
+                amount: (session.amount_total || 0) / 100,
+                currency: session.currency?.toUpperCase() || 'USD',
+                gateway: 'stripe',
+                status: 'completed'
+              });
+
+              // Increment coupon uses if couponCode exists in metadata
+              const couponCode = session.metadata?.couponCode;
+              if (couponCode) {
+                const { incrementCouponUses } = await import('../../../coupon-updater');
+                await incrementCouponUses(couponCode);
+              }
+            } catch (err) {
+              console.error('[Stripe Webhook] Failed to log purchase:', err);
+            }
+          }
+        } catch (dbErr) {
+          console.error('Failed to update subscription/session access in DB', dbErr);
         }
       }
 

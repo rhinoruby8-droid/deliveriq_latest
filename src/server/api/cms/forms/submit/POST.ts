@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express';
 import { supabaseAdmin } from '../../../../supabase';
 import { sendEmail } from '../../../../email';
+import { sendTemplatedEmail } from '../../../../email-template-compiler';
 import { getSecret } from '#airo/secrets';
 
 interface SubmitPayload {
@@ -58,6 +59,19 @@ export default async function handler(req: Request, res: Response) {
     // Send Notification Email
     const recipient = getSecret('NOTIFICATION_RECIPIENT_EMAIL') ?? 'info@deliveriq.live';
     const sourceLabel = formRes.name;
+
+    // Check if custom email template exists in Supabase for this dynamic form
+    const didSendCustom = await sendTemplatedEmail({
+      formIdentifier: `dynamic:${formId}`,
+      formName: sourceLabel,
+      recipientEmail: String(recipient),
+      replyTo: data.email ? String(data.email) : undefined,
+      payload: data,
+    });
+
+    if (didSendCustom) {
+      return res.status(200).json({ ok: true });
+    }
 
     const rows = Object.entries(data).map(([k, v]) => {
       const label = k.charAt(0).toUpperCase() + k.slice(1);

@@ -58,21 +58,21 @@ export function VisualPageEditor({ page, content, onContentChange }: Props) {
 
     return (
       <div className="flex flex-col gap-6">
-        <div className="flex flex-col gap-4 p-5 bg-[#1A1D24]/60 border border-[#2C2F38] rounded-sm">
-          <p className="text-[10px] font-bold text-[#C79A4E] uppercase tracking-widest">Page Header</p>
+        <div className="flex flex-col gap-4 p-5 bg-background/60 border border-border rounded-sm">
+          <p className="text-[10px] font-bold text-primary uppercase tracking-widest">Page Header</p>
           <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-bold text-[#8A8D96] uppercase tracking-wider">Title</label>
+            <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Title</label>
             <input
-              className="bg-[#1A1D24] border border-[#2C2F38] rounded-sm px-3 py-2 text-sm text-[#F0EDE8] placeholder-[#4A4D56] focus:outline-none focus:border-[#C79A4E]/60 transition-colors w-full"
+              className="bg-background border border-border rounded-sm px-3 py-2 text-sm text-foreground placeholder-[#4A4D56] focus:outline-none focus:border-primary/60 transition-colors w-full"
               value={c.hero?.title || ''}
               onChange={e => set({ hero: { ...(c.hero || { title: '', subtitle: '' }), title: e.target.value } })}
               placeholder="Page Title"
             />
           </div>
           <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-bold text-[#8A8D96] uppercase tracking-wider">Subtitle</label>
+            <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Subtitle</label>
             <textarea
-              className="bg-[#1A1D24] border border-[#2C2F38] rounded-sm px-3 py-2 text-sm text-[#F0EDE8] placeholder-[#4A4D56] focus:outline-none focus:border-[#C79A4E]/60 transition-colors w-full resize-none"
+              className="bg-background border border-border rounded-sm px-3 py-2 text-sm text-foreground placeholder-[#4A4D56] focus:outline-none focus:border-primary/60 transition-colors w-full resize-none"
               rows={2}
               value={c.hero?.subtitle || ''}
               onChange={e => set({ hero: { ...(c.hero || { title: '', subtitle: '' }), subtitle: e.target.value } })}

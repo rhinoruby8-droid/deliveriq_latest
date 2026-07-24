@@ -1,6 +1,334 @@
 /* Custom overrides that apply to the entire website */
 
-/* Example: Expand the sessions container on the home page to fit 2 columns side-by-side */
-.max-w-4xl {
+/* Ensure the .container class always has horizontal padding, is centered, and has a consistent max-width */
+.container {
   max-width: 1200px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 1.5rem !important; /* px-6 equivalent */
+  padding-right: 1.5rem !important;
 }
+
+@media (min-width: 1024px) {
+  .container {
+    padding-left: 2rem !important; /* lg:px-8 equivalent */
+    padding-right: 2rem !important;
+  }
+}
+
+/* ==================================================
+   ENTERPRISE FORM STYLING — Global Input/Form Fix
+   Fixes white background input bug and establishes
+   a consistent modern enterprise form design system.
+================================================== */
+
+/* Fix all native inputs, selects, textareas globally */
+input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]),
+select,
+textarea {
+  background-color: #14161B !important;
+  color: #F0EDE8 !important;
+  border: 1px solid #2C2F38 !important;
+  border-radius: 10px !important;
+  padding: 0 1rem;
+  height: 3rem !important;
+  font-size: 0.875rem !important;
+  outline: none !important;
+  transition: border-color 0.2s ease !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+}
+
+textarea {
+  height: auto !important;
+  padding: 0.75rem 1rem;
+  resize: vertical !important;
+}
+
+input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):focus,
+select:focus,
+textarea:focus {
+  border-color: #C79A4E !important;
+  box-shadow: 0 0 0 1px #C79A4E !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #8A8D96 !important;
+  opacity: 1 !important;
+}
+
+/* Fix autofill background (Chrome/Safari override) */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active,
+input:-internal-autofill-previewed,
+input:-internal-autofill-selected,
+input:autofill,
+input:-webkit-autofill::first-line {
+  -webkit-box-shadow: 0 0 0 1000px #14161B inset !important;
+  box-shadow: 0 0 0 1000px #14161B inset !important;
+  -webkit-text-fill-color: #F0EDE8 !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  border-color: #2C2F38 !important;
+  color: #F0EDE8 !important;
+  transition: background-color 600000s ease-in-out 0s, border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+/* Fix select dropdown options */
+select option {
+  background-color: #21242C !important;
+  color: #F0EDE8 !important;
+}
+
+/* Override specificity for Tailwind input padding classes containing left/right icons */
+.pl-8 {
+  padding-left: 2rem !important;
+}
+.pl-10 {
+  padding-left: 2.5rem !important;
+}
+.pl-12 {
+  padding-left: 3rem !important;
+}
+.pr-8 {
+  padding-right: 2rem !important;
+}
+.pr-10 {
+  padding-right: 2.5rem !important;
+}
+.pr-12 {
+  padding-right: 3rem !important;
+}
+
+/* === Form Card Layout Constraints === */
+/* Constrain form cards to a readable width, not full screen */
+.diq-form-card {
+  width: 100%;
+  max-width: 48rem; /* 768px */
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #21242C;
+  border: 1px solid #2C2F38;
+  border-radius: 1.25rem;
+  padding: 2rem;
+  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+}
+
+/* === Primary Button Style === */
+.diq-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 1rem 2rem;
+  background-color: #C79A4E;
+  color: #1A1D24;
+  font-weight: 700;
+  font-size: 1rem;
+  border-radius: 9999px;
+  border: none;
+  cursor: pointer;
+  transition: filter 0.2s ease, transform 0.1s ease;
+  margin-top: 2rem;
+}
+.diq-btn-primary:hover { filter: brightness(1.1); }
+.diq-btn-primary:active { transform: scale(0.98); }
+.diq-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Remove the sessions page max-w override - keep it scoped */
+
+/* ==================================================
+   infinite scrolling marquee ticker animation
+================================================== */
+@keyframes diq-marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-diq-marquee {
+  display: flex;
+  width: max-content;
+  animation: diq-marquee 30s linear infinite;
+}
+
+.animate-diq-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* ==================================================
+   standard html block styles (fallbacks & custom html)
+   prevents clipping under the sticky header
+================================================== */
+.hero {
+  position: relative;
+  overflow: hidden;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 6rem 1.5rem 4rem 1.5rem !important; /* pt accounts for sticky header */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+@media (min-width: 768px) {
+  .hero {
+    padding: 8rem 2rem 5rem 2rem !important;
+  }
+}
+
+.hero h1 {
+  font-size: 2.75rem !important;
+  font-weight: 800 !important;
+  color: #F0EDE8 !important;
+  line-height: 1.1 !important;
+  margin: 0 0 1.5rem 0 !important;
+  letter-spacing: -0.02em !important;
+  max-width: 56rem;
+}
+
+@media (min-width: 768px) {
+  .hero h1 {
+    font-size: 4.5rem !important;
+  }
+}
+
+.hero .eyebrow {
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.2em !important;
+  color: #C79A4E !important;
+  margin: 0 0 1rem 0 !important;
+}
+
+.hero .subheadline {
+  font-size: 1.125rem !important;
+  color: #8A8D96 !important;
+  max-width: 36rem !important;
+  line-height: 1.6 !important;
+  margin: 0 0 2rem 0 !important;
+}
+
+.cta-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem !important;
+  margin-top: 1rem !important;
+}
+
+.btn-primary {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0.875rem 1.75rem !important;
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  background-color: #C79A4E !important;
+  color: #1A1D24 !important;
+  border-radius: 9999px !important;
+  border: none !important;
+  transition: all 0.2s ease !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+}
+
+.btn-primary:hover {
+  filter: brightness(1.1) !important;
+  transform: translateY(-1px) !important;
+}
+
+.btn-secondary {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0.875rem 1.75rem !important;
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  background-color: transparent !important;
+  color: #F0EDE8 !important;
+  border-radius: 9999px !important;
+  border: 1px solid #2C2F38 !important;
+  transition: all 0.2s ease !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+}
+
+.btn-secondary:hover {
+  background-color: #2C2F38 !important;
+  color: #F0EDE8 !important;
+}
+
+/* Stats Section */
+.stats {
+  display: grid;
+  grid-template-columns: 1fr;
+  border-top: 1px solid rgba(44, 47, 56, 0.6);
+  border-bottom: 1px solid rgba(44, 47, 56, 0.6);
+  background-color: rgba(33, 36, 44, 0.3);
+  max-width: 100% !important;
+  width: 100% !important;
+}
+
+@media (min-width: 768px) {
+  .stats {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.stats .stat-item {
+  padding: 2rem !important;
+  text-align: center !important;
+  border-bottom: 1px solid rgba(44, 47, 56, 0.6);
+}
+
+@media (min-width: 768px) {
+  .stats .stat-item {
+    border-bottom: none;
+    border-right: 1px solid rgba(44, 47, 56, 0.6);
+  }
+  .stats .stat-item:last-child {
+    border-right: none;
+  }
+}
+
+.stats .stat-value {
+  display: block !important;
+  font-size: 2.25rem !important;
+  font-weight: 700 !important;
+  color: #C79A4E !important;
+  margin-bottom: 0.25rem !important;
+}
+
+.stats .stat-label {
+  display: block !important;
+  font-size: 0.75rem !important;
+  color: #8A8D96 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.15em !important;
+  font-weight: 600 !important;
+}
+
+/* Intro block */
+.intro {
+  max-width: 800px !important;
+  margin: 4rem auto !important;
+  padding: 0 1.5rem !important;
+  text-align: center !important;
+}
+
+.intro p {
+  font-size: 1.125rem !important;
+  line-height: 1.7 !important;
+  color: #8A8D96 !important;
+}
+
+

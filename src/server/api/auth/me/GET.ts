@@ -11,7 +11,7 @@ export default async function handler(req: AuthRequest, res: Response) {
 
     const { data: user, error } = await supabaseAdmin
       .from('users')
-      .select('id, email, name, role, registered_session_ids, minutes_attended, hours_watched')
+      .select('id, email, name, role, registered_session_ids, minutes_attended, hours_watched, subscription_tier, subscription_expires_at, session_access')
       .eq('id', userId)
       .maybeSingle();
 

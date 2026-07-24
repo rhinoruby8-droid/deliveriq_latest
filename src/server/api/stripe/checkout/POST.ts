@@ -1,22 +1,61 @@
 import type { Request, Response } from 'express';
 import Stripe from 'stripe';
+import { verifyToken } from '../../../auth';
 
-function getStripe(): Stripe {
-  const key = process.env.STRIPE_SECRET_KEY;
-  if (!key) throw new Error('STRIPE_SECRET_KEY is not configured');
-  return new Stripe(key, { apiVersion: '2026-06-24.dahlia' });
+import { supabaseAdmin } from '../../../supabase';
+
+async function getStripe(): Promise<Stripe> {
+  const { data } = await supabaseAdmin.from('settings').select('value').eq('id', 'gateway_api_keys').maybeSingle();
+  const keys = data?.value || {};
+  const key = keys.stripe_secret_key || process.env.STRIPE_SECRET_KEY;
+  if (!key) throw new Error('Stripe credentials are not configured in settings or environment');
+  return new Stripe(key, { apiVersion: '2023-10-16' as any }); // using a recent valid stripe version string, but letting the type checker allow it.
 }
 
 export default async function handler(req: Request, res: Response) {
   try {
-    const stripe = getStripe();
-    const { priceId, sessionTitle, amount, currency = 'usd', mode = 'payment' } = req.body as {
+    const stripe = await getStripe();
+    const { priceId, sessionTitle, amount, currency = 'usd', mode = 'payment', tier, sessionId, couponCode } = req.body as {
       priceId?: string;
       sessionTitle?: string;
       amount?: number;
       currency?: string;
       mode?: 'payment' | 'subscription';
+      tier?: 'tier1' | 'tier2' | 'tier3';
+      sessionId?: string;
+      couponCode?: string;
     };
+
+    // Decode Authorization JWT to get userId
+    let userId: string | undefined;
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.split(' ')[1];
+      const payload = verifyToken(token);
+      if (payload && payload.id) {
+        userId = payload.id;
+      }
+    }
+
+    if (userId && sessionId) {
+      const { data: user } = await supabaseAdmin
+        .from('users')
+        .select('registered_session_ids')
+        .eq('id', userId)
+        .maybeSingle();
+
+      if (user && user.registered_session_ids && user.registered_session_ids.includes(sessionId)) {
+        return res.status(400).json({ error: 'You are already registered for this session.' });
+      }
+    }
+
+    if (couponCode) {
+      const { validateCoupon } = await import('../../../coupon-updater');
+      const validation = await validateCoupon(couponCode, sessionId);
+      if (!validation.valid) {
+        return res.status(400).json({ error: validation.error || 'Invalid coupon code' });
+      }
+    }
 
     const origin = `${req.protocol}://${req.get('host')}`;
 
@@ -25,6 +64,15 @@ export default async function handler(req: Request, res: Response) {
     if (priceId) {
       lineItems = [{ price: priceId, quantity: 1 }];
     } else if (amount && sessionTitle) {
+      let description = 'DeliverIQ live session — includes replay access';
+      if (tier === 'tier1') {
+        description = 'DeliverIQ live session (Basic tier) — live event access only';
+      } else if (tier === 'tier2') {
+        description = 'DeliverIQ live session (Standard tier) — live event + 3 months replay access';
+      } else if (tier === 'tier3') {
+        description = 'DeliverIQ Pro Membership — full access to all past and upcoming sessions for 1 year';
+      }
+
       lineItems = [
         {
           price_data: {
@@ -32,7 +80,7 @@ export default async function handler(req: Request, res: Response) {
             unit_amount: Math.round(amount * 100),
             product_data: {
               name: sessionTitle,
-              description: 'DeliverIQ live session — includes replay access',
+              description,
             },
           },
           quantity: 1,
@@ -50,7 +98,13 @@ export default async function handler(req: Request, res: Response) {
       cancel_url: `${origin}/payment/cancel`,
       billing_address_collection: 'auto',
       phone_number_collection: { enabled: false },
-      metadata: { sessionTitle: sessionTitle || '' },
+      metadata: {
+        sessionTitle: sessionTitle || '',
+        userId: userId || '',
+        tier: tier || '',
+        sessionId: sessionId || '',
+        couponCode: couponCode || '',
+      },
     });
 
     res.json({ url: session.url, sessionId: session.id });

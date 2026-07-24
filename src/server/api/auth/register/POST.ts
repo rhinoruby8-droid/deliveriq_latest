@@ -37,6 +37,18 @@ export default async function handler(req: Request, res: Response) {
       .select('id, email, name, role')
       .single();
 
+    if (newUser && !error) {
+      // Save profile metadata in settings
+      await supabaseAdmin.from('settings').upsert({
+        id: 'user_profile_' + newUser.id,
+        value: {
+          jobTitle: req.body.jobTitle || '',
+          company: req.body.company || '',
+          country: req.body.country || ''
+        }
+      });
+    }
+
     if (error || !newUser) {
       console.error('Registration failed:', error);
       return res.status(500).json({ error: 'Failed to create account' });

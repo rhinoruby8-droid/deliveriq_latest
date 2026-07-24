@@ -19,6 +19,10 @@ const TermsPage       = lazy(() => import('./pages/terms'));
 const RegisterPage    = lazy(() => import('./pages/register'));
 const LoginPage       = lazy(() => import('./pages/login'));
 const DashboardPage   = lazy(() => import('./pages/dashboard'));
+const ReplayPlayerPage = lazy(() => import('./pages/dashboard-replay-player'));
+const DashboardSessionsPage = lazy(() => import('./pages/dashboard-sessions'));
+const PaymentSuccessPage = lazy(() => import('./pages/payment/success'));
+const PaymentCancelPage = lazy(() => import('./pages/payment/cancel'));
 const EmbedFormPage   = lazy(() => import('./pages/embed-form'));
 const AdminPage       = lazy(() => import('./pages/admin')); // isolated — carries editor libs
 const AdminLoginPage  = lazy(() => import('./pages/admin-login'));
@@ -51,6 +55,10 @@ export const routes: RouteObject[] = [
   { path: '/signup',        element: <Lazy component={LoginPage} /> },
   { path: '/embed/form/:id',element: <Lazy component={EmbedFormPage} /> },
   { path: '/dashboard',     element: <ProtectedRoute><Lazy component={DashboardPage} /></ProtectedRoute> },
+  { path: '/dashboard/sessions', element: <ProtectedRoute><Lazy component={DashboardSessionsPage} /></ProtectedRoute> },
+  { path: '/dashboard/replays/:id', element: <ProtectedRoute><Lazy component={ReplayPlayerPage} /></ProtectedRoute> },
+  { path: '/payment/success', element: <Lazy component={PaymentSuccessPage} /> },
+  { path: '/payment/cancel',  element: <Lazy component={PaymentCancelPage} /> },
   { path: '/privacy',       element: <Lazy component={PrivacyPage} /> },
   { path: '/terms',         element: <Lazy component={TermsPage} /> },
   { path: '/admin/login',   element: <Lazy component={AdminLoginPage} /> },

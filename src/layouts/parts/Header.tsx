@@ -1,18 +1,29 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type MouseEvent } from 'react';
 import { UserNav } from '../../components/UserNav';
+import { getUserToken } from '@/lib/user-auth';
+import AuthDialog from '@/components/AuthDialog';
+import { ModeToggle } from '@/components/ModeToggle';
 
 export default function Header() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showAuthDialog, setShowAuthDialog] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    const token = getUserToken();
+    setIsAuthenticated(!!token);
+  }, [location.pathname]);
 
   const navItems = [
     { href: '/', label: 'Home' },
@@ -26,53 +37,65 @@ export default function Header() {
 
   return (
     <header
-      className={`sticky top-0 z-50 transition-all duration-300 ${
+      className={`sticky top-0 z-50 transition-all duration-300 diq-header ${
         scrolled
-          ? 'bg-[#1A1D24]/95 backdrop-blur-md border-b border-[#2C2F38]'
-          : 'bg-[#1A1D24] border-b border-[#2C2F38]'
+          ? 'bg-background/95 backdrop-blur-md border-b border-border'
+          : 'bg-background border-b border-border'
       }`}
     >
-      <div className="container mx-auto px-6 lg:px-8">
-        <div className="flex h-[84px] items-center justify-between">
+      <div className="container mx-auto px-6 lg:px-8 diq-header-container">
+        <div className="flex h-[84px] items-center justify-between diq-header-row">
           {/* Logo */}
-          <Link to="/" className="flex items-center shrink-0">
+          <Link to="/" className="flex items-center shrink-0 diq-header-logo-link">
             <img
               src="/assets/deliveriq-logo-dark-notag-1400.png"
               alt="DeliverIQ"
-              className="h-14 md:h-16 w-auto object-contain shrink-0"
+              className="h-14 md:h-16 w-auto object-contain shrink-0 diq-header-logo-img"
             />
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-8">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                to={item.href}
-                className={`relative text-sm font-medium tracking-wide transition-colors group ${
-                  isActive(item.href)
-                    ? 'text-[#C79A4E]'
-                    : 'text-[#8A8D96] hover:text-[#F0EDE8]'
-                }`}
-              >
-                {item.label}
-                <span
-                  className={`absolute -bottom-0.5 left-0 h-px bg-[#C79A4E] transition-all duration-300 ${
-                    isActive(item.href) ? 'w-full' : 'w-0 group-hover:w-full'
+          <nav className="hidden md:flex items-center gap-8 diq-header-nav-desktop">
+            {navItems.map((item) => {
+              const isReplays = item.href === '/replays';
+              const handleLinkClick = (e: MouseEvent) => {
+                if (isReplays && !isAuthenticated) {
+                  e.preventDefault();
+                  setShowAuthDialog(true);
+                }
+              };
+
+              return (
+                <Link
+                  key={item.href}
+                  to={item.href}
+                  onClick={handleLinkClick}
+                  className={`relative text-sm font-medium tracking-wide transition-colors group diq-header-nav-link-desktop ${
+                    isActive(item.href)
+                      ? 'text-primary'
+                      : 'text-muted-foreground hover:text-foreground'
                   }`}
-                />
-              </Link>
-            ))}
+                >
+                  {item.label}
+                  <span
+                    className={`absolute -bottom-0.5 left-0 h-px bg-primary transition-all duration-300 diq-header-nav-active-bar ${
+                      isActive(item.href) ? 'w-full' : 'w-0 group-hover:w-full'
+                    }`}
+                  />
+                </Link>
+              );
+            })}
           </nav>
 
           {/* CTA + Mobile Toggle */}
-          <div className="flex items-center gap-4">
-            <div className="hidden md:block">
+          <div className="flex items-center gap-4 diq-header-cta-toggle-container">
+            <ModeToggle />
+            <div className="hidden md:block diq-header-usernav-desktop">
               <UserNav />
             </div>
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 text-[#8A8D96] hover:text-[#F0EDE8] transition-colors"
+              className="md:hidden p-2 text-muted-foreground hover:text-foreground transition-colors diq-header-mobile-toggle-btn"
               aria-label="Toggle menu"
             >
               {isMobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
@@ -82,29 +105,50 @@ export default function Header() {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-[#2C2F38] py-5">
-            <nav className="flex flex-col gap-1">
-              {navItems.map((item) => (
-                <Link
-                  key={item.href}
-                  to={item.href}
-                  className={`text-sm font-medium py-3 px-2 transition-colors ${
-                    isActive(item.href)
-                      ? 'text-[#C79A4E]'
-                      : 'text-[#8A8D96] hover:text-[#F0EDE8]'
-                  }`}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {item.label}
-                </Link>
-              ))}
-              <div className="mt-4 px-2">
+          <div className="md:hidden border-t border-border py-5 diq-header-menu-mobile">
+            <nav className="flex flex-col gap-1 diq-header-nav-mobile">
+              {navItems.map((item) => {
+                const isReplays = item.href === '/replays';
+                const handleLinkClick = (e: MouseEvent) => {
+                  setIsMobileMenuOpen(false);
+                  if (isReplays && !isAuthenticated) {
+                    e.preventDefault();
+                    setShowAuthDialog(true);
+                  }
+                };
+
+                return (
+                  <Link
+                    key={item.href}
+                    to={item.href}
+                    className={`text-sm font-medium py-3 px-2 transition-colors diq-header-nav-link-mobile ${
+                      isActive(item.href)
+                        ? 'text-primary'
+                        : 'text-muted-foreground hover:text-foreground'
+                    }`}
+                    onClick={handleLinkClick}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
+              <div className="mt-4 px-2 diq-header-usernav-mobile">
                 <UserNav />
               </div>
             </nav>
           </div>
         )}
       </div>
+
+      <AuthDialog
+        isOpen={showAuthDialog}
+        onClose={() => setShowAuthDialog(false)}
+        onSuccess={() => {
+          setShowAuthDialog(false);
+          setIsAuthenticated(true);
+          navigate('/replays');
+        }}
+      />
     </header>
   );
 }

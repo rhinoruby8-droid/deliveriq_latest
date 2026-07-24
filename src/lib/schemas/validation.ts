@@ -9,6 +9,9 @@ export const RegisterSchema = z.object({
     .regex(/[a-zA-Z]/, { message: 'Password must contain at least one letter' })
     .regex(/[0-9]/, { message: 'Password must contain at least one number' })
     .regex(/[^a-zA-Z0-9]/, { message: 'Password must contain at least one special character' }),
+  jobTitle: z.string().optional(),
+  company: z.string().optional(),
+  country: z.string().optional(),
 });
 
 export const LoginSchema = z.object({

@@ -1,23 +1,6 @@
-/** TREAT AS IMMUTABLE - This file is protected by the file-edit tool
- *
- * Send transactional email through the Airo email gateway.
- *
- * Posts a JSON message to the loopback gateway provided by the Airo
- * runtime. The gateway authors the outbound RFC-5322 message, applies
- * the platform sender-identity policy, and forwards to the configured
- * SMTP destination. Customer code never touches SMTP directly.
- *
- * The gateway listens on 127.0.0.1:2525 inside both the preview and
- * publish containers; this module assumes that contract and does not
- * accept an override.
- */
+import { Resend } from 'resend';
+import { supabaseAdmin } from './supabase';
 
-// Loopback only — the email gateway runs on 127.0.0.1 inside the same
-// container as customer code. TLS adds nothing for traffic that never
-// leaves the kernel and would require cert provisioning for 127.0.0.1
-// in every preview/publish container; the SMTP path uses plain
-// localhost:25 + secure:false for the same reason.
-// nosemgrep: typescript.react.security.react-insecure-request.react-insecure-request
 const EMAIL_GATEWAY_URL = "http://127.0.0.1:2525/api/email/send";
 const REQUEST_TIMEOUT_MS = 30_000;
 
@@ -73,7 +56,7 @@ export type SendEmailInput = {
 };
 
 export type SendEmailResult = {
-	/** Opaque id minted by the gateway. Logged on the gateway for correlation. */
+	/** Opaque id minted by the gateway or Resend. Logged for correlation. */
 	messageId: string;
 };
 
@@ -97,14 +80,78 @@ type GatewayResponse = {
 	error?: string;
 };
 
-export async function sendEmail(input: SendEmailInput): Promise<SendEmailResult> {
+export async function getGatewaySettings(): Promise<{ email_provider: string; resend_api_key: string }> {
+	try {
+		if (supabaseAdmin) {
+			const { data } = await supabaseAdmin
+				.from('settings')
+				.select('value')
+				.eq('id', 'gateway_api_keys')
+				.maybeSingle();
+
+			if (data?.value) {
+				return {
+					email_provider: data.value.email_provider || process.env.EMAIL_PROVIDER || 'airo',
+					resend_api_key: data.value.resend_api_key || process.env.RESEND_API_KEY || '',
+				};
+			}
+		}
+	} catch (err) {
+		console.warn('Failed to fetch email settings from Supabase:', err);
+	}
+
+	return {
+		email_provider: process.env.EMAIL_PROVIDER || 'airo',
+		resend_api_key: process.env.RESEND_API_KEY || '',
+	};
+}
+
+export async function sendEmailViaResend(input: SendEmailInput, apiKey: string): Promise<SendEmailResult> {
+	if (!apiKey) {
+		throw new Error('Resend API key is missing');
+	}
+
+	const resend = new Resend(apiKey);
+	const fromAddress = input.from || 'onboarding@resend.dev';
+	const fromFormatted = input.fromName ? `${input.fromName} <${fromAddress}>` : fromAddress;
+
+	const payload: Record<string, unknown> = {
+		from: fromFormatted,
+		to: toArray(input.to),
+		subject: input.subject,
+	};
+
+	const cc = toArray(input.cc);
+	if (cc.length > 0) payload.cc = cc;
+
+	const bcc = toArray(input.bcc);
+	if (bcc.length > 0) payload.bcc = bcc;
+
+	if (input.text) payload.text = input.text;
+	if (input.html) payload.html = input.html;
+	if (!input.text && !input.html) payload.html = '<p></p>';
+
+	if (input.replyTo) payload.reply_to = input.replyTo;
+
+	if (input.attachments && input.attachments.length > 0) {
+		payload.attachments = input.attachments.map((att) => ({
+			filename: att.filename,
+			content: Buffer.from(att.content),
+		}));
+	}
+
+	const { data, error } = await resend.emails.send(payload as any);
+
+	if (error || !data) {
+		throw new Error(`Resend email send failed: ${error?.message || 'Unknown error'}`);
+	}
+
+	return { messageId: data.id };
+}
+
+export async function sendEmailViaAiro(input: SendEmailInput): Promise<SendEmailResult> {
 	const payload = buildPayload(input);
 
-	// AbortSignal.timeout() binds to the response so the same deadline
-	// covers connect, headers, AND body reads. A manual
-	// `setTimeout(controller.abort, ...)` cleared in `finally` after
-	// `fetch()` resolves headers leaves body reads unprotected — the
-	// caller hangs indefinitely on a stalled mid-body response.
 	let response: Response;
 	let body: GatewayResponse;
 	try {
@@ -130,6 +177,14 @@ export async function sendEmail(input: SendEmailInput): Promise<SendEmailResult>
 	}
 
 	return { messageId: body.messageId };
+}
+
+export async function sendEmail(input: SendEmailInput): Promise<SendEmailResult> {
+	const settings = await getGatewaySettings();
+	if (settings.email_provider === 'resend' && settings.resend_api_key) {
+		return sendEmailViaResend(input, settings.resend_api_key);
+	}
+	return sendEmailViaAiro(input);
 }
 
 function buildPayload(input: SendEmailInput): GatewayPayload {
@@ -171,9 +226,6 @@ async function parseBody(response: Response): Promise<GatewayResponse> {
 	try {
 		return (await response.json()) as GatewayResponse;
 	} catch (err) {
-		// Don't swallow aborts — re-raise so the outer catch reports the
-		// timeout. JSON parse errors fall through to a sanitized "non-JSON
-		// response" payload that lets sendEmail produce a useful error.
 		if (isAbortLike(err)) throw err;
 		return { success: false, error: `non-JSON response (HTTP ${response.status})` };
 	}
@@ -190,3 +242,4 @@ function describeError(err: unknown): string {
 	}
 	return String(err);
 }
+

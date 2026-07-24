@@ -2,6 +2,7 @@ import { Helmet } from '@dr.pogodin/react-helmet';
 import { useCmsContent, FALLBACK_CMS_CONTENT } from '@/lib/cms-client';
 import { PageHtmlRenderer } from '@/components/PageHtmlRenderer';
 import { SessionsList } from '@/components/SessionsList';
+import { TopicsList } from '@/components/TopicsList';
 
 export default function SessionsPage() {
   const { data: cms = FALLBACK_CMS_CONTENT } = useCmsContent();
@@ -24,7 +25,8 @@ export default function SessionsPage() {
   };
 
   const widgets = {
-    SessionsList: <SessionsList />
+    SessionsList: <SessionsList />,
+    TopicsList: <TopicsList />
   };
 
   return (

@@ -13,6 +13,7 @@ import Spinner from './components/Spinner';
 import { routes } from './routes';
 import { trackPageView } from './lib/analytics';
 import InboxChatWidget from './components/InboxChatWidget';
+import { ThemeProvider } from '@/components/ThemeProvider';
 
 const CookieBanner = lazy(() =>
   import('@/components/CookieBanner').catch((error) => {
@@ -68,7 +69,7 @@ export default function App() {
   const isEmbed = typeof window !== 'undefined' && window.location.pathname.startsWith('/embed/');
 
   return (
-    <>
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <RouterProvider router={router} />
       {/*
         CookieBanner reads document.cookie and subscribes to browser events.
@@ -85,6 +86,6 @@ export default function App() {
           <InboxChatWidget />
         </>
       )}
-    </>
+    </ThemeProvider>
   );
 }

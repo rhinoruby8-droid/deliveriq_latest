@@ -15,6 +15,7 @@ vi.mock('./supabase', () => {
 import cms_get from './api/cms/GET';
 import cms_post from './api/cms/POST';
 import cms_login_post from './api/cms/login/POST';
+import { requireRole, generateToken } from './auth';
 
 async function withServer<T>(
   app: express.Express,
@@ -44,7 +45,7 @@ describe('CMS API endpoints', () => {
   const app = express();
   app.use(express.json());
   app.get('/api/cms/content', cms_get);
-  app.post('/api/cms/content', cms_post);
+  app.post('/api/cms/content', requireRole(['admin']) as any, cms_post);
   app.post('/api/cms/login', cms_login_post);
 
   const mockFrom = (globalThis as any)._mockFrom;
@@ -135,8 +136,7 @@ describe('CMS API endpoints', () => {
   });
 
   it('POST /api/cms/content accepts valid auth token and updates contents', async () => {
-    const exp = Date.now() + 1000 * 60 * 60;
-    const mockToken = Buffer.from(JSON.stringify({ role: 'admin', exp })).toString('base64');
+    const mockToken = generateToken({ role: 'admin', id: 'admin-id' }, 1000 * 60 * 60);
 
     const updatePayload = {
       speakers: [{ id: 'sp1', name: 'Speaker 1', role: 'Role', organisation: 'Org', bio: 'Bio', avatarUrl: 'url', email: 'email', socialUrl: 'social' }],

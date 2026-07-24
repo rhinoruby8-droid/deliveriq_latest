@@ -56,20 +56,26 @@ export default async function handler(req: Request, res: Response) {
         websiteUrl: s.website_url,
         tier: s.tier
       })),
-      sessions: sessionsRes.data.map((s: any) => ({
-        id: s.id,
-        title: s.title,
-        description: s.description,
-        tag: s.tag,
-        date: s.date,
-        time: s.time,
-        duration: s.duration,
-        status: s.status,
-        speakerIds: s.speaker_ids || [],
-        sponsorIds: s.sponsor_ids || [],
-        registrationUrl: s.registration_url,
-        videoUrl: s.video_url
-      })),
+      sessions: sessionsRes.data.map((s: any) => {
+        const pricingSetting = settingsRes.data.find((st: any) => st.id === 'session_pricing');
+        const pricing = pricingSetting?.value?.[s.id] || {};
+        return {
+          id: s.id,
+          title: s.title,
+          description: s.description,
+          tag: s.tag,
+          date: s.date,
+          time: s.time,
+          duration: s.duration,
+          status: s.status,
+          speakerIds: s.speaker_ids || [],
+          sponsorIds: s.sponsor_ids || [],
+          registrationUrl: s.registration_url,
+          videoUrl: s.video_url,
+          price: pricing.price !== undefined ? pricing.price : 0,
+          isFree: pricing.isFree !== undefined ? pricing.isFree : false
+        };
+      }),
       forms: formsRes.data.map((f: any) => ({
         id: f.id,
         name: f.name,
@@ -128,6 +134,20 @@ export default async function handler(req: Request, res: Response) {
       }
     });
 
+    // Strip legacy "Practical AI skills" heading if it remains in the DB
+    if (data.sessionsPageHtml) {
+      data.sessionsPageHtml = data.sessionsPageHtml.replace(
+        /<h2[^>]*>[\s\n]*Practical AI skills across three disciplines.[\s\n]*<\/h2>/g,
+        ''
+      );
+    }
+    if (data.homepageHtml) {
+      data.homepageHtml = data.homepageHtml.replace(
+        /<h2[^>]*>[\s\n]*Practical AI skills across three disciplines.[\s\n]*<\/h2>/g,
+        ''
+      );
+    }
+
     const paymentConfigSetting = settingsRes.data.find((s: any) => s.id === 'payment_config');
     if (paymentConfigSetting) {
       data.paymentConfig = paymentConfigSetting.value;
@@ -139,6 +159,12 @@ export default async function handler(req: Request, res: Response) {
     } else {
       data.globalCss = '';
     }
+
+    const couponsSetting = settingsRes.data.find((s: any) => s.id === 'coupons');
+    data.coupons = couponsSetting ? couponsSetting.value : [];
+
+    const topicsSetting = settingsRes.data.find((s: any) => s.id === 'topics');
+    data.topics = topicsSetting ? topicsSetting.value : [];
 
     // Store in cache for future requests
     const cacheModule = await import('./cache');

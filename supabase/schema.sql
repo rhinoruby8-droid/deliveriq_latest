@@ -71,5 +71,8 @@ create table if not exists users (
   registered_session_ids text[] default '{}',
   minutes_attended integer default 0,
   hours_watched numeric default 0,
+  subscription_tier text default 'free',
+  subscription_expires_at timestamp with time zone,
+  session_access jsonb default '{}'::jsonb,
   created_at timestamp with time zone default timezone('utc'::text, now())
 );
