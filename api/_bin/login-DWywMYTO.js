@@ -1,0 +1,296 @@
+import { createRequire } from "module";
+const require2 = createRequire(import.meta.url);
+import { d as distExports, r as reactExports, j as jsxRuntimeExports, H as Helmet, T as TriangleAlert, M as Mail, a as ArrowRight, U as User, L as Lock, s as setUserToken, b as trackEvent } from "./entry-server-QtrLgn1N.js";
+import { E as EyeOff } from "./eye-off-F2UAHZ2w.js";
+import { E as Eye } from "./eye-dU3O6D7j.js";
+import "../index.js";
+import "tty";
+import "util";
+import "os";
+import "path";
+import "buffer";
+import "string_decoder";
+import "node:zlib";
+import "node:events";
+import "url";
+import "node:path";
+import "node:fs";
+import "node:http";
+import "crypto";
+import "fs";
+import "node:querystring";
+import "node:buffer";
+import "node:net";
+import "stream";
+import "node:url";
+import "net";
+import "http";
+import "zlib";
+import "events";
+import "https";
+import "node:crypto";
+import "tls";
+import "assert";
+import "http2";
+import "async_hooks";
+function Login() {
+  const navigate = distExports.useNavigate();
+  const location = distExports.useLocation();
+  const [isLogin, setIsLogin] = reactExports.useState(location.pathname !== "/signup");
+  const [isForgotPassword, setIsForgotPassword] = reactExports.useState(false);
+  const [resetSuccess, setResetSuccess] = reactExports.useState(null);
+  const [email, setEmail] = reactExports.useState("");
+  const [password, setPassword] = reactExports.useState("");
+  const [name, setName] = reactExports.useState("");
+  const [showPassword, setShowPassword] = reactExports.useState(false);
+  const [error, setError] = reactExports.useState(null);
+  const [isLoading, setIsLoading] = reactExports.useState(false);
+  reactExports.useState(() => {
+    setIsLogin(location.pathname !== "/signup");
+  });
+  reactExports.useEffect(() => {
+    setIsLogin(location.pathname !== "/signup");
+    setIsForgotPassword(false);
+    setResetSuccess(null);
+    setError(null);
+  }, [location.pathname]);
+  const handleForgotPasswordSubmit = async (e) => {
+    e.preventDefault();
+    setError(null);
+    setResetSuccess(null);
+    setIsLoading(true);
+    try {
+      const res = await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "An error occurred. Please try again.");
+      }
+      setResetSuccess(`A password reset link has been sent to ${email}.`);
+    } catch (err) {
+      setError(err.message || "An error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  const handleSubmit = async (e) => {
+    var _a, _b, _c;
+    e.preventDefault();
+    setError(null);
+    setIsLoading(true);
+    try {
+      const endpoint = isLogin ? "/api/auth/login" : "/api/auth/register";
+      const body = isLogin ? { email, password } : { email, name, password };
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Authentication failed");
+      if (data.token) {
+        setUserToken(data.token);
+        trackEvent("auth", { action: isLogin ? "login" : "register", status: "success" });
+        const defaultRoute = ((_a = data.user) == null ? void 0 : _a.role) === "admin" ? "/admin" : "/dashboard";
+        const from = ((_c = (_b = location.state) == null ? void 0 : _b.from) == null ? void 0 : _c.pathname) || defaultRoute;
+        navigate(from, { replace: true });
+      }
+    } catch (err) {
+      setError(err.message || "An unexpected error occurred");
+      trackEvent("auth", { action: isLogin ? "login_error" : "register_error", error: err.message });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  const inputBase = {
+    width: "100%",
+    height: "3rem",
+    backgroundColor: "#14161B",
+    color: "#F0EDE8",
+    border: "1.5px solid #2C2F38",
+    borderRadius: "10px",
+    paddingLeft: "2.75rem",
+    paddingRight: "1rem",
+    fontSize: "0.9rem",
+    outline: "none",
+    boxSizing: "border-box",
+    transition: "border-color 0.2s ease, box-shadow 0.2s ease"
+  };
+  const handleFocus = (e) => {
+    e.target.style.borderColor = "#C79A4E";
+    e.target.style.boxShadow = "0 0 0 2px rgba(199,154,78,0.2)";
+  };
+  const handleBlur = (e) => {
+    e.target.style.borderColor = "#2C2F38";
+    e.target.style.boxShadow = "none";
+  };
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { style: { minHeight: "100vh", backgroundColor: "#1A1D24", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "3rem 1.5rem" }, children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx(Helmet, { children: /* @__PURE__ */ jsxRuntimeExports.jsx("title", { children: isForgotPassword ? "Reset Password | DeliverIQ" : isLogin ? "Sign In | DeliverIQ" : "Create Account | DeliverIQ" }) }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { style: { marginBottom: "2rem", textAlign: "center" }, children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { style: { fontSize: "0.65rem", fontWeight: 800, letterSpacing: "0.3em", color: "#C79A4E", textTransform: "uppercase", display: "block", marginBottom: "0.75rem" }, children: "DeliverIQ" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { style: { fontSize: "1.75rem", fontWeight: 800, color: "#F0EDE8", margin: 0 }, children: isForgotPassword ? "Reset your password" : isLogin ? "Sign in to your account" : "Create your account" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { style: { fontSize: "0.875rem", color: "#8A8D96", marginTop: "0.5rem" }, children: isForgotPassword ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "button",
+        {
+          type: "button",
+          onClick: () => setIsForgotPassword(false),
+          style: { color: "#C79A4E", fontWeight: 600, background: "none", border: "none", cursor: "pointer", padding: 0, fontSize: "inherit" },
+          children: "Back to sign in"
+        }
+      ) : /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
+        isLogin ? "Or " : "Already have an account? ",
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "button",
+          {
+            type: "button",
+            onClick: () => setIsLogin(!isLogin),
+            style: { color: "#C79A4E", fontWeight: 600, background: "none", border: "none", cursor: "pointer", padding: 0, fontSize: "inherit" },
+            children: isLogin ? "create a new account" : "sign in instead"
+          }
+        )
+      ] }) })
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { style: { width: "100%", maxWidth: "28rem", backgroundColor: "#21242C", border: "1px solid #2C2F38", borderRadius: "1.25rem", padding: "2.5rem", boxShadow: "0 25px 50px -12px rgba(0,0,0,0.6)" }, children: [
+      error && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { style: { marginBottom: "1.5rem", backgroundColor: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: "0.625rem", padding: "0.875rem 1rem", display: "flex", alignItems: "flex-start", gap: "0.75rem" }, children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(TriangleAlert, { size: 16, color: "#f87171", style: { flexShrink: 0, marginTop: "2px" } }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { style: { fontSize: "0.875rem", color: "#fca5a5" }, children: error })
+      ] }),
+      resetSuccess && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { style: { marginBottom: "1.5rem", backgroundColor: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.3)", borderRadius: "0.625rem", padding: "0.875rem 1rem" }, children: /* @__PURE__ */ jsxRuntimeExports.jsx("span", { style: { fontSize: "0.875rem", color: "#86efac" }, children: resetSuccess }) }),
+      isForgotPassword ? /* @__PURE__ */ jsxRuntimeExports.jsxs("form", { onSubmit: handleForgotPasswordSubmit, style: { display: "flex", flexDirection: "column", gap: "1.25rem" }, children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("label", { style: { display: "block", fontSize: "0.75rem", fontWeight: 700, color: "#8A8D96", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "0.5rem" }, children: "Email Address" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { style: { position: "relative" }, children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Mail, { size: 16, color: "#8A8D96", style: { position: "absolute", left: "0.875rem", top: "50%", transform: "translateY(-50%)", pointerEvents: "none" } }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "input",
+              {
+                id: "email",
+                type: "email",
+                required: true,
+                value: email,
+                onChange: (e) => setEmail(e.target.value),
+                placeholder: "jane@company.com",
+                style: inputBase,
+                onFocus: handleFocus,
+                onBlur: handleBlur
+              }
+            )
+          ] })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "button",
+          {
+            type: "submit",
+            disabled: isLoading,
+            style: { width: "100%", height: "3.25rem", backgroundColor: "#C79A4E", color: "#1A1D24", fontWeight: 700, fontSize: "1rem", borderRadius: "9999px", border: "none", cursor: isLoading ? "not-allowed" : "pointer", opacity: isLoading ? 0.7 : 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", marginTop: "0.25rem", boxShadow: "0 4px 20px rgba(199,154,78,0.25)" },
+            children: [
+              isLoading ? "Please wait..." : "Send Reset Link",
+              !isLoading && /* @__PURE__ */ jsxRuntimeExports.jsx(ArrowRight, { size: 18 })
+            ]
+          }
+        )
+      ] }) : /* @__PURE__ */ jsxRuntimeExports.jsxs("form", { onSubmit: handleSubmit, style: { display: "flex", flexDirection: "column", gap: "1.25rem" }, children: [
+        !isLogin && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("label", { style: { display: "block", fontSize: "0.75rem", fontWeight: 700, color: "#8A8D96", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "0.5rem" }, children: "Full Name" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { style: { position: "relative" }, children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(User, { size: 16, color: "#8A8D96", style: { position: "absolute", left: "0.875rem", top: "50%", transform: "translateY(-50%)", pointerEvents: "none" } }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "input",
+              {
+                id: "name",
+                type: "text",
+                required: true,
+                value: name,
+                onChange: (e) => setName(e.target.value),
+                placeholder: "Jane Doe",
+                style: inputBase,
+                onFocus: handleFocus,
+                onBlur: handleBlur
+              }
+            )
+          ] })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("label", { style: { display: "block", fontSize: "0.75rem", fontWeight: 700, color: "#8A8D96", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "0.5rem" }, children: "Email Address" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { style: { position: "relative" }, children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Mail, { size: 16, color: "#8A8D96", style: { position: "absolute", left: "0.875rem", top: "50%", transform: "translateY(-50%)", pointerEvents: "none" } }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "input",
+              {
+                id: "email",
+                type: "email",
+                autoComplete: "email",
+                required: true,
+                value: email,
+                onChange: (e) => setEmail(e.target.value),
+                placeholder: "jane@company.com",
+                style: inputBase,
+                onFocus: handleFocus,
+                onBlur: handleBlur
+              }
+            )
+          ] })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }, children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("label", { style: { display: "block", fontSize: "0.75rem", fontWeight: 700, color: "#8A8D96", letterSpacing: "0.08em", textTransform: "uppercase", margin: 0 }, children: "Password" }),
+            isLogin && /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "button",
+              {
+                type: "button",
+                onClick: () => setIsForgotPassword(true),
+                style: { color: "#C79A4E", fontWeight: 600, background: "none", border: "none", cursor: "pointer", padding: 0, fontSize: "0.75rem" },
+                children: "Forgot password?"
+              }
+            )
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { style: { position: "relative" }, children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Lock, { size: 16, color: "#8A8D96", style: { position: "absolute", left: "0.875rem", top: "50%", transform: "translateY(-50%)", pointerEvents: "none" } }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "input",
+              {
+                id: "password",
+                type: showPassword ? "text" : "password",
+                autoComplete: isLogin ? "current-password" : "new-password",
+                required: true,
+                value: password,
+                onChange: (e) => setPassword(e.target.value),
+                placeholder: "��������",
+                style: { ...inputBase, paddingRight: "2.75rem" },
+                onFocus: handleFocus,
+                onBlur: handleBlur
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "button",
+              {
+                type: "button",
+                onClick: () => setShowPassword(!showPassword),
+                style: { position: "absolute", right: "0.875rem", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "#8A8D96", padding: 0, display: "flex", alignItems: "center" },
+                children: showPassword ? /* @__PURE__ */ jsxRuntimeExports.jsx(EyeOff, { size: 16 }) : /* @__PURE__ */ jsxRuntimeExports.jsx(Eye, { size: 16 })
+              }
+            )
+          ] })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "button",
+          {
+            type: "submit",
+            disabled: isLoading,
+            style: { width: "100%", height: "3.25rem", backgroundColor: "#C79A4E", color: "#1A1D24", fontWeight: 700, fontSize: "1rem", borderRadius: "9999px", border: "none", cursor: isLoading ? "not-allowed" : "pointer", opacity: isLoading ? 0.7 : 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", marginTop: "0.25rem", boxShadow: "0 4px 20px rgba(199,154,78,0.25)" },
+            children: [
+              isLoading ? "Please wait..." : isLogin ? "Sign in" : "Create account",
+              !isLoading && /* @__PURE__ */ jsxRuntimeExports.jsx(ArrowRight, { size: 18 })
+            ]
+          }
+        )
+      ] })
+    ] })
+  ] });
+}
+export {
+  Login as default
+};
