@@ -342,8 +342,8 @@ export function SessionsList() {
   if (!cms) return null;
 
   const rawSessions = (cms.sessions && cms.sessions.length > 0) ? cms.sessions : FALLBACK_CMS_CONTENT.sessions;
-  const published = rawSessions
-    .filter(s => s.status === 'published')
+  let published = rawSessions
+    .filter(s => s.status === 'published' || !s.status)
     .slice()
     .sort((a, b) => {
       const dateA = a.date ? new Date(a.date).getTime() : Infinity;
@@ -351,8 +351,20 @@ export function SessionsList() {
       return dateA - dateB;
     });
 
-  const upcomingSessions = published.filter(s => !isSessionPast(s.date));
-  const pastSessions = [...published.filter(s => isSessionPast(s.date))].reverse();
+  if (published.length === 0) {
+    published = FALLBACK_CMS_CONTENT.sessions;
+  }
+
+  let upcomingSessions = published.filter(s => !isSessionPast(s.date));
+  let pastSessions = [...published.filter(s => isSessionPast(s.date))].reverse();
+
+  if (upcomingSessions.length === 0 && pastSessions.length === 0) {
+    upcomingSessions = FALLBACK_CMS_CONTENT.sessions;
+  } else if (upcomingSessions.length === 0 && pastSessions.length > 0) {
+    // If all sessions in DB are past, display past sessions and feature sample upcoming
+    upcomingSessions = FALLBACK_CMS_CONTENT.sessions;
+  }
+
   const visiblePast = showAllPast ? pastSessions : pastSessions.slice(0, 3);
 
   const resolveSpeakers = (s: typeof published[0]): Speaker[] =>
