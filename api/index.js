@@ -56118,7 +56118,7 @@ async function handler$s(req, res) {
       }
     }
     if (couponCode) {
-      const { validateCoupon } = await import("./bin/coupon-updater-D-ZJx27M.js");
+      const { validateCoupon } = await import("./_bin/coupon-updater-D-ZJx27M.js");
       const validation = await validateCoupon(couponCode, sessionId);
       if (!validation.valid) {
         return res.status(400).json({ error: validation.error || "Invalid coupon code" });
@@ -56295,7 +56295,7 @@ async function handler$r(req, res) {
               const { data: userProfile } = await supabaseAdmin2.from("users").select("email, name").eq("id", userId).maybeSingle();
               const userEmail = ((_i = session.customer_details) == null ? void 0 : _i.email) || (userProfile == null ? void 0 : userProfile.email) || "";
               const userName = ((_j = session.customer_details) == null ? void 0 : _j.name) || (userProfile == null ? void 0 : userProfile.name) || userEmail.split("@")[0];
-              const { logPurchase } = await import("./bin/purchases-logger-CDz3oQol.js");
+              const { logPurchase } = await import("./_bin/purchases-logger-CDz3oQol.js");
               await logPurchase({
                 id: session.id,
                 userId,
@@ -56310,7 +56310,7 @@ async function handler$r(req, res) {
               });
               const couponCode = (_m = session.metadata) == null ? void 0 : _m.couponCode;
               if (couponCode) {
-                const { incrementCouponUses } = await import("./bin/coupon-updater-D-ZJx27M.js");
+                const { incrementCouponUses } = await import("./_bin/coupon-updater-D-ZJx27M.js");
                 await incrementCouponUses(couponCode);
               }
             } catch (err) {
@@ -61119,7 +61119,7 @@ function parseEmailToApiOptions(email) {
 async function render(node2) {
   let render2;
   try {
-    ({ render: render2 } = await import("./bin/render_resend-C1rvGvCj.js"));
+    ({ render: render2 } = await import("./_bin/render_resend-C1rvGvCj.js"));
   } catch {
     throw new Error("Failed to render React component. Make sure to install `@react-email/render` or `@react-email/components`.");
   }
@@ -78727,7 +78727,7 @@ async function handler$c(req, res) {
       }
     }
     if (couponCode) {
-      const { validateCoupon } = await import("./bin/coupon-updater-D-ZJx27M.js");
+      const { validateCoupon } = await import("./_bin/coupon-updater-D-ZJx27M.js");
       const validation = await validateCoupon(couponCode, sessionId);
       if (!validation.valid) {
         return res.status(400).json({ error: validation.error || "Invalid coupon code" });
@@ -78756,7 +78756,7 @@ async function handler$c(req, res) {
           userName = userProfile.name;
         }
       }
-      const { logPurchase } = await import("./bin/purchases-logger-CDz3oQol.js");
+      const { logPurchase } = await import("./_bin/purchases-logger-CDz3oQol.js");
       await logPurchase({
         id: order.id,
         userId: userId || "",
@@ -78890,7 +78890,7 @@ async function handler$b(req, res) {
               amount = pricing.price || sessionData.price || 49.99;
             }
           }
-          const { logPurchase } = await import("./bin/purchases-logger-CDz3oQol.js");
+          const { logPurchase } = await import("./_bin/purchases-logger-CDz3oQol.js");
           await logPurchase({
             id: razorpay_payment_id,
             userId,
@@ -78904,7 +78904,7 @@ async function handler$b(req, res) {
             status: "completed"
           }, razorpay_order_id);
           if (couponCode) {
-            const { incrementCouponUses } = await import("./bin/coupon-updater-D-ZJx27M.js");
+            const { incrementCouponUses } = await import("./_bin/coupon-updater-D-ZJx27M.js");
             await incrementCouponUses(couponCode);
           }
         }
@@ -79619,7 +79619,7 @@ if (process.env.NODE_ENV !== "development") {
     process.exit(1);
   }, SSR_MODULE_LOAD_TIMEOUT_MS);
   loadTimeout.unref();
-  import("./bin/entry-server-GmC-mm2M.js").then((n) => n.af).then(
+  import("./_bin/entry-server-GmC-mm2M.js").then((n) => n.af).then(
     (mod) => {
       clearTimeout(loadTimeout);
       renderFn = mod.render;

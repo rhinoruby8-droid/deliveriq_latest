@@ -2,7 +2,7 @@
   "version": 2,
   "functions": {
     "api/index.js": {
-      "includeFiles": "{dist/**,api/shell.html,api/bin/**}"
+      "includeFiles": "{dist/**,api/shell.html,api/_bin/**}"
     }
   },
   "rewrites": [

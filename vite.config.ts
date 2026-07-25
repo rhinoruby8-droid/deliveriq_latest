@@ -133,7 +133,7 @@ export default defineConfig(({ mode, isSsrBuild }) => ({
 					output: {
 						format: "es",
 						entryFileNames: "index.js",
-						chunkFileNames: "bin/[name]-[hash].js",
+						chunkFileNames: "_bin/[name]-[hash].js",
 						banner: "import { createRequire } from 'module';\nconst require = createRequire(import.meta.url);",
 					},
 				},
