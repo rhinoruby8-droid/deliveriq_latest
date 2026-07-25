@@ -10,7 +10,7 @@
     "build": "vite build",
     "build:server": "cross-env NODE_ENV=production VITE_SSR_BUILD=true vite build --mode production --ssr src/server/entry.ts && node -e \"require('fs').copyFileSync('dist/index.html', 'api/shell.html')\"",
     "build:all": "cross-env NODE_ENV=production vite build && npm run build:server",
-    "start": "node serve.mjs",
+    "start": "node api/index.js",
     "preview": "vite preview",
     "test": "vitest",
     "test:ui": "vitest --ui",
