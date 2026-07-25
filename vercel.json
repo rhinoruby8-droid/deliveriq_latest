@@ -1,14 +1,13 @@
 {
   "version": 2,
-  "functions": {
-    "api/index.js": {
-      "includeFiles": "{dist/**,api/shell.html,api/_bin/**}"
-    }
-  },
   "rewrites": [
     {
+      "source": "/api/:path*",
+      "destination": "https://deliveriq-api.onrender.com/api/:path*"
+    },
+    {
       "source": "/:path*",
-      "destination": "/api/index.js"
+      "destination": "/index.html"
     }
   ]
 }
