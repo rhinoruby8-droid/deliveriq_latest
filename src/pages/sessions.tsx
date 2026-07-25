@@ -47,6 +47,13 @@ export default function SessionsPage() {
 
       <main>
         <PageHtmlRenderer html={htmlContent} widgets={widgets} />
+        {!htmlContent?.includes('[SessionsList]') && (
+          <section className="py-16 bg-background">
+            <div className="container mx-auto px-6 lg:px-8">
+              <SessionsList />
+            </div>
+          </section>
+        )}
       </main>
     </>
   );
