@@ -1406,6 +1406,18 @@ export function useCmsContent() {
         if (!data.forms || data.forms.length === 0) {
           data.forms = FALLBACK_CMS_CONTENT.forms;
         }
+        if (!data.sessions || data.sessions.length === 0) {
+          data.sessions = FALLBACK_CMS_CONTENT.sessions;
+        }
+        if (!data.speakers || data.speakers.length === 0) {
+          data.speakers = FALLBACK_CMS_CONTENT.speakers;
+        }
+        if (!data.sponsors || data.sponsors.length === 0) {
+          data.sponsors = FALLBACK_CMS_CONTENT.sponsors;
+        }
+        if (!data.topics || data.topics.length === 0) {
+          data.topics = FALLBACK_CMS_CONTENT.topics;
+        }
         return data;
       } catch (err) {
         console.error('API failed, returning fallback CMS content:', err);

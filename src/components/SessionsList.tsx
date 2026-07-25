@@ -341,7 +341,8 @@ export function SessionsList() {
 
   if (!cms) return null;
 
-  const published = cms.sessions
+  const rawSessions = (cms.sessions && cms.sessions.length > 0) ? cms.sessions : FALLBACK_CMS_CONTENT.sessions;
+  const published = rawSessions
     .filter(s => s.status === 'published')
     .slice()
     .sort((a, b) => {
