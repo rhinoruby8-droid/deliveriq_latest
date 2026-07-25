@@ -2,7 +2,7 @@ import { Calendar, Clock, ArrowRight, PlayCircle, ChevronDown, X, Tag, Users, Gl
 import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
 import type { Session, Speaker, Sponsor } from '@/lib/cms-client';
-import { useCmsContent } from '@/lib/cms-client';
+import { useCmsContent, FALLBACK_CMS_CONTENT } from '@/lib/cms-client';
 import { getUserToken } from '@/lib/user-auth';
 import AuthDialog from './AuthDialog';
 import SpeakerDialog from './SpeakerDialog';
