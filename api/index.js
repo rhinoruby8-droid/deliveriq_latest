@@ -61119,7 +61119,7 @@ function parseEmailToApiOptions(email) {
 async function render(node2) {
   let render2;
   try {
-    ({ render: render2 } = await import("./_bin/render_resend-C1rvGvCj.js"));
+    ({ render: render2 } = await import("./_bin/render_resend-CweP_SE4.js"));
   } catch {
     throw new Error("Failed to render React component. Make sure to install `@react-email/render` or `@react-email/components`.");
   }
@@ -79619,7 +79619,7 @@ if (process.env.NODE_ENV !== "development") {
     process.exit(1);
   }, SSR_MODULE_LOAD_TIMEOUT_MS);
   loadTimeout.unref();
-  import("./_bin/entry-server-GmC-mm2M.js").then((n) => n.af).then(
+  import("./_bin/entry-server-CO9Km2vr.js").then((n) => n.ae).then(
     (mod) => {
       clearTimeout(loadTimeout);
       renderFn = mod.render;
