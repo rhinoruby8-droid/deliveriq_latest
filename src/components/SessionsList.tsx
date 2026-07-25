@@ -341,8 +341,21 @@ export function SessionsList() {
 
   if (!cms) return null;
 
-  const rawSessions = (cms.sessions && cms.sessions.length > 0) ? cms.sessions : FALLBACK_CMS_CONTENT.sessions;
-  let published = rawSessions
+  // Merge fallback content with DB content so both sample sessions and custom admin sessions render together
+  const allSessionsMap = new Map<string, Session>();
+  (FALLBACK_CMS_CONTENT.sessions || []).forEach(s => allSessionsMap.set(s.id, s));
+  (cms.sessions || []).forEach(s => allSessionsMap.set(s.id, s));
+
+  const allSpeakersMap = new Map<string, Speaker>();
+  (FALLBACK_CMS_CONTENT.speakers || []).forEach(sp => allSpeakersMap.set(sp.id, sp));
+  (cms.speakers || []).forEach(sp => allSpeakersMap.set(sp.id, sp));
+
+  const allSponsorsMap = new Map<string, Sponsor>();
+  (FALLBACK_CMS_CONTENT.sponsors || []).forEach(sp => allSponsorsMap.set(sp.id, sp));
+  (cms.sponsors || []).forEach(sp => allSponsorsMap.set(sp.id, sp));
+
+  const rawSessions = Array.from(allSessionsMap.values());
+  const published = rawSessions
     .filter(s => s.status === 'published' || !s.status)
     .slice()
     .sort((a, b) => {
@@ -351,26 +364,17 @@ export function SessionsList() {
       return dateA - dateB;
     });
 
-  if (published.length === 0) {
-    published = FALLBACK_CMS_CONTENT.sessions;
-  }
-
-  let upcomingSessions = published.filter(s => !isSessionPast(s.date));
-  let pastSessions = [...published.filter(s => isSessionPast(s.date))].reverse();
-
-  if (upcomingSessions.length === 0 && pastSessions.length === 0) {
-    upcomingSessions = FALLBACK_CMS_CONTENT.sessions;
-  } else if (upcomingSessions.length === 0 && pastSessions.length > 0) {
-    // If all sessions in DB are past, display past sessions and feature sample upcoming
-    upcomingSessions = FALLBACK_CMS_CONTENT.sessions;
-  }
-
+  const upcomingSessions = published.filter(s => !isSessionPast(s.date));
+  const pastSessions = [...published.filter(s => isSessionPast(s.date))].reverse();
   const visiblePast = showAllPast ? pastSessions : pastSessions.slice(0, 3);
 
-  const resolveSpeakers = (s: typeof published[0]): Speaker[] =>
-    (cms.speakers || []).filter(sp => (s.speakerIds || []).includes(sp.id));
-  const resolveSponsors = (s: typeof published[0]): Sponsor[] =>
-    (cms.sponsors || []).filter(sp => (s.sponsorIds || []).includes(sp.id));
+  const allSpeakers = Array.from(allSpeakersMap.values());
+  const allSponsors = Array.from(allSponsorsMap.values());
+
+  const resolveSpeakers = (s: Session): Speaker[] =>
+    allSpeakers.filter(sp => (s.speakerIds || []).includes(sp.id));
+  const resolveSponsors = (s: Session): Sponsor[] =>
+    allSponsors.filter(sp => (s.sponsorIds || []).includes(sp.id));
 
   const modalSession = activeModal ? published.find(s => s.id === activeModal) ?? null : null;
 
