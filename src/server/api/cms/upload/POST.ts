@@ -22,12 +22,24 @@ export default async function uploadHandler(req: Request, res: Response) {
     // Try Supabase Storage first
     try {
       if (supabaseAdmin) {
-        const { error } = await supabaseAdmin.storage
+        let { error } = await supabaseAdmin.storage
           .from('deliveriq-assets')
           .upload(path, buffer, {
             contentType,
-            upsert: false,
+            upsert: true,
           });
+
+        if (error && (error.message?.toLowerCase().includes('not found') || error.message?.toLowerCase().includes('bucket'))) {
+          console.log('Attempting auto-creation of public bucket "deliveriq-assets"...');
+          await supabaseAdmin.storage.createBucket('deliveriq-assets', { public: true });
+          const retry = await supabaseAdmin.storage
+            .from('deliveriq-assets')
+            .upload(path, buffer, {
+              contentType,
+              upsert: true,
+            });
+          error = retry.error;
+        }
 
         if (!error) {
           const { data: publicUrlData } = supabaseAdmin.storage
