@@ -1,4 +1,4 @@
-import { Globe, Calendar, Clock, Linkedin, X } from 'lucide-react';
+import { Globe, Calendar, Clock, Linkedin, X, User } from 'lucide-react';
 import type { Speaker } from '@/lib/cms-client';
 import { useCmsContent } from '@/lib/cms-client';
 import { Link } from 'react-router-dom';

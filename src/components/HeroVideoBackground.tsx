@@ -1,6 +1,5 @@
 import { useCmsContent } from '@/lib/cms-client';
-import { useEffect, useRef, useState } from 'react';
-import { Play } from 'lucide-react';
+import { useEffect, useRef } from 'react';
 
 interface HeroVideoBackgroundProps {
   videoSrc?: string;
@@ -11,7 +10,6 @@ export function HeroVideoBackground({ videoSrc, pageKey }: HeroVideoBackgroundPr
   const { data: cms } = useCmsContent();
   const config = cms?.heroBannerConfig;
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [isAutoplayBlocked, setIsAutoplayBlocked] = useState(false);
   
   const resolvedSrc = videoSrc 
     || (pageKey && config?.pages?.[pageKey]?.videoUrl)
