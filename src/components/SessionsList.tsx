@@ -1,9 +1,9 @@
-import { Calendar, Clock, ArrowRight, PlayCircle, ChevronDown, X, Tag, Users, Globe } from 'lucide-react';
+import { Calendar, Clock, ArrowRight, PlayCircle, ChevronDown, X, Tag, Users, Globe, User } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
 import type { Session, Speaker, Sponsor } from '@/lib/cms-client';
 import { useCmsContent, FALLBACK_CMS_CONTENT } from '@/lib/cms-client';
-import { getUserToken } from '@/lib/user-auth';
+import { getUserToken, useUserProfile } from '@/lib/user-auth';
 import AuthDialog from './AuthDialog';
 import SpeakerDialog from './SpeakerDialog';
 
@@ -19,9 +19,10 @@ function isSessionPast(dateStr: string): boolean {
 }
 
 // ── Session Detail Modal (ARIA-compliant) ─────────────────────────────────
-function SessionModal({ session, speakers, sponsors, isPast, onClose, onWatchReplay, onSpeakerClick }: {
-  session: Session; speakers: Speaker[]; sponsors: Sponsor[]; isPast: boolean; onClose: () => void;
+function SessionModal({ session, speakers, sponsors, isPast, currency, onClose, onWatchReplay, onSpeakerClick, hasAccess }: {
+  session: Session; speakers: Speaker[]; sponsors: Sponsor[]; isPast: boolean; currency: string; onClose: () => void;
   onWatchReplay: (sessionId: string) => void; onSpeakerClick: (speaker: Speaker) => void;
+  hasAccess: boolean;
 }) {
   const navigate = useNavigate();
   const titleId = `session-modal-title-${session.id}`;
@@ -102,14 +103,18 @@ function SessionModal({ session, speakers, sponsors, isPast, onClose, onWatchRep
                     onClick={(e) => { e.stopPropagation(); onSpeakerClick(sp); }}
                     className="flex items-start gap-3 bg-background border border-border hover:border-primary/30 rounded-sm p-3 text-left w-full cursor-pointer transition-colors"
                   >
-                    <img
-                      src={sp.avatarUrl}
-                      alt={sp.name}
-                      loading="lazy"
-                      decoding="async"
-                      onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=48&h=48'; }}
-                      className="w-9 h-9 rounded-full object-cover border border-border shrink-0"
-                    />
+                    {sp.avatarUrl ? (
+                      <img
+                        src={sp.avatarUrl}
+                        alt={sp.name}
+                        onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=64&h=64'; }}
+                        className="w-8 h-8 rounded-full border-2 border-background bg-card object-cover"
+                      />
+                    ) : (
+                      <div className="w-8 h-8 rounded-full border-2 border-background bg-secondary flex items-center justify-center">
+                        <User size={16} className="text-secondary-foreground" />
+                      </div>
+                    )}
                     <div className="flex-1 min-w-0">
                       <p className="font-bold text-foreground text-xs">{sp.name}</p>
                       <p className="text-[10px] text-primary">{sp.role} · {sp.organisation}</p>
@@ -155,6 +160,35 @@ function SessionModal({ session, speakers, sponsors, isPast, onClose, onWatchRep
             </div>
           )}
 
+          {/* Pricing Block */}
+          {(() => {
+            const currentPrice = isPast ? (session.replayPrice ?? session.price) : session.price;
+            const isFree = session.isFree || currentPrice === 0;
+            if (!isFree && (currentPrice === undefined || currentPrice === null)) return null;
+
+            return (
+              <div className="flex items-center justify-between rounded-sm bg-muted/30 border border-border px-4 py-3 mb-6">
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                    {isPast ? 'On-Demand Replay Price' : 'Registration Price'}
+                  </span>
+                  {isFree ? (
+                    <span className="text-base font-bold text-green-400">Free · Included</span>
+                  ) : (
+                    <span className="text-base font-bold text-foreground">
+                      {new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(currentPrice!)}
+                    </span>
+                  )}
+                </div>
+                {!isFree && (
+                  <span className="text-[10px] text-muted-foreground italic">
+                    {isPast ? 'Gated Replay Content' : 'All taxes included'}
+                  </span>
+                )}
+              </div>
+            );
+          })()}
+
           {/* CTA buttons */}
           <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-border">
             {isPast ? (
@@ -165,13 +199,21 @@ function SessionModal({ session, speakers, sponsors, isPast, onClose, onWatchRep
                 <PlayCircle size={14} /> View Replay
               </button>
             ) : (
-
-              <button
-                onClick={() => { onClose(); navigate(`/register?session=${session.id}`); }}
-                className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 bg-primary text-[#1A1D24] hover:brightness-110 text-sm font-bold rounded-sm transition-all"
-              >
-                {session.isFree ? 'Register for Free' : 'Register & Pay'} <ArrowRight size={14} />
-              </button>
+              hasAccess ? (
+                <button
+                  onClick={() => { onClose(); navigate(`/dashboard`); }}
+                  className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 bg-muted border border-border text-foreground hover:bg-muted/80 text-sm font-bold rounded-sm transition-all"
+                >
+                  Go to Dashboard <ArrowRight size={14} />
+                </button>
+              ) : (
+                <button
+                  onClick={() => { onClose(); navigate(`/register?session=${session.id}`); }}
+                  className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 bg-primary text-primary-foreground hover:brightness-110 text-sm font-bold rounded-sm transition-all"
+                >
+                  {session.isFree ? 'Register for Free' : 'Register & Pay'} <ArrowRight size={14} />
+                </button>
+              )
             )}
             <button
               onClick={() => { onClose(); navigate(`/sessions/${session.id}`); }}
@@ -187,9 +229,10 @@ function SessionModal({ session, speakers, sponsors, isPast, onClose, onWatchRep
 }
 
 // ── Session Card ───────────────────────────────────────────────────────────
-function SessionCard({ session, speakers, sponsors, isPast, currency, onTitleClick, onWatchReplay, onSpeakerClick }: {
+function SessionCard({ session, speakers, sponsors, isPast, currency, onTitleClick, onWatchReplay, onSpeakerClick, hasAccess }: {
   session: Session; speakers: Speaker[]; sponsors: Sponsor[]; isPast: boolean; currency: string; onTitleClick: () => void;
   onWatchReplay: (sessionId: string) => void; onSpeakerClick: (speaker: Speaker) => void;
+  hasAccess: boolean;
 }) {
   return (
     <div className={`group border rounded-sm p-6 transition-all duration-200 flex flex-col diq-session-card ${
@@ -244,13 +287,19 @@ function SessionCard({ session, speakers, sponsors, isPast, currency, onTitleCli
                   onClick={(e) => { e.stopPropagation(); onSpeakerClick(sp); }}
                   className="flex items-center gap-1.5 bg-background border border-border hover:border-primary/30 pl-1 pr-2 py-0.5 rounded-full text-[10px] diq-card-presenter-badge cursor-pointer transition-colors"
                 >
-                  <img
-                    src={sp.avatarUrl} alt={sp.name}
-                    loading="lazy"
-                    decoding="async"
-                    onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=32&h=32'; }}
-                    className="w-4 h-4 rounded-full object-cover bg-card border border-border diq-card-presenter-avatar"
-                  />
+                  {sp.avatarUrl ? (
+                    <img
+                      src={sp.avatarUrl} alt={sp.name}
+                      loading="lazy"
+                      decoding="async"
+                      onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=32&h=32'; }}
+                      className="w-4 h-4 rounded-full object-cover bg-card border border-border diq-card-presenter-avatar"
+                    />
+                  ) : (
+                    <div className="w-4 h-4 rounded-full bg-secondary flex items-center justify-center border border-border">
+                       <User size={10} className="text-secondary-foreground" />
+                    </div>
+                  )}
                   <span className="font-semibold text-foreground diq-card-presenter-name">{sp.name}</span>
                 </button>
               ))}
@@ -279,7 +328,12 @@ function SessionCard({ session, speakers, sponsors, isPast, currency, onTitleCli
         {/* Row 2: Action Buttons */}
         <div className="flex items-center justify-between pt-3 border-t border-border/20 diq-card-actions-row">
           <div className="font-bold text-foreground text-sm">
-            {session.isFree ? 'FREE' : new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(session.price || 0)}
+            {(() => {
+              const currentPrice = isPast ? (session.replayPrice ?? session.price) : session.price;
+              const isFree = session.isFree || currentPrice === 0;
+              if (isFree) return 'FREE';
+              return new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(currentPrice || 0);
+            })()}
           </div>
           <div className="flex items-center justify-end gap-2">
           <button
@@ -296,12 +350,21 @@ function SessionCard({ session, speakers, sponsors, isPast, currency, onTitleCli
               <PlayCircle size={12} /> View Replay
             </button>
           ) : (
-            <Link
-              to={`/register?session=${session.id}`}
-              className="inline-flex items-center gap-1.5 px-4 py-2 bg-primary text-[#1A1D24] hover:brightness-110 text-[11px] font-semibold rounded-sm transition-all whitespace-nowrap diq-card-register-btn"
-            >
-              {session.isFree ? 'Register for Free' : 'Register & Pay'} <ArrowRight size={11} />
-            </Link>
+            hasAccess ? (
+              <button
+                onClick={() => window.location.href = '/dashboard'}
+                className="inline-flex items-center gap-1.5 px-4 py-2 bg-muted text-foreground hover:bg-muted/80 text-[11px] font-semibold rounded-sm transition-all whitespace-nowrap diq-card-register-btn"
+              >
+                Go to Dashboard <ArrowRight size={11} />
+              </button>
+            ) : (
+              <Link
+                to={`/register?session=${session.id}`}
+                className="inline-flex items-center gap-1.5 px-4 py-2 bg-primary text-primary-foreground hover:brightness-110 text-[11px] font-semibold rounded-sm transition-all whitespace-nowrap diq-card-register-btn"
+              >
+                {session.isFree ? 'Register for Free' : 'Register & Pay'} <ArrowRight size={11} />
+              </Link>
+            )
           )}
           </div>
         </div>
@@ -320,6 +383,22 @@ export function SessionsList() {
   const [showAuthDialog, setShowAuthDialog] = useState(false);
   const [selectedSpeaker, setSelectedSpeaker] = useState<Speaker | null>(null);
   const [isSpeakerDialogOpen, setIsSpeakerDialogOpen] = useState(false);
+  const { data: userProfile } = useUserProfile();
+
+  const checkAccess = (sessionId: string) => {
+    if (!userProfile) return false;
+    const now = new Date();
+    if (userProfile.subscription_tier === 'tier3' && userProfile.subscription_expires_at) {
+      if (new Date(userProfile.subscription_expires_at) > now) return true;
+    }
+    const access = userProfile.session_access?.[sessionId];
+    if (access && access.tier === 'tier2' && access.expires_at) {
+      if (new Date(access.expires_at) > now) return true;
+    }
+    const registeredIds = userProfile.registered_session_ids || [];
+    if (registeredIds.includes(sessionId)) return true;
+    return false;
+  };
 
   useEffect(() => {
     const token = getUserToken();
@@ -387,9 +466,11 @@ export function SessionsList() {
           speakers={resolveSpeakers(modalSession)}
           sponsors={resolveSponsors(modalSession)}
           isPast={isSessionPast(modalSession.date)}
+          currency={cms?.paymentConfig?.currency || 'USD'}
           onClose={() => setActiveModal(null)}
           onWatchReplay={handleWatchReplay}
           onSpeakerClick={handleSpeakerClick}
+          hasAccess={checkAccess(modalSession.id)}
         />
       )}
 
@@ -424,6 +505,7 @@ export function SessionsList() {
                   onTitleClick={() => setActiveModal(session.id)}
                   onWatchReplay={handleWatchReplay}
                   onSpeakerClick={handleSpeakerClick}
+                  hasAccess={checkAccess(session.id)}
                 />
               ))}
             </div>
@@ -453,6 +535,7 @@ export function SessionsList() {
                   onTitleClick={() => setActiveModal(session.id)}
                   onWatchReplay={handleWatchReplay}
                   onSpeakerClick={handleSpeakerClick}
+                  hasAccess={checkAccess(session.id)}
                 />
               ))}
             </div>

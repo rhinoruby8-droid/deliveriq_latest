@@ -23,7 +23,7 @@ export function verifyPassword(password: string, hash: string): boolean {
     const keyBuffer = Buffer.from(key, 'hex');
     if (derivedKey.length !== keyBuffer.length) return false;
     return crypto.timingSafeEqual(derivedKey, keyBuffer);
-  } catch (err) {
+  } catch {
     return false;
   }
 }

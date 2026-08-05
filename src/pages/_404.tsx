@@ -1,4 +1,5 @@
 import { useCmsContent, FALLBACK_CMS_CONTENT } from '@/lib/cms-client';
+import { SeoHead } from '../components/SeoHead';
 import { PageHtmlRenderer } from '@/components/PageHtmlRenderer';
 
 import { Helmet } from '@dr.pogodin/react-helmet';
@@ -8,8 +9,8 @@ export default function NotFoundPage() {
 
   return (
     <>
+      <SeoHead />
       <Helmet>
-        <title>404 Not Found — DeliverIQ</title>
         {cms.notFoundPageCss ? <style>{cms.notFoundPageCss}</style> : null}
       </Helmet>
       <main>

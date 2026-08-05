@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Helmet } from '@dr.pogodin/react-helmet';
+import { SeoHead } from '../components/SeoHead';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import DashboardLayout from '../layouts/Dashboard';
@@ -63,7 +63,7 @@ export default function Dashboard() {
         <div className="flex flex-col items-center gap-4">
           <div className="relative w-10 h-10">
             <div className="absolute inset-0 border-2 border-primary/10 rounded-full" />
-            <div className="absolute inset-0 border-2 border-transparent border-t-[#C79A4E] rounded-full animate-spin" />
+            <div className="absolute inset-0 border-2 border-transparent border-t-primary rounded-full animate-spin" />
           </div>
           <span className="text-[10px] text-slate-500 font-bold tracking-widest uppercase">Loading workspace</span>
         </div>
@@ -113,9 +113,7 @@ export default function Dashboard() {
 
   return (
     <DashboardLayout config={config}>
-      <Helmet>
-        <title>Dashboard | DeliverIQ</title>
-      </Helmet>
+      <SeoHead />
 
       <motion.div
         initial="hidden"
@@ -127,11 +125,11 @@ export default function Dashboard() {
         <motion.div variants={fadeIn} custom={0} className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-black text-white tracking-tight leading-none">
+              <h1 className="text-3xl font-black text-foreground tracking-tight leading-none">
                 Welcome back, {firstName}
               </h1>
               {isPro ? (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-[#C79A4E]/20 to-[#E5C185]/10 text-[10px] font-black text-[#E5C185] uppercase tracking-widest border border-primary/30 shadow-[0_0_15px_rgba(199,154,78,0.1)]">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-primary/20 to-primary/10 text-[10px] font-black text-primary uppercase tracking-widest border border-primary/30 shadow-[0_0_15px_rgba(199,154,78,0.1)]">
                   <Crown className="w-3 h-3 text-primary" /> Pro Member
                 </span>
               ) : (
@@ -166,7 +164,7 @@ export default function Dashboard() {
 
             <div className="space-y-4">
               <div>
-                <p className="text-2xl font-black text-white tracking-tight">{metrics.minutes_attended}m</p>
+                <p className="text-2xl font-black text-foreground tracking-tight">{metrics.minutes_attended}m</p>
                 <p className="text-xs text-slate-500 mt-1">Live interactive room attendance</p>
               </div>
 
@@ -200,7 +198,7 @@ export default function Dashboard() {
 
             <div className="space-y-4">
               <div>
-                <p className="text-2xl font-black text-white tracking-tight">{Number(metrics.hours_watched).toFixed(1)}h</p>
+                <p className="text-2xl font-black text-foreground tracking-tight">{Number(metrics.hours_watched).toFixed(1)}h</p>
                 <p className="text-xs text-slate-500 mt-1">Recorded sessions watched</p>
               </div>
 
@@ -234,7 +232,7 @@ export default function Dashboard() {
 
             <div className="space-y-4">
               <div>
-                <p className="text-2xl font-black text-white tracking-tight">{registeredSessions.length}</p>
+                <p className="text-2xl font-black text-foreground tracking-tight">{registeredSessions.length}</p>
                 <p className="text-xs text-slate-500 mt-1">Sessions on your calendar</p>
               </div>
 
@@ -275,14 +273,14 @@ export default function Dashboard() {
                       <Calendar size={20} />
                     </div>
                     <div>
-                      <p className="text-white font-bold text-sm">Agenda empty</p>
+                      <p className="text-foreground font-bold text-sm">Agenda empty</p>
                       <p className="text-xs text-slate-500 mt-1 max-w-[280px] mx-auto leading-relaxed">
                         Reserve your spot in upcoming live rooms to collaborate and build your skills.
                       </p>
                     </div>
                     <Link
                       to="/sessions"
-                      className="inline-flex items-center gap-2 px-6 py-2.5 text-xs font-bold bg-primary text-[#0A0B0E] rounded-xl hover:brightness-110 active:scale-[0.98] transition-all shadow-[0_4px_16px_rgba(199,154,78,0.12)]"
+                      className="inline-flex items-center gap-2 px-6 py-2.5 text-xs font-bold bg-primary text-primary-foreground rounded-xl hover:brightness-110 active:scale-[0.98] transition-all shadow-[0_4px_16px_rgba(199,154,78,0.12)]"
                     >
                       Find a Live Session <ArrowRight size={13} />
                     </Link>
@@ -297,7 +295,7 @@ export default function Dashboard() {
                     >
                       <div className="min-w-0">
                         <span className="text-[9px] font-bold text-emerald-400 uppercase tracking-widest bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20">{session.tag}</span>
-                        <h3 className="font-bold text-white text-sm mt-2 group-hover:text-primary transition-colors truncate">{session.title}</h3>
+                        <h3 className="font-bold text-foreground text-sm mt-2 group-hover:text-primary transition-colors truncate">{session.title}</h3>
                         <p className="text-[11px] text-slate-500 mt-1 flex items-center gap-1.5">
                           <Calendar size={10} className="text-slate-600" />
                           {session.date} · {session.time}
@@ -327,15 +325,15 @@ export default function Dashboard() {
                       className="relative bg-background border border-border/60 hover:border-primary/30 rounded-2xl p-5 transition-all duration-300 flex flex-col justify-between group overflow-hidden"
                     >
                       {/* Interactive glow border trigger */}
-                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#C79A4E]/[0.01] to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/[0.01] to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
                       
                       <div>
                         <span className="text-[9px] font-bold text-primary uppercase tracking-widest bg-primary/10 px-2 py-0.5 rounded-md border border-primary/20">{session.tag}</span>
-                        <h3 className="font-extrabold text-white text-sm mt-3 mb-1.5 line-clamp-2 leading-snug group-hover:text-primary transition-colors">{session.title}</h3>
+                        <h3 className="font-extrabold text-foreground text-sm mt-3 mb-1.5 line-clamp-2 leading-snug group-hover:text-primary transition-colors">{session.title}</h3>
                         <p className="text-[11px] text-slate-500">{session.date}</p>
                       </div>
                       
-                      <div className="flex items-center gap-1.5 text-xs font-semibold text-primary mt-5 group-hover:text-white transition-colors">
+                      <div className="flex items-center gap-1.5 text-xs font-semibold text-primary mt-5 group-hover:text-foreground transition-colors">
                         <span>View Details</span>
                         <ChevronRight size={13} className="group-hover:translate-x-0.5 transition-transform" />
                       </div>
@@ -361,7 +359,7 @@ export default function Dashboard() {
                     <div className="inline-flex items-center gap-1.5 rounded-md bg-primary/10 px-2.5 py-1 text-[9px] font-bold text-primary uppercase tracking-widest mb-4 border border-primary/20">
                       <Sparkles className="w-3.5 h-3.5" /> Premium Pass
                     </div>
-                    <h3 className="text-lg font-extrabold text-white mb-2 tracking-tight">Unlock Platform Access</h3>
+                    <h3 className="text-lg font-extrabold text-foreground mb-2 tracking-tight">Unlock Platform Access</h3>
                     <p className="text-xs text-slate-400 mb-6 leading-relaxed">
                       Upgrade to Pro for unlimited interactive session replays, direct instructor templates, and community Discord benefits.
                     </p>
@@ -370,7 +368,7 @@ export default function Dashboard() {
                       amount={199.00}
                       tier="tier3"
                       label="Upgrade to Pro"
-                      className="w-full font-bold text-xs h-10 rounded-xl bg-primary text-[#0A0B0E] hover:brightness-115 active:scale-[0.98] transition-all shadow-[0_4px_16px_rgba(199,154,78,0.15)]"
+                      className="w-full font-bold text-xs h-10 rounded-xl bg-primary text-primary-foreground hover:brightness-115 active:scale-[0.98] transition-all shadow-[0_4px_16px_rgba(199,154,78,0.15)]"
                     />
                   </div>
                 </div>
@@ -382,7 +380,7 @@ export default function Dashboard() {
                     <div className="inline-flex items-center gap-1.5 rounded-md bg-primary/10 px-2.5 py-1 text-[9px] font-bold text-primary uppercase tracking-widest mb-4 border border-primary/20">
                       <Crown className="w-3.5 h-3.5" /> PRO MEMBER
                     </div>
-                    <h3 className="text-lg font-extrabold text-white mb-2 tracking-tight">Welcome, Pro!</h3>
+                    <h3 className="text-lg font-extrabold text-foreground mb-2 tracking-tight">Welcome, Pro!</h3>
                     <p className="text-xs text-slate-400 mb-5 leading-relaxed">
                       You have full access to our complete live archive and templates library.
                     </p>
@@ -414,7 +412,7 @@ export default function Dashboard() {
                   { icon: Settings, label: 'Account Preferences', to: '#', isLink: false },
                 ].map((item, i) => {
                   const Icon = item.icon;
-                  const cls = "flex items-center gap-3 p-3 rounded-xl hover:bg-card transition-all text-xs text-slate-400 hover:text-white font-semibold group w-full";
+                  const cls = "flex items-center gap-3 p-3 rounded-xl hover:bg-card transition-all text-xs text-slate-400 hover:text-foreground font-semibold group w-full";
                   const inner = (
                     <>
                       <Icon className="w-4 h-4 text-slate-500 group-hover:text-primary transition-colors" />

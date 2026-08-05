@@ -11,7 +11,7 @@ export default function handler(req: Request, res: Response) {
     }
     clearCmsCache();
     return res.status(200).json({ ok: true });
-  } catch (err) {
+  } catch {
     return res.status(500).json({ error: 'Failed to process webhook' });
   }
 }

@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { SeoHead } from '../components/SeoHead';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCmsContent, useUpdateCmsContent, CmsContent, Speaker, Sponsor, Session, Topic } from '@/lib/cms-client';
-import { Save, LogOut, Layout, BookOpen, User, Users, Award, Mail, Shield, FileText, Code, RefreshCw, CheckCircle, AlertTriangle, Plus, Trash2, Edit2, Eye, Calendar, Clock, Globe, Settings, CheckSquare, Play, X, List, Download } from 'lucide-react';
+import { Save, LogOut, Layout, BookOpen, User, Users, Award, Mail, Shield, FileText, Code, RefreshCw, CheckCircle, AlertTriangle, Plus, Trash2, Edit2, Eye, Calendar, Clock, Globe, Settings, CheckSquare, Play, X, List, Download, CreditCard } from 'lucide-react';
 import * as XLSX from 'xlsx';
-import { Helmet } from '@dr.pogodin/react-helmet';
 import { RichTextEditor } from '@/components/RichTextEditor';
 import { ModeToggle } from '@/components/cms/ModeToggle';
 import { MigrationPrompt } from '@/components/cms/MigrationPrompt';
@@ -16,10 +16,12 @@ import { FALLBACK_CMS_CONTENT } from '@/lib/cms-client';
 type ActiveTabType = 
   | 'home' | 'sessions-html' | 'speakers-html' | 'sponsors-html' | 'contact-html' | 'privacy-html' | 'terms-html' | 'register-html'
   | 'replays-html' | 'session-detail-html' | '404-html' | 'global-css'
-  | 'manage-sessions' | 'manage-speakers' | 'manage-sponsors' | 'manage-topics' | 'manage-forms' | 'manage-users' | 'manage-coupons' | 'manage-purchases' | 'email-templates' | 'settings' | 'json';
+  | 'hero-banner' | 'manage-sessions' | 'manage-speakers' | 'manage-sponsors' | 'manage-topics' | 'manage-forms' | 'manage-users' | 'manage-coupons' | 'manage-purchases' | 'email-templates' | 'settings' | 'json' | 'global-content' | 'subscriptions';
 
 import { removeUserToken, getUserToken } from '@/lib/user-auth';
 import { EmailTemplateStudio } from '@/components/cms/EmailTemplateStudio';
+import { GlobalContentEditor } from '@/components/cms/GlobalContentEditor';
+import { SubscriptionConfigEditor } from '@/components/cms/SubscriptionConfigEditor';
 
 // ... (imports remain)
 
@@ -65,6 +67,9 @@ export default function AdminPage() {
     socialUrl: '',
   });
 
+  const [isUploadingSpeakerAvatar, setIsUploadingSpeakerAvatar] = useState(false);
+  const speakerAvatarInputRef = useRef<HTMLInputElement>(null);
+
   // Sponsor Modal State
   const [showSponsorModal, setShowSponsorModal] = useState(false);
   const [editingSponsor, setEditingSponsor] = useState<Sponsor | null>(null);
@@ -81,7 +86,7 @@ export default function AdminPage() {
   const [editingSession, setEditingSession] = useState<Session | null>(null);
   const [sessionTimezone, setSessionTimezone] = useState('UTC');
   const [sessionTimeRaw, setSessionTimeRaw] = useState('09:00'); // HH:MM for <input type="time">
-  const [sessionForm, setSessionForm] = useState<Omit<Session, 'id' | 'speakerIds' | 'sponsorIds'> & { id: string; speakerIds: string[]; sponsorIds: string[] }>({
+  const [sessionForm, setSessionForm] = useState<Omit<Session, 'id' | 'speakerIds' | 'sponsorIds'> & { id: string; speakerIds: string[]; sponsorIds: string[]; sessionOgImageUrl?: string }>({
     id: '',
     title: '',
     description: '',
@@ -94,6 +99,7 @@ export default function AdminPage() {
     sponsorIds: [],
     registrationUrl: '',
     videoUrl: '',
+    sessionOgImageUrl: '',
     price: 0,
     isFree: false,
     gateway: 'all',
@@ -122,6 +128,10 @@ export default function AdminPage() {
   }
 
   const [showCouponModal, setShowCouponModal] = useState(false);
+  const [isUploadingHeroVideo, setIsUploadingHeroVideo] = useState(false);
+  const [isUploadingHeroGif, setIsUploadingHeroGif] = useState(false);
+  const [uploadProgressVideo, setUploadProgressVideo] = useState(0);
+  const [uploadProgressGif, setUploadProgressGif] = useState(0);
   const [editingCoupon, setEditingCoupon] = useState<CouponDetail | null>(null);
   const [couponForm, setCouponForm] = useState<CouponDetail>({
     id: '',
@@ -722,6 +732,56 @@ export default function AdminPage() {
     handleSave(newContent);
   };
 
+  const handleSpeakerAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploadingSpeakerAvatar(true);
+    try {
+      const reader = new FileReader();
+      const base64Promise = new Promise<string>((resolve, reject) => {
+        reader.onload = () => {
+          const result = reader.result as string;
+          const base64 = result.split(',')[1];
+          resolve(base64);
+        };
+        reader.onerror = reject;
+      });
+      reader.readAsDataURL(file);
+      const base64 = await base64Promise;
+
+      const res = await fetch('/api/cms/upload', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${getUserToken()}`
+        },
+        body: JSON.stringify({
+          filename: file.name,
+          contentType: file.type,
+          base64,
+          folder: 'speakers'
+        })
+      });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || 'Upload failed');
+      }
+
+      const data = await res.json();
+      setSpeakerForm(prev => ({ ...prev, avatarUrl: data.url }));
+    } catch (err: any) {
+      console.error('Speaker avatar upload failed:', err);
+      alert(`Failed to upload image: ${err.message || 'Unknown error'}`);
+    } finally {
+      setIsUploadingSpeakerAvatar(false);
+      if (speakerAvatarInputRef.current) {
+        speakerAvatarInputRef.current.value = '';
+      }
+    }
+  };
+
   const saveSpeakerForm = (e: React.FormEvent) => {
     e.preventDefault();
     if (!localContent) return;
@@ -832,7 +892,9 @@ export default function AdminPage() {
       sponsorIds: [],
       registrationUrl: '',
       videoUrl: '',
+      sessionOgImageUrl: '',
       price: 0,
+      replayPrice: 0,
       isFree: false,
       gateway: 'all',
     });
@@ -854,6 +916,7 @@ export default function AdminPage() {
       speakerIds: se.speakerIds || [],
       sponsorIds: se.sponsorIds || [],
       price: se.price || 0,
+      replayPrice: se.replayPrice !== undefined ? se.replayPrice : 0,
       isFree: se.isFree || false,
       gateway: se.gateway || 'all',
     });
@@ -960,10 +1023,7 @@ export default function AdminPage() {
 
   return (
     <>
-      <Helmet>
-        <title>CMS Admin Panel — DeliverIQ</title>
-        <meta name="robots" content="noindex" />
-      </Helmet>
+      <SeoHead />
 
       {/* Migration prompt modal — shown when switching a page to Visual mode */}
       {migrationState && (
@@ -1122,6 +1182,15 @@ export default function AdminPage() {
             
             <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest px-4 py-2 mt-4 hidden md:block select-none">Database Modules</p>
             <button
+              onClick={() => handleTabChange('hero-banner')}
+              className={`w-full flex items-center gap-3 px-4 py-2.5 rounded text-xs font-semibold transition-all ${
+                activeTab === 'hero-banner' ? 'bg-primary text-[#1A1D24]' : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+              }`}
+            >
+              <Layout size={14} />
+              Hero Banner Config
+            </button>
+            <button
               onClick={() => handleTabChange('manage-sessions')}
               className={`w-full flex items-center gap-3 px-4 py-2.5 rounded text-xs font-semibold transition-all ${
                 activeTab === 'manage-sessions' ? 'bg-primary text-[#1A1D24]' : 'text-muted-foreground hover:bg-muted hover:text-foreground'
@@ -1204,6 +1273,24 @@ export default function AdminPage() {
             </button>
 
             <div className="h-px bg-muted my-2 hidden md:block" />
+            <button
+              onClick={() => handleTabChange('global-content')}
+              className={`w-full flex items-center gap-3 px-4 py-2.5 rounded text-xs font-semibold transition-all ${
+                activeTab === 'global-content' ? 'bg-primary text-[#1A1D24]' : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+              }`}
+            >
+              <Globe size={14} />
+              Global Content
+            </button>
+            <button
+              onClick={() => handleTabChange('subscriptions')}
+              className={`w-full flex items-center gap-3 px-4 py-2.5 rounded text-xs font-semibold transition-all ${
+                activeTab === 'subscriptions' ? 'bg-primary text-[#1A1D24]' : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+              }`}
+            >
+              <CreditCard size={14} />
+              Subscriptions
+            </button>
             <button
               onClick={() => handleTabChange('settings')}
               className={`w-full flex items-center gap-3 px-4 py-2.5 rounded text-xs font-semibold transition-all ${
@@ -1317,6 +1404,336 @@ export default function AdminPage() {
                 </div>
               );
             })}
+
+            
+            {/* ==================== HERO BANNER CONFIG TAB ==================== */}
+            {activeTab === 'hero-banner' && localContent.heroBannerConfig && (
+              <div className="flex flex-col gap-8">
+                <div>
+                  <h2 className="text-xl font-bold">Hero Banner Configuration</h2>
+                  <p className="text-xs text-muted-foreground mt-1">Manage global default settings and per-page overrides for all hero banner sections.</p>
+                </div>
+
+                {/* Global Settings */}
+                <div className="border border-border bg-card rounded-sm overflow-hidden">
+                  <div className="px-5 py-4 border-b border-border bg-background/40">
+                    <h3 className="text-sm font-bold">Global Settings</h3>
+                  </div>
+                  <div className="p-5 flex flex-col gap-6">
+                    <div className="flex flex-col gap-2">
+                      <label className="font-semibold text-muted-foreground uppercase tracking-wider text-[10px]">Global Video Background (.mp4)</label>
+                      <div className="flex items-center gap-4">
+                        <div className="w-64 aspect-video bg-background border border-border rounded overflow-hidden flex-shrink-0">
+                          {localContent.heroBannerConfig.globalVideoUrl ? (
+                            <video src={localContent.heroBannerConfig.globalVideoUrl} className="w-full h-full object-cover" autoPlay loop muted playsInline />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">No video</div>
+                          )}
+                        </div>
+                        <div className="flex flex-col gap-2 flex-1">
+                          <input 
+                            type="text" 
+                            value={localContent.heroBannerConfig.globalVideoUrl}
+                            onChange={(e) => {
+                              const newConfig = { ...localContent.heroBannerConfig!, globalVideoUrl: e.target.value };
+                              handleUpdate('heroBannerConfig', newConfig);
+                            }}
+                            className="w-full bg-background border border-border rounded px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary"
+                            placeholder="https://..."
+                          />
+                          <div className="relative overflow-hidden inline-block cursor-pointer">
+                            <button type="button" disabled={isUploadingHeroVideo} className="bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 px-4 py-2 rounded font-semibold text-xs whitespace-nowrap transition-colors flex items-center gap-2">
+                              {isUploadingHeroVideo ? <RefreshCw className="animate-spin" size={14} /> : <Plus size={14} />}
+                              {isUploadingHeroVideo ? `Uploading... ${uploadProgressVideo}%` : 'Upload MP4 Video'}
+                            </button>
+                            <input 
+                              type="file" 
+                              accept="video/mp4"
+                              disabled={isUploadingHeroVideo}
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (!file) return;
+                                setIsUploadingHeroVideo(true);
+                                setUploadProgressVideo(0);
+                                const reader = new FileReader();
+                                reader.readAsDataURL(file);
+                                reader.onloadend = () => {
+                                  const base64data = (reader.result as string).split(',')[1];
+                                  const xhr = new XMLHttpRequest();
+                                  xhr.open('POST', '/api/cms/upload', true);
+                                  xhr.setRequestHeader('Content-Type', 'application/json');
+                                  xhr.setRequestHeader('Authorization', `Bearer ${getUserToken()}`);
+                                  
+                                  xhr.upload.onprogress = (event) => {
+                                    if (event.lengthComputable) {
+                                      const percentComplete = Math.round((event.loaded / event.total) * 100);
+                                      setUploadProgressVideo(percentComplete);
+                                    }
+                                  };
+                                  
+                                  xhr.onload = () => {
+                                    setIsUploadingHeroVideo(false);
+                                    if (xhr.status >= 200 && xhr.status < 300) {
+                                      const { url } = JSON.parse(xhr.responseText);
+                                      const newConfig = { ...localContent.heroBannerConfig!, globalVideoUrl: url };
+                                      handleUpdate('heroBannerConfig', newConfig);
+                                    } else {
+                                      console.error('Upload failed');
+                                      alert('Failed to upload video.');
+                                    }
+                                    e.target.value = '';
+                                  };
+                                  
+                                  xhr.onerror = () => {
+                                    setIsUploadingHeroVideo(false);
+                                    console.error('Upload error');
+                                    alert('Failed to upload video.');
+                                    e.target.value = '';
+                                  };
+                                  
+                                  xhr.send(JSON.stringify({ filename: file.name, contentType: file.type, base64: base64data, folder: 'hero-videos' }));
+                                };
+                              }}
+                              className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex flex-col gap-2">
+                      <label className="font-semibold text-muted-foreground uppercase tracking-wider text-[10px]">Global GIF Background (.gif)</label>
+                      <div className="flex items-center gap-4">
+                        <div className="w-64 aspect-video bg-background border border-border rounded overflow-hidden flex-shrink-0">
+                          {localContent.heroBannerConfig.globalGifUrl ? (
+                            <img src={localContent.heroBannerConfig.globalGifUrl} className="w-full h-full object-cover" alt="Hero GIF" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">No GIF (Uses video if empty)</div>
+                          )}
+                        </div>
+                        <div className="flex flex-col gap-2 flex-1">
+                          <div className="flex items-center gap-2 w-full">
+                          <input 
+                            type="text" 
+                            value={localContent.heroBannerConfig.globalGifUrl}
+                            onChange={(e) => {
+                              const newConfig = { ...localContent.heroBannerConfig!, globalGifUrl: e.target.value };
+                              handleUpdate('heroBannerConfig', newConfig);
+                            }}
+                            className="w-full bg-background border border-border rounded px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary"
+                            placeholder="https://..."
+                          />
+                          </div>
+                          <button 
+                            type="button" 
+                            onClick={() => {
+                              const newConfig = { ...localContent.heroBannerConfig!, globalGifUrl: '' };
+                              handleUpdate('heroBannerConfig', newConfig);
+                            }}
+                            className="bg-destructive/10 text-destructive hover:bg-destructive/20 border border-destructive/20 rounded px-3 py-2 text-sm font-semibold transition-colors"
+                          >
+                            Clear
+                          </button>
+                          <div className="relative overflow-hidden inline-block cursor-pointer">
+                            <button type="button" disabled={isUploadingHeroGif} className="bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 px-4 py-2 rounded font-semibold text-xs whitespace-nowrap transition-colors flex items-center gap-2">
+                              {isUploadingHeroGif ? <RefreshCw className="animate-spin" size={14} /> : <Plus size={14} />}
+                              {isUploadingHeroGif ? `Uploading... ${uploadProgressGif}%` : 'Upload GIF'}
+                            </button>
+                            <input 
+                              type="file" 
+                              accept="image/gif"
+                              disabled={isUploadingHeroGif}
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (!file) return;
+                                setIsUploadingHeroGif(true);
+                                setUploadProgressGif(0);
+                                const reader = new FileReader();
+                                reader.readAsDataURL(file);
+                                reader.onloadend = () => {
+                                  const base64data = (reader.result as string).split(',')[1];
+                                  const xhr = new XMLHttpRequest();
+                                  xhr.open('POST', '/api/cms/upload', true);
+                                  xhr.setRequestHeader('Content-Type', 'application/json');
+                                  xhr.setRequestHeader('Authorization', `Bearer ${getUserToken()}`);
+                                  
+                                  xhr.upload.onprogress = (event) => {
+                                    if (event.lengthComputable) {
+                                      const percentComplete = Math.round((event.loaded / event.total) * 100);
+                                      setUploadProgressGif(percentComplete);
+                                    }
+                                  };
+                                  
+                                  xhr.onload = () => {
+                                    setIsUploadingHeroGif(false);
+                                    if (xhr.status >= 200 && xhr.status < 300) {
+                                      const { url } = JSON.parse(xhr.responseText);
+                                      const newConfig = { ...localContent.heroBannerConfig!, globalGifUrl: url };
+                                      handleUpdate('heroBannerConfig', newConfig);
+                                    } else {
+                                      console.error('Upload failed');
+                                      alert('Failed to upload GIF.');
+                                    }
+                                    e.target.value = '';
+                                  };
+                                  
+                                  xhr.onerror = () => {
+                                    setIsUploadingHeroGif(false);
+                                    console.error('Upload error');
+                                    alert('Failed to upload GIF.');
+                                    e.target.value = '';
+                                  };
+                                  
+                                  xhr.send(JSON.stringify({ filename: file.name, contentType: file.type, base64: base64data, folder: 'hero-videos' }));
+                                };
+                              }}
+                              className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <div className="flex flex-col gap-2">
+                        <label className="font-semibold text-muted-foreground uppercase tracking-wider text-[10px]">Text Color</label>
+                        <div className="flex items-center gap-2">
+                          <input 
+                            type="color" 
+                            value={localContent.heroBannerConfig.textColor}
+                            onChange={(e) => {
+                              const newConfig = { ...localContent.heroBannerConfig!, textColor: e.target.value };
+                              handleUpdate('heroBannerConfig', newConfig);
+                            }}
+                            className="w-10 h-10 rounded cursor-pointer bg-transparent border-0 p-0"
+                          />
+                          <input 
+                            type="text" 
+                            value={localContent.heroBannerConfig.textColor}
+                            onChange={(e) => {
+                              const newConfig = { ...localContent.heroBannerConfig!, textColor: e.target.value };
+                              handleUpdate('heroBannerConfig', newConfig);
+                            }}
+                            className="flex-1 bg-background border border-border rounded px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary"
+                          />
+                        </div>
+                      </div>
+                      
+                      <div className="flex flex-col gap-2">
+                        <label className="font-semibold text-muted-foreground uppercase tracking-wider text-[10px]">Button Color</label>
+                        <div className="flex items-center gap-2">
+                          <input 
+                            type="color" 
+                            value={localContent.heroBannerConfig.buttonColor}
+                            onChange={(e) => {
+                              const newConfig = { ...localContent.heroBannerConfig!, buttonColor: e.target.value };
+                              handleUpdate('heroBannerConfig', newConfig);
+                            }}
+                            className="w-10 h-10 rounded cursor-pointer bg-transparent border-0 p-0"
+                          />
+                          <input 
+                            type="text" 
+                            value={localContent.heroBannerConfig.buttonColor}
+                            onChange={(e) => {
+                              const newConfig = { ...localContent.heroBannerConfig!, buttonColor: e.target.value };
+                              handleUpdate('heroBannerConfig', newConfig);
+                            }}
+                            className="flex-1 bg-background border border-border rounded px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col gap-2">
+                        <label className="font-semibold text-muted-foreground uppercase tracking-wider text-[10px]">Alignment</label>
+                        <select
+                          value={localContent.heroBannerConfig.alignment}
+                          onChange={(e) => {
+                            const newConfig = { ...localContent.heroBannerConfig!, alignment: e.target.value as 'left' | 'center' | 'right' };
+                            handleUpdate('heroBannerConfig', newConfig);
+                          }}
+                          className="bg-background border border-border rounded px-3 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary w-full"
+                        >
+                          <option value="left">Left Align</option>
+                          <option value="center">Center Align</option>
+                          <option value="right">Right Align</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Per-Page Overrides */}
+                <div className="flex flex-col gap-4">
+                  <h3 className="text-sm font-bold border-b border-border pb-2">Per-Page Overrides</h3>
+                  
+                  {['homepage', 'sessions', 'speakers', 'sponsors'].map((pageKey) => {
+                    const pageConfig = localContent.heroBannerConfig!.pages[pageKey] || {};
+                    return (
+                      <div key={pageKey} className="border border-border bg-card rounded-sm overflow-hidden">
+                        <div className="px-5 py-3 border-b border-border bg-background/40 flex items-center justify-between">
+                          <h4 className="text-sm font-bold capitalize">{pageKey}</h4>
+                        </div>
+                        <div className="p-5 flex flex-col gap-5">
+                          <div className="flex flex-col gap-2">
+                            <label className="font-semibold text-muted-foreground uppercase tracking-wider text-[10px]">Text Content (HTML)</label>
+                            <RichTextEditor
+                              value={pageConfig.textContent || ''}
+                              onChange={(val) => {
+                                const newConfig = { ...localContent.heroBannerConfig! };
+                                newConfig.pages = { ...newConfig.pages, [pageKey]: { ...pageConfig, textContent: val } };
+                                handleUpdate('heroBannerConfig', newConfig);
+                              }}
+                            />
+                          </div>
+
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="flex flex-col gap-2">
+                              <label className="font-semibold text-muted-foreground uppercase tracking-wider text-[10px]">Video Override URL (Optional)</label>
+                              <input 
+                                type="text" 
+                                value={pageConfig.videoUrl || ''}
+                                onChange={(e) => {
+                                  const newConfig = { ...localContent.heroBannerConfig! };
+                                  newConfig.pages = { ...newConfig.pages, [pageKey]: { ...pageConfig, videoUrl: e.target.value } };
+                                  handleUpdate('heroBannerConfig', newConfig);
+                                }}
+                                className="bg-background border border-border rounded px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary"
+                                placeholder="Leave empty to use global video"
+                              />
+                            </div>
+                            <div className="flex flex-col gap-2">
+                              <label className="font-semibold text-muted-foreground uppercase tracking-wider text-[10px]">Alignment Override (Optional)</label>
+                              <select
+                                value={pageConfig.alignment || ''}
+                                onChange={(e) => {
+                                  const newConfig = { ...localContent.heroBannerConfig! };
+                                  const val = e.target.value;
+                                  if (val) {
+                                    newConfig.pages = { ...newConfig.pages, [pageKey]: { ...pageConfig, alignment: val as 'left' | 'center' | 'right' } };
+                                  } else {
+                                    const rest = { ...pageConfig };
+                                    delete rest.alignment;
+                                    newConfig.pages = { ...newConfig.pages, [pageKey]: rest };
+                                  }
+                                  handleUpdate('heroBannerConfig', newConfig);
+                                }}
+                                className="bg-background border border-border rounded px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary"
+                              >
+                                <option value="">-- Use Global Alignment --</option>
+                                <option value="left">Left Align</option>
+                                <option value="center">Center Align</option>
+                                <option value="right">Right Align</option>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             {/* ==================== TOPICS CRUD TAB ==================== */}
             {activeTab === 'manage-topics' && (
@@ -1916,6 +2333,19 @@ export default function AdminPage() {
               </div>
             )}
 
+            {activeTab === 'global-content' && localContent && (
+              <GlobalContentEditor content={localContent} onChange={handleUpdate} />
+            )}
+
+            {activeTab === 'subscriptions' && localContent && (
+              <SubscriptionConfigEditor 
+                config={localContent.subscriptionConfig ?? FALLBACK_CMS_CONTENT.subscriptionConfig!} 
+                onChange={(updated) => {
+                  setLocalContent({ ...localContent, subscriptionConfig: updated });
+                }} 
+              />
+            )}
+
             {/* ==================== SETTINGS TAB ==================== */}
             {activeTab === 'settings' && (
               <div className="flex flex-col gap-6">
@@ -2336,13 +2766,30 @@ export default function AdminPage() {
 
               <div className="flex flex-col gap-1.5">
                 <label className="font-semibold text-muted-foreground uppercase tracking-wider text-[10px]">Avatar image path</label>
-                <input
-                  type="text"
-                  value={speakerForm.avatarUrl}
-                  onChange={(e) => setSpeakerForm(prev => ({ ...prev, avatarUrl: e.target.value }))}
-                  placeholder="e.g. /airo-assets/images/speakers/john-doe"
-                  className="bg-background border border-border text-foreground px-3.5 py-2.5 rounded focus:outline-none"
-                />
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={speakerForm.avatarUrl}
+                    onChange={(e) => setSpeakerForm(prev => ({ ...prev, avatarUrl: e.target.value }))}
+                    placeholder="e.g. /airo-assets/images/speakers/john-doe"
+                    className="flex-1 bg-background border border-border text-foreground px-3.5 py-2.5 rounded focus:outline-none"
+                  />
+                  <input 
+                    type="file" 
+                    accept="image/*" 
+                    className="hidden" 
+                    ref={speakerAvatarInputRef}
+                    onChange={handleSpeakerAvatarUpload}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => speakerAvatarInputRef.current?.click()}
+                    disabled={isUploadingSpeakerAvatar}
+                    className="px-4 py-2 bg-secondary text-secondary-foreground rounded border border-border font-medium hover:brightness-110 whitespace-nowrap disabled:opacity-50"
+                  >
+                    {isUploadingSpeakerAvatar ? 'Uploading...' : 'Browse Local Machine'}
+                  </button>
+                </div>
               </div>
 
               <div className="flex flex-col gap-1.5">
@@ -2378,7 +2825,8 @@ export default function AdminPage() {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-primary text-[#1A1D24] rounded font-bold hover:brightness-110"
+                  disabled={isUploadingSpeakerAvatar}
+                  className="px-5 py-2 bg-primary text-[#1A1D24] rounded font-bold hover:brightness-110 disabled:opacity-50"
                 >
                   Save Speaker
                 </button>
@@ -2513,9 +2961,9 @@ export default function AdminPage() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-3 gap-4">
                 <div className="flex flex-col gap-1.5">
-                  <label className="font-semibold text-muted-foreground uppercase tracking-wider text-[10px]">Session Price ({localContent?.paymentConfig?.currency || 'USD'}) *</label>
+                  <label className="font-semibold text-muted-foreground uppercase tracking-wider text-[10px]">Live Price ({localContent?.paymentConfig?.currency || 'USD'}) *</label>
                   <input
                     type="number"
                     step="0.01"
@@ -2528,12 +2976,25 @@ export default function AdminPage() {
                     className="bg-background border border-border text-foreground px-3.5 py-2.5 rounded focus:outline-none disabled:opacity-50"
                   />
                 </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="font-semibold text-muted-foreground uppercase tracking-wider text-[10px]">Replay Price ({localContent?.paymentConfig?.currency || 'USD'})</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    disabled={sessionForm.isFree}
+                    value={sessionForm.isFree ? 0 : (sessionForm.replayPrice ?? '')}
+                    onChange={(e) => setSessionForm(prev => ({ ...prev, replayPrice: Number(e.target.value) }))}
+                    placeholder="e.g. 29.99"
+                    className="bg-background border border-border text-foreground px-3.5 py-2.5 rounded focus:outline-none disabled:opacity-50"
+                  />
+                </div>
                 <div className="flex items-center gap-2 pt-5">
                   <input
                     type="checkbox"
                     id="isFree"
                     checked={sessionForm.isFree || false}
-                    onChange={(e) => setSessionForm(prev => ({ ...prev, isFree: e.target.checked, price: e.target.checked ? 0 : prev.price }))}
+                    onChange={(e) => setSessionForm(prev => ({ ...prev, isFree: e.target.checked, price: e.target.checked ? 0 : prev.price, replayPrice: e.target.checked ? 0 : prev.replayPrice }))}
                     className="rounded border-border text-primary focus:ring-0 focus:ring-offset-0 bg-card w-4 h-4 cursor-pointer"
                   />
                   <label htmlFor="isFree" className="font-semibold text-muted-foreground uppercase tracking-wider text-[10px] cursor-pointer">Free Session</label>
@@ -2744,6 +3205,16 @@ export default function AdminPage() {
                     className="bg-background border border-border text-foreground px-3.5 py-2.5 rounded focus:outline-none"
                   />
                 </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="font-semibold text-muted-foreground uppercase tracking-wider text-[10px]">Session OG Image URL</label>
+                    <input
+                      type="text"
+                      value={sessionForm.sessionOgImageUrl || ''}
+                      onChange={(e) => setSessionForm(prev => ({ ...prev, sessionOgImageUrl: e.target.value }))}
+                      placeholder="e.g. /airo-assets/images/og/session1.jpg"
+                      className="bg-background border border-border text-foreground px-3.5 py-2.5 rounded focus:outline-none"
+                    />
+                  </div>
               </div>
 
               {/* Speaker Select Checklist */}

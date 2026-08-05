@@ -9,7 +9,9 @@ This document defines the functional scope and technical specifications of the *
 
 - **User Accounts & Dashboard**: Personalized attendee portal where delegates manage registrations, view event schedules, watch replays, and monitor watch-time metrics.
 - **Secure Live Webinar Join Flow**: JWT-protected proxy redirect system preventing raw meeting URL exposure.
-- **Headless CMS Admin Suite**: Complete administrative controls managing sessions, takeaways ("What to Expect"), speakers, sponsors, forms, coupon codes, users, purchases, and gateway credentials.
+- **Headless CMS Admin Suite**: Complete administrative controls managing sessions, takeaways ("What to Expect"), speakers, sponsors, forms, coupon codes, users, purchases, gateway credentials, global content, and dynamic subscription tier pricing (Free, Starter, Pro). Features direct file drag-and-drop and local machine browsing uploads stored in Supabase Storage (`deliveriq-assets`).
+- **Centralized Video Engine**: Hero Video Background component (`HeroVideoBackground.tsx`) integrated across portals with dynamic HTML widget token parsing (`[HeroVideoBackground]`).
+- **Subscription Module**: Comprehensive tier-based gating, dynamic duration logic, CMS-driven billing string creation, and subscription kill-switches.
 - **Dual Payment Integrations**: Supports both Stripe and Razorpay checkout workflows, dynamically toggleable from settings.
 - **No-Login Guest Checkout Option**: An optimized registration path allowing non-authenticated guests to purchase session tickets and create accounts inline.
 - **Dynamic Form Embeds**: Generates embeddable, iframe-friendly customer intake forms (`/embed/form/:id`) with customizable fields.
@@ -31,14 +33,14 @@ This document defines the functional scope and technical specifications of the *
                                   ▼
    ┌─────────────────────────────────────────────────────────────┐
    │                       EXPRESS SERVER                        │
-   │               Node.js 22 + entry-server.tsx                 │
+   │      Node.js 22 + entry-server.tsx (50MB Payload Limit)     │
    └──────┬───────────────────────┬───────────────────────┬──────┘
            │                       │                       │
            ▼                       ▼                       ▼
    ┌─────────────┐         ┌─────────────┐         ┌─────────────┐
    │ Payment     │         │ Loopback    │         │ Primary DB  │
    │ Gateways    │         │ SMTP Mailer │         │ Supabase    │
-   │ Stripe/Rzp  │         │ Nodemailer  │         │ PostgreSQL  │
+   │ Stripe/Rzp  │         │ Nodemailer  │         │ DB & Storage│
    └─────────────┘         └─────────────┘         └─────────────┘
 ```
 
@@ -59,8 +61,8 @@ This document defines the functional scope and technical specifications of the *
 
 ### Backend Architecture
 - **Runtime**: **Node.js 22** (configured with ES Modules).
-- **Server Framework**: **Express.js 5.1.0** (acts as API router, static assets server, and Server-Side Renderer).
-- **Primary Database**: **Supabase (PostgreSQL)** (handles all user profiles, transactional purchases, sessions registry, speakers/sponsors metadata, forms, and gateway configurations).
+- **Server Framework**: **Express.js 5.1.0** (acts as API router, static assets server, and Server-Side Renderer; body parser configured with 50MB payload limits).
+- **Primary Database & Object Storage**: **Supabase (PostgreSQL)** (handles user profiles, transactional purchases, sessions registry, speakers/sponsors metadata, forms, and gateway configurations). **Supabase Storage** manages uploaded avatars & media in the public `deliveriq-assets` bucket.
 - **Email Service**: **Nodemailer** + custom loopback proxy interface. Connects internally to Airo Gateway at `127.0.0.1:2525` to manage domain authentication policies.
 - **Payment Processing**: 
   - **Stripe SDK** (creates hosted billing pages, handles checkout events, and runs secure webhook signature validations).
@@ -82,4 +84,4 @@ This document defines the functional scope and technical specifications of the *
 
 ---
 
-*Last updated: 2026-07-18*
+*Last updated: 2026-08-03*

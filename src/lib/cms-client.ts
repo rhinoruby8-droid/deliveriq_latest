@@ -33,8 +33,10 @@ export interface Session {
   registrationUrl?: string;
   videoUrl?: string;
   price?: number;
+  replayPrice?: number;
   isFree?: boolean;
   gateway?: 'stripe' | 'razorpay' | 'paypal' | 'all';
+  sessionOgImageUrl?: string;
 }
 
 export interface Coupon {
@@ -54,6 +56,26 @@ export interface Coupon {
 export interface CtaButtonBlock {
   label: string;
   href: string;
+}
+
+export type HeroAlignment = 'left' | 'center' | 'right';
+
+export interface HeroPageOverride {
+  textContent?: string;
+  alignment?: HeroAlignment;
+  videoUrl?: string;
+  subheadline?: string;
+  ctaLabel?: string;
+  previewVideoUrl?: string;
+}
+
+export interface HeroBannerConfig {
+  globalVideoUrl: string;
+  globalGifUrl?: string;
+  textColor: string;
+  buttonColor: string;
+  alignment: HeroAlignment;
+  pages: Record<string, HeroPageOverride>;
 }
 
 export interface HeroBlock {
@@ -175,6 +197,79 @@ export interface Topic {
   description: string;
 }
 
+export interface NavItem {
+  href: string;
+  label: string;
+  protected?: boolean;
+}
+
+export interface FooterContent {
+  tagline: string;
+  contactEmail: string;
+  copyrightEntity: string;
+  navLinks: NavItem[];
+}
+
+export interface HeaderContent {
+  navItems: NavItem[];
+}
+
+export interface SeoPageMeta {
+  title: string;
+  description: string;
+  ogImageUrl?: string;
+}
+
+export interface SponsorDemographic {
+  role: string;
+  percentage: number;
+}
+
+export interface SponsorReachPackage {
+  title: string;
+  description: string;
+  price: string;
+  benefits: string[];
+  sessionTitle: string;
+}
+
+export interface SponsorsPageExtended {
+  audienceDemographics: SponsorDemographic[];
+  audienceDemographicsFootnote: string;
+  reachPackages: SponsorReachPackage[];
+}
+
+export interface ReplaysPageContent {
+  emptyStateTitle: string;
+  emptyStateDescription: string;
+  filterTags: string[];
+  fallbackAvatarUrl: string;
+}
+
+export interface PaymentCancelContent {
+  heading: string;
+  paragraph: string;
+  primaryCtaLabel: string;
+}
+
+export interface GlobalSiteContent {
+  header: HeaderContent;
+  footer: FooterContent;
+  seoMeta: Record<string, SeoPageMeta>;
+  defaultOgImageUrl: string;
+  sponsorsExtended: SponsorsPageExtended;
+  replaysContent: ReplaysPageContent;
+  paymentCancelContent: PaymentCancelContent;
+}
+
+export interface SubscriptionConfig {
+  isSubscriptionActive: boolean;
+  tier2DurationMonths: number;
+  tier3DurationMonths: number;
+  tier3PriceUSD: number;
+  proFeaturesList: string[];
+}
+
 export interface CmsContent {
   homepageHtml: string;
   sessionsPageHtml: string;
@@ -218,12 +313,27 @@ export interface CmsContent {
   sessionDetailPageCss?: string;
   notFoundPageCss?: string;
   globalCss?: string;
+  heroBannerConfig?: HeroBannerConfig;
+  globalSiteContent?: GlobalSiteContent;
+  subscriptionConfig?: SubscriptionConfig;
 }
 
 // --- Fallback default content (useful during loading and hydration) ---
 
 export const FALLBACK_CMS_CONTENT: CmsContent = {
   globalCss: '',
+  heroBannerConfig: {
+    globalVideoUrl: '/assets/hero-loop.mp4',
+    textColor: '#F0EDE8',
+    buttonColor: '#C79A4E',
+    alignment: 'left',
+    pages: {
+      homepage: { textContent: '<h1>AI Skills for<br/><span class="text-primary">Project</span> Delivery.</h1>' },
+      sessions: { textContent: '<h1>Sessions are coming.<br/><span class="text-primary">Be first to know.</span></h1>', videoUrl: '/assets/hero-loop_2.mp4' },
+      speakers: { textContent: '<h1>Teach what you know.<br/><span class="text-primary">To the people who need it.</span></h1>', videoUrl: '/assets/hero-loop_speaker.mp4' },
+      sponsors: { textContent: '<h1>Be in the room<br/><span class="text-primary">where project pros learn.</span></h1>', videoUrl: '/assets/hero-loop_sponsor.mp4' },
+    }
+  },
   topics: [
     {
       id: 'project-controls',
@@ -247,6 +357,19 @@ export const FALLBACK_CMS_CONTENT: CmsContent = {
     paypalActive: false,
     razorpayActive: false,
     currency: 'USD',
+  },
+  subscriptionConfig: {
+    isSubscriptionActive: true,
+    tier2DurationMonths: 3,
+    tier3DurationMonths: 12,
+    tier3PriceUSD: 199.00,
+    proFeaturesList: [
+      'Unlimited access to all past session replays',
+      'Live access to all upcoming sessions',
+      'Priority Q&A during live events',
+      'Downloadable session resources',
+      'Cancel anytime',
+    ],
   },
   homepageCss: '',
   sessionsPageCss: '',
@@ -457,7 +580,8 @@ export const FALLBACK_CMS_CONTENT: CmsContent = {
   </div>
 </section>`,
   sessionsPageHtml: `<section class="relative overflow-hidden pt-20 pb-16 lg:pt-28 lg:pb-20">
-  <div class="container mx-auto px-6 lg:px-8 relative z-10">
+    [HeroVideoBackground]
+    <div class="container mx-auto px-6 lg:px-8 relative z-10">
     <div class="max-w-3xl">
       <p class="text-xs font-semibold tracking-[0.2em] text-primary uppercase mb-4">
         Live Sessions
@@ -507,7 +631,8 @@ export const FALLBACK_CMS_CONTENT: CmsContent = {
   </div>
 </section>`,
   speakersPageHtml: `<section class="relative overflow-hidden pt-20 pb-16 lg:pt-28 lg:pb-20">
-  <div class="container mx-auto px-6 lg:px-8 relative z-10">
+    [HeroVideoBackground]
+    <div class="container mx-auto px-6 lg:px-8 relative z-10">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
       <div>
         <p class="text-xs font-semibold tracking-[0.2em] text-primary uppercase mb-4">
@@ -1361,6 +1486,75 @@ export const FALLBACK_CMS_CONTENT: CmsContent = {
     hero: { title: 'Register Now', subtitle: 'Secure your spot for the upcoming session.' },
     sections: [],
   },
+  globalSiteContent: {
+    header: {
+      navItems: [
+        { href: '/', label: 'Home', protected: true },
+        { href: '/sessions', label: 'Sessions', protected: true },
+        { href: '/replays', label: 'Replays' },
+        { href: '/for-speakers', label: 'Speakers' },
+        { href: '/for-sponsors', label: 'Sponsors' },
+      ],
+    },
+    footer: {
+      tagline: "The project world's live room.",
+      contactEmail: 'info@deliveriq.live',
+      copyrightEntity: 'DeliverIQ',
+      navLinks: [
+        { href: '/', label: 'Home' },
+        { href: '/sessions', label: 'Sessions' },
+        { href: '/replays', label: 'Replays' },
+        { href: '/for-speakers', label: 'For Speakers' },
+        { href: '/for-sponsors', label: 'For Sponsors' },
+        { href: '/contact', label: 'Contact' },
+      ],
+    },
+    defaultOgImageUrl: '/airo-assets/images/logo/horizontal',
+    seoMeta: {},
+    sponsorsExtended: {
+      audienceDemographics: [
+        { role: 'Project Managers', percentage: 42 },
+        { role: 'Project Controls Professionals', percentage: 31 },
+        { role: 'Delivery Leaders & PMO', percentage: 18 },
+        { role: 'Other Project Professionals', percentage: 9 },
+      ],
+      audienceDemographicsFootnote: 'Based on registration data across 50+ live sessions.',
+      reachPackages: [
+        {
+          title: 'Brand Visibility',
+          description: 'Logo Placement',
+          price: '$500',
+          benefits: ['Logo on all session pages', 'Logo on newsletter (1 month)', 'Social media mention'],
+          sessionTitle: 'Sponsor Package: Brand Visibility',
+        },
+        {
+          title: 'Dedicated Session',
+          description: 'Hosted Webinar Slot',
+          price: '$1,500',
+          benefits: ['45-minute dedicated live session', 'Full lead generation & registration list', 'Branded waiting room', 'Recording hosted on platform'],
+          sessionTitle: 'Sponsor Package: Dedicated Session',
+        },
+        {
+          title: 'Lead Generation',
+          description: 'Registration List Sharing',
+          price: '$2,500',
+          benefits: ['Opt-in registration list for 3 sessions', 'Post-event email blast to attendees', 'Prominent logo placement', 'Pre-roll video ad (30s)'],
+          sessionTitle: 'Sponsor Package: Lead Generation',
+        },
+      ],
+    },
+    replaysContent: {
+      emptyStateTitle: 'Replays coming soon.',
+      emptyStateDescription: "The first live sessions are on their way. Once they've aired, replays will appear here — filterable by topic and available on demand.",
+      filterTags: ['All', 'Project Controls', 'Project Management', 'Delivery Leadership'],
+      fallbackAvatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=32&h=32',
+    },
+    paymentCancelContent: {
+      heading: 'No charge was made.',
+      paragraph: 'You cancelled before completing payment. No charge was made to your card. You can try again any time.',
+      primaryCtaLabel: 'Back to Sessions',
+    }
+  },
 };
 
 // --- Authentication Session Storage Helpers ---
@@ -1403,20 +1597,23 @@ export function useCmsContent() {
         const res = await fetch('/api/cms/content');
         if (!res.ok) throw new Error('Failed to load CMS content');
         const data = await res.json() as CmsContent;
-        if (!data.forms || data.forms.length === 0) {
+        if (!data.forms) {
           data.forms = FALLBACK_CMS_CONTENT.forms;
         }
-        if (!data.sessions || data.sessions.length === 0) {
+        if (!data.sessions) {
           data.sessions = FALLBACK_CMS_CONTENT.sessions;
         }
-        if (!data.speakers || data.speakers.length === 0) {
+        if (!data.speakers) {
           data.speakers = FALLBACK_CMS_CONTENT.speakers;
         }
-        if (!data.sponsors || data.sponsors.length === 0) {
+        if (!data.sponsors) {
           data.sponsors = FALLBACK_CMS_CONTENT.sponsors;
         }
-        if (!data.topics || data.topics.length === 0) {
+        if (!data.topics) {
           data.topics = FALLBACK_CMS_CONTENT.topics;
+        }
+        if (!data.globalSiteContent) {
+          data.globalSiteContent = FALLBACK_CMS_CONTENT.globalSiteContent;
         }
         return data;
       } catch (err) {
@@ -1427,7 +1624,8 @@ export function useCmsContent() {
     // Do NOT use initialData — it causes the admin useEffect to fire with
     // an empty sessions [] before the real DB data loads, which can wipe sessions.
     // Instead show a loading state until real data arrives.
-    staleTime: 5 * 60 * 1000, // 5 minutes — prevents constant refetching that resets admin local edits
+    staleTime: 10 * 60 * 1000, // 10 minutes — prevents constant refetching that resets admin local edits
+    gcTime: 30 * 60 * 1000, // 30 minutes - retains cached CMS data for seamless navigation
     refetchOnWindowFocus: false, // Prevents admin data loss when user switches browser tabs
   });
 }

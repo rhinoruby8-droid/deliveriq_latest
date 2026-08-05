@@ -13,6 +13,8 @@ interface CheckoutButtonProps {
   sessionId?: string;
   gateway?: 'stripe' | 'razorpay' | 'paypal' | 'all';
   couponCode?: string;
+  disabled?: boolean;
+  disabledReason?: string;
 }
 
 const loadRazorpayScript = (): Promise<boolean> => {
@@ -38,6 +40,8 @@ export default function CheckoutButton({
   sessionId,
   gateway = 'stripe',
   couponCode,
+  disabled = false,
+  disabledReason,
 }: CheckoutButtonProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -55,12 +59,27 @@ export default function CheckoutButton({
 
     let activeGateway = gateway;
     if (!activeGateway || activeGateway === 'all') {
-      const curr = (currency || '').toLowerCase();
-      const userTz = typeof Intl !== 'undefined' ? (Intl.DateTimeFormat().resolvedOptions().timeZone || '') : '';
-      if (curr === 'inr' || userTz.includes('Kolkata') || userTz.includes('Calcutta') || userTz.includes('India')) {
-        activeGateway = 'razorpay';
-      } else {
-        activeGateway = 'stripe';
+      try {
+        const geoRes = await fetch('/api/geo');
+        if (geoRes.ok) {
+          const geoData = await geoRes.json();
+          if (geoData.country === 'IN') {
+            activeGateway = 'razorpay';
+          } else {
+            activeGateway = 'stripe';
+          }
+        } else {
+          throw new Error('Geo fetch failed');
+        }
+      } catch {
+        // Fallback to timezone heuristics
+        const curr = (currency || '').toLowerCase();
+        const userTz = typeof Intl !== 'undefined' ? (Intl.DateTimeFormat().resolvedOptions().timeZone || '') : '';
+        if (curr === 'inr' || userTz.includes('Kolkata') || userTz.includes('Calcutta') || userTz.includes('India')) {
+          activeGateway = 'razorpay';
+        } else {
+          activeGateway = 'stripe';
+        }
       }
     }
 
@@ -193,8 +212,8 @@ export default function CheckoutButton({
     <div className="flex flex-col gap-2">
       <button
         onClick={handleCheckout}
-        disabled={loading}
-        className={`inline-flex items-center justify-center gap-2 px-7 py-3.5 text-sm font-semibold bg-primary text-[#1A1D24] rounded transition-all duration-200 hover:brightness-110 hover:scale-[1.02] disabled:opacity-60 disabled:cursor-not-allowed disabled:scale-100 ${className}`}
+        disabled={loading || disabled}
+        className={`inline-flex items-center justify-center gap-2 px-7 py-3.5 text-sm font-semibold bg-primary text-primary-foreground rounded transition-all duration-200 hover:brightness-110 hover:scale-[1.02] disabled:opacity-60 disabled:cursor-not-allowed disabled:scale-100 ${className}`}
       >
         {loading ? (
           <>
@@ -208,8 +227,11 @@ export default function CheckoutButton({
           </>
         )}
       </button>
+      {disabled && disabledReason && (
+        <p className="text-xs text-amber-500 text-center">{disabledReason}</p>
+      )}
       {error && (
-        <p className="text-xs text-red-400">{error}</p>
+        <p className="text-xs text-red-400 text-center">{error}</p>
       )}
     </div>
   );

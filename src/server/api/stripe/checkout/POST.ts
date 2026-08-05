@@ -3,6 +3,7 @@ import Stripe from 'stripe';
 import { verifyToken } from '../../../auth';
 
 import { supabaseAdmin } from '../../../supabase';
+import { getSubscriptionConfig } from '../../../subscription-config';
 
 async function getStripe(): Promise<Stripe> {
   const { data } = await supabaseAdmin.from('settings').select('value').eq('id', 'gateway_api_keys').maybeSingle();
@@ -57,27 +58,39 @@ export default async function handler(req: Request, res: Response) {
       }
     }
 
+    const config = await getSubscriptionConfig();
+    if (tier === 'tier3' && !config.isSubscriptionActive) {
+      return res.status(503).json({ error: 'Subscription sales are currently paused.' });
+    }
+
+    const resolvedAmount = amount ?? (tier === 'tier3' ? config.tier3PriceUSD : 0);
+
     const origin = `${req.protocol}://${req.get('host')}`;
 
     let lineItems: Stripe.Checkout.SessionCreateParams.LineItem[];
 
     if (priceId) {
       lineItems = [{ price: priceId, quantity: 1 }];
-    } else if (amount && sessionTitle) {
+    } else if (resolvedAmount > 0 && sessionTitle) {
       let description = 'DeliverIQ live session — includes replay access';
       if (tier === 'tier1') {
         description = 'DeliverIQ live session (Basic tier) — live event access only';
       } else if (tier === 'tier2') {
-        description = 'DeliverIQ live session (Standard tier) — live event + 3 months replay access';
+        const monthsText = config.tier2DurationMonths === 1 ? '1 month' : `${config.tier2DurationMonths} months`;
+        description = `DeliverIQ live session (Standard tier) — live event + ${monthsText} replay access`;
       } else if (tier === 'tier3') {
-        description = 'DeliverIQ Pro Membership — full access to all past and upcoming sessions for 1 year';
+        const years = config.tier3DurationMonths / 12;
+        const durationText = config.tier3DurationMonths % 12 === 0 && config.tier3DurationMonths > 0
+          ? (years === 1 ? '1 year' : `${years} years`)
+          : (config.tier3DurationMonths === 1 ? '1 month' : `${config.tier3DurationMonths} months`);
+        description = `DeliverIQ Pro Membership — full access to all past and upcoming sessions for ${durationText}`;
       }
 
       lineItems = [
         {
           price_data: {
             currency,
-            unit_amount: Math.round(amount * 100),
+            unit_amount: Math.round(resolvedAmount * 100),
             product_data: {
               name: sessionTitle,
               description,
@@ -106,6 +119,29 @@ export default async function handler(req: Request, res: Response) {
         couponCode: couponCode || '',
       },
     });
+
+    if (userId) {
+      try {
+        const { data: userProfile } = await supabaseAdmin.from('users').select('email, name').eq('id', userId).maybeSingle();
+        if (userProfile) {
+          const { logPurchase } = await import('../../../purchases-logger');
+          await logPurchase({
+             id: session.id,
+             userId,
+             userEmail: userProfile.email,
+             userName: userProfile.name,
+             sessionId: sessionId || 'pro_yearly',
+             sessionTitle: sessionTitle || 'DeliverIQ Pro Yearly Subscription',
+             amount: amount || (priceId ? 199.00 : 0),
+             currency: currency.toUpperCase(),
+             gateway: 'stripe',
+             status: 'pending'
+          });
+        }
+      } catch (err) {
+        console.error('Failed to log pending purchase:', err);
+      }
+    }
 
     res.json({ url: session.url, sessionId: session.id });
   } catch (error) {

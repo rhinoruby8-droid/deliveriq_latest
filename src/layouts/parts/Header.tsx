@@ -5,6 +5,8 @@ import { UserNav } from '../../components/UserNav';
 import { getUserToken } from '@/lib/user-auth';
 import AuthDialog from '@/components/AuthDialog';
 import { ModeToggle } from '@/components/ModeToggle';
+import { ThemeAwareLogo } from '@/components/ThemeAwareLogo';
+import { useCmsContent, FALLBACK_CMS_CONTENT } from '@/lib/cms-client';
 
 export default function Header() {
   const location = useLocation();
@@ -25,13 +27,9 @@ export default function Header() {
     setIsAuthenticated(!!token);
   }, [location.pathname]);
 
-  const navItems = [
-    { href: '/', label: 'Home' },
-    { href: '/sessions', label: 'Sessions' },
-    { href: '/replays', label: 'Replays' },
-    { href: '/for-speakers', label: 'Speakers' },
-    { href: '/for-sponsors', label: 'Sponsors' },
-  ];
+  const { data } = useCmsContent();
+  const content = data || FALLBACK_CMS_CONTENT;
+  const navItems = content.globalSiteContent?.header.navItems || FALLBACK_CMS_CONTENT.globalSiteContent!.header.navItems;
 
   const isActive = (href: string) => location.pathname === href;
 
@@ -47,11 +45,7 @@ export default function Header() {
         <div className="flex h-[84px] items-center justify-between diq-header-row">
           {/* Logo */}
           <Link to="/" className="flex items-center shrink-0 diq-header-logo-link">
-            <img
-              src="/assets/deliveriq-logo-dark-notag-1400.png"
-              alt="DeliverIQ"
-              className="h-14 md:h-16 w-auto object-contain shrink-0 diq-header-logo-img"
-            />
+            <ThemeAwareLogo className="h-14 md:h-16 w-auto object-contain shrink-0 diq-header-logo-img" />
           </Link>
 
           {/* Desktop Nav */}

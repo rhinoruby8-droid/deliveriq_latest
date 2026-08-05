@@ -1,4 +1,5 @@
 import { Helmet } from '@dr.pogodin/react-helmet';
+import { SeoHead } from '../components/SeoHead';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { useState, useEffect } from 'react';
@@ -8,6 +9,8 @@ import { Calendar, Clock, ArrowRight, ArrowLeft, Users, Globe, CheckCircle, Play
 
 import { VideoPlayer } from '@/components/VideoPlayer';
 import { PageHtmlRenderer } from '@/components/PageHtmlRenderer';
+import SpeakerDialog from '@/components/SpeakerDialog';
+import type { Speaker } from '@/lib/cms-client';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -55,6 +58,7 @@ export default function SessionDetailPage() {
   const [gateway, setGateway] = useState('stripe');
   const [registrationMessage, setRegistrationMessage] = useState('');
   const [checkoutUrl, setCheckoutUrl] = useState('');
+  const [selectedSpeaker, setSelectedSpeaker] = useState<Speaker | null>(null);
 
   useEffect(() => {
     async function checkAuth() {
@@ -296,7 +300,11 @@ export default function SessionDetailPage() {
         </h2>
         <div className="flex flex-col gap-4">
           {speakers.map(sp => (
-            <div key={sp.id} className="flex items-start gap-4 border border-border bg-card/40 rounded-sm p-4">
+            <div 
+              key={sp.id} 
+              className="flex items-start gap-4 border border-border bg-card/40 hover:bg-card/60 hover:border-primary/30 rounded-sm p-4 cursor-pointer transition-colors group"
+              onClick={() => setSelectedSpeaker(sp)}
+            >
               <img
                 src={sp.avatarUrl}
                 alt={sp.name}
@@ -306,12 +314,12 @@ export default function SessionDetailPage() {
                 className="w-12 h-12 rounded-full object-cover border border-border shrink-0"
               />
               <div className="flex-1 min-w-0">
-                <p className="font-bold text-foreground text-sm">{sp.name}</p>
+                <p className="font-bold text-foreground text-sm group-hover:text-primary transition-colors">{sp.name}</p>
                 <p className="text-xs text-primary font-medium mb-1">{sp.role} · {sp.organisation}</p>
                 {sp.bio && <p className="text-xs text-muted-foreground leading-relaxed line-clamp-3">{sp.bio}</p>}
               </div>
               {sp.socialUrl && (
-                <a href={sp.socialUrl} target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-primary transition-colors shrink-0">
+                <a href={sp.socialUrl} onClick={(e) => e.stopPropagation()} target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-primary transition-colors shrink-0">
                   <Globe size={14} />
                 </a>
               )}
@@ -389,7 +397,7 @@ export default function SessionDetailPage() {
             ) : null}
             <div className="px-6 py-8 flex flex-col items-center text-center gap-3">
               <PlayCircle size={36} className="text-slate-500" />
-              <p className="text-xs font-bold text-white">This session has ended</p>
+              <p className="text-xs font-bold text-foreground">This session has ended</p>
               {session.videoUrl ? (
                 <Link
                   to="/replays"
@@ -406,7 +414,7 @@ export default function SessionDetailPage() {
           <div className="px-6 py-12 flex flex-col items-center text-center gap-4">
             <CheckCircle size={40} className="text-emerald-400 animate-bounce" />
             <div>
-              <p className="text-sm font-black text-white">Successfully Registered!</p>
+              <p className="text-sm font-black text-foreground">Successfully Registered!</p>
               <p className="text-[11px] text-slate-500 leading-relaxed mt-1 max-w-xs">
                 {registrationMessage || "We've registered you for this session."}
               </p>
@@ -450,7 +458,7 @@ export default function SessionDetailPage() {
                       value={name}
                       onChange={e => setName(e.target.value)}
                       placeholder="Your name"
-                      className="bg-card border border-border rounded-xl px-4 py-3 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-primary transition-colors"
+                      className="bg-card border border-border rounded-xl px-4 py-3 text-xs text-foreground placeholder-slate-600 focus:outline-none focus:border-primary transition-colors"
                     />
                   </div>
                   <div className="flex flex-col gap-1.5">
@@ -461,7 +469,7 @@ export default function SessionDetailPage() {
                       value={email}
                       onChange={e => setEmail(e.target.value)}
                       placeholder="you@company.com"
-                      className="bg-card border border-border rounded-xl px-4 py-3 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-primary transition-colors"
+                      className="bg-card border border-border rounded-xl px-4 py-3 text-xs text-foreground placeholder-slate-600 focus:outline-none focus:border-primary transition-colors"
                     />
                   </div>
                   {!getUserToken() && (
@@ -473,7 +481,7 @@ export default function SessionDetailPage() {
                         value={password}
                         onChange={e => setPassword(e.target.value)}
                         placeholder="Create a password"
-                        className="bg-card border border-border rounded-xl px-4 py-3 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-primary transition-colors"
+                        className="bg-card border border-border rounded-xl px-4 py-3 text-xs text-foreground placeholder-slate-600 focus:outline-none focus:border-primary transition-colors"
                       />
                     </div>
                   )}
@@ -490,12 +498,12 @@ export default function SessionDetailPage() {
                         value={couponCode}
                         onChange={e => setCouponCode(e.target.value)}
                         placeholder="e.g. SAVE20"
-                        className="flex-1 bg-card border border-border rounded-xl px-4 py-3 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-primary transition-colors"
+                        className="flex-1 bg-card border border-border rounded-xl px-4 py-3 text-xs text-foreground placeholder-slate-600 focus:outline-none focus:border-primary transition-colors"
                       />
                       <button
                         type="button"
                         onClick={handleApplyCoupon}
-                        className="px-4 py-3 bg-muted text-white text-xs font-bold rounded-xl hover:bg-[#3C404E] transition-colors cursor-pointer"
+                        className="px-4 py-3 bg-muted text-foreground text-xs font-bold rounded-xl hover:brightness-110 transition-colors cursor-pointer"
                       >
                         Apply
                       </button>
@@ -510,7 +518,7 @@ export default function SessionDetailPage() {
                       <select
                         value={gateway}
                         onChange={e => setGateway(e.target.value)}
-                        className="bg-card border border-border text-white px-4 py-3 text-xs rounded-xl focus:outline-none focus:border-primary transition-colors cursor-pointer"
+                        className="bg-card border border-border text-foreground px-4 py-3 text-xs rounded-xl focus:outline-none focus:border-primary transition-colors cursor-pointer"
                       >
                         <option value="stripe">Stripe (Card / Apple Pay)</option>
                         <option value="razorpay">Razorpay (UPI / Netbanking)</option>
@@ -529,7 +537,7 @@ export default function SessionDetailPage() {
                         <span>-{new Intl.NumberFormat('en-US', { style: 'currency', currency: cms.paymentConfig?.currency || 'USD' }).format(originalPrice * discountPercent / 100)}</span>
                       </div>
                     )}
-                    <div className="flex justify-between border-t border-border/40 pt-3 text-xs text-white font-bold">
+                    <div className="flex justify-between border-t border-border/40 pt-3 text-xs text-foreground font-bold">
                       <span>Total to Pay:</span>
                       <span className="text-primary text-sm font-extrabold">{new Intl.NumberFormat('en-US', { style: 'currency', currency: cms.paymentConfig?.currency || 'USD' }).format(finalPrice)}</span>
                     </div>
@@ -539,7 +547,7 @@ export default function SessionDetailPage() {
 
               <button
                 type="submit"
-                className="mt-2 inline-flex items-center justify-center gap-2 px-6 py-3.5 text-xs font-black bg-primary text-[#1A1D24] rounded-xl hover:brightness-110 active:scale-[0.98] transition-all cursor-pointer shadow-[0_4px_16px_rgba(199,154,78,0.15)]"
+                className="mt-2 inline-flex items-center justify-center gap-2 px-6 py-3.5 text-xs font-black bg-primary text-primary-foreground rounded-xl hover:brightness-110 active:scale-[0.98] transition-all cursor-pointer shadow-[0_4px_16px_rgba(199,154,78,0.15)]"
               >
                 {finalPrice > 0 ? "Pay & Register " + new Intl.NumberFormat('en-US', { style: 'currency', currency: cms.paymentConfig?.currency || 'USD' }).format(finalPrice) : 'Register Now'} <ArrowRight size={13} />
               </button>
@@ -553,25 +561,22 @@ export default function SessionDetailPage() {
 
   return (
     <>
+      <SeoHead sessionOverrides={{ title, description, image: session?.sessionOgImageUrl }} />
       <Helmet>
-        <title>{title}</title>
-        <meta name="description" content={description} />
         <link rel="canonical" href={pageUrl} />
-        <meta property="og:title" content={title} />
-        <meta property="og:description" content={description} />
         <meta property="og:type" content="website" />
         <meta property="og:url" content={pageUrl} />
-        <meta property="og:image" content={`${site}/airo-assets/images/logo/horizontal`} />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={title} />
-        <meta name="twitter:description" content={description} />
-        <meta name="twitter:image" content={`${site}/airo-assets/images/logo/horizontal`} />
         <script type="application/ld+json">{JSON.stringify(eventSchema)}</script>
         {cms.sessionDetailPageCss ? <style>{cms.sessionDetailPageCss}</style> : null}
       </Helmet>
       <main>
         <PageHtmlRenderer html={htmlContent} widgets={widgets} />
       </main>
+      <SpeakerDialog 
+        speaker={selectedSpeaker} 
+        isOpen={!!selectedSpeaker} 
+        onClose={() => setSelectedSpeaker(null)} 
+      />
     </>
   );
 }

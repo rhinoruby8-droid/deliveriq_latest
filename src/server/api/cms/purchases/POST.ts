@@ -29,7 +29,7 @@ export default async function handler(req: Request, res: Response) {
       .eq('id', 'purchases')
       .maybeSingle();
 
-    let purchases: Purchase[] = record?.value || [];
+    const purchases: Purchase[] = record?.value || [];
 
     // Find if user exists in database to associate userId
     const { data: userRecord } = await supabaseAdmin

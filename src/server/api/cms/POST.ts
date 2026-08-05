@@ -21,6 +21,15 @@ export default async function handler(req: AuthRequest, res: Response) {
         }))
       );
       if (error) throw new Error(`Speakers upsert failed: ${error.message}`);
+
+      // Delete removed speakers
+      const incomingIds = data.speakers.map((s: any) => s.id);
+      const { data: existing } = await supabaseAdmin.from('speakers').select('id');
+      const existingIds = existing?.map((s: { id: string }) => s.id) || [];
+      const idsToDelete = existingIds.filter((id: string) => !incomingIds.includes(id));
+      if (idsToDelete.length > 0) {
+        await supabaseAdmin.from('speakers').delete().in('id', idsToDelete);
+      }
     }
 
     // Upsert Sponsors
@@ -35,6 +44,15 @@ export default async function handler(req: AuthRequest, res: Response) {
         }))
       );
       if (error) throw new Error(`Sponsors upsert failed: ${error.message}`);
+
+      // Delete removed sponsors
+      const incomingIds = data.sponsors.map((s: any) => s.id);
+      const { data: existing } = await supabaseAdmin.from('sponsors').select('id');
+      const existingIds = existing?.map((s: { id: string }) => s.id) || [];
+      const idsToDelete = existingIds.filter((id: string) => !incomingIds.includes(id));
+      if (idsToDelete.length > 0) {
+        await supabaseAdmin.from('sponsors').delete().in('id', idsToDelete);
+      }
     }
 
     // Upsert Sessions
@@ -57,19 +75,33 @@ export default async function handler(req: AuthRequest, res: Response) {
       );
       if (error) throw new Error(`Sessions upsert failed: ${error.message}`);
 
+      // Delete removed sessions
+      const incomingIds = data.sessions.map((s: any) => s.id);
+      const { data: existing } = await supabaseAdmin.from('sessions').select('id');
+      const existingIds = existing?.map((s: { id: string }) => s.id) || [];
+      const idsToDelete = existingIds.filter((id: string) => !incomingIds.includes(id));
+      if (idsToDelete.length > 0) {
+        await supabaseAdmin.from('sessions').delete().in('id', idsToDelete);
+      }
+
       // Store pricing config in settings to avoid schema changes
       const sessionPricing: Record<string, any> = {};
+      const sessionOgImages: Record<string, any> = {};
       data.sessions.forEach((s: any) => {
         sessionPricing[s.id] = {
           price: s.price !== undefined ? s.price : 0,
           isFree: s.isFree !== undefined ? s.isFree : false
         };
+        if (s.sessionOgImageUrl) {
+          sessionOgImages[s.id] = s.sessionOgImageUrl;
+        }
       });
-      const { error: pricingErr } = await supabaseAdmin.from('settings').upsert({
-        id: 'session_pricing',
-        value: sessionPricing
-      });
-      if (pricingErr) throw new Error(`Pricing config upsert failed: ${pricingErr.message}`);
+      
+      const { error: pricingErr } = await supabaseAdmin.from('settings').upsert([
+        { id: 'session_pricing', value: sessionPricing },
+        { id: 'session_og_images', value: sessionOgImages }
+      ]);
+      if (pricingErr) throw new Error(`Pricing/OG Config upsert failed: ${pricingErr.message}`);
     }
 
     // Save coupons to settings to avoid schema changes
@@ -102,6 +134,15 @@ export default async function handler(req: AuthRequest, res: Response) {
         }))
       );
       if (error) throw new Error(`Forms upsert failed: ${error.message}`);
+
+      // Delete removed forms
+      const incomingIds = data.forms.map((f: any) => f.id);
+      const { data: existing } = await supabaseAdmin.from('forms').select('id');
+      const existingIds = existing?.map((f: { id: string }) => f.id) || [];
+      const idsToDelete = existingIds.filter((id: string) => !incomingIds.includes(id));
+      if (idsToDelete.length > 0) {
+        await supabaseAdmin.from('forms').delete().in('id', idsToDelete);
+      }
     }
 
     // Upsert Pages
@@ -144,6 +185,23 @@ export default async function handler(req: AuthRequest, res: Response) {
         value: { css: data.globalCss }
       });
       if (error) throw new Error(`Global CSS upsert failed: ${error.message}`);
+    }
+
+    // Save hero banner config to settings
+    if (data.heroBannerConfig) {
+      const { error: heroErr } = await supabaseAdmin.from('settings').upsert({
+        id: 'hero_banner_config',
+        value: data.heroBannerConfig
+      });
+      if (heroErr) throw new Error(`Hero banner config upsert failed: ${heroErr.message}`);
+    }
+
+    if (data.globalSiteContent) {
+      const { error: globalSiteErr } = await supabaseAdmin.from('settings').upsert({
+        id: 'global_site_content',
+        value: data.globalSiteContent
+      });
+      if (globalSiteErr) throw new Error(`Global site content upsert failed: ${globalSiteErr.message}`);
     }
 
     // Clear local memory cache

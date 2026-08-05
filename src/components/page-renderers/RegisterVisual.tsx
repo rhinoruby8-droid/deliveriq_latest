@@ -18,7 +18,7 @@ export function RegisterVisual({ data }: RegisterVisualProps) {
         backgroundSize: '48px 48px'
       }} />
       <div className="absolute inset-0 pointer-events-none diq-register-hero-glow-bg" aria-hidden="true" style={{
-        background: 'radial-gradient(ellipse 50% 60% at 20% 50%, rgba(199,154,78,0.06) 0%, transparent 70%)'
+        background: 'radial-gradient(ellipse 50% 60% at 20% 50%, hsl(var(--primary) / 0.06) 0%, transparent 70%)'
       }} />
 
       <div className="container mx-auto px-6 lg:px-8 relative z-10 diq-register-hero-container">

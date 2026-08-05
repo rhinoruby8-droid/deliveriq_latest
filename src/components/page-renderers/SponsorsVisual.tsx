@@ -1,6 +1,10 @@
+import React, { Suspense } from 'react';
 import type { SponsorsPageContent } from '@/lib/cms-client';
 import { ArrowRight, Check } from 'lucide-react';
 import { SponsorIntakeForm } from '../SponsorIntakeForm';
+
+import { useCmsContent } from '@/lib/cms-client';
+import { HeroVideoBackground } from '@/components/HeroVideoBackground';
 
 const TIER_COLORS: Record<string, string> = {
   'Session Sponsor': 'border-[#CD7F32]/40 bg-[#CD7F32]/5',
@@ -11,24 +15,28 @@ const TIER_COLORS: Record<string, string> = {
 interface Props { data: SponsorsPageContent; }
 
 export function SponsorsVisual({ data }: Props) {
+  const { data: cms } = useCmsContent();
+  const config = cms?.heroBannerConfig;
+  const pageConfig = config?.pages?.['sponsors'] || {};
+  const alignment = pageConfig.alignment || config?.alignment || 'left';
+  
+  const alignClass = alignment === 'center' ? 'text-center items-center mx-auto' 
+                   : alignment === 'right' ? 'text-right items-end ml-auto' 
+                   : 'text-left items-start';
   const { hero, tiers, cta } = data;
   return (
     <>
       <section className="relative overflow-hidden pt-20 pb-16 lg:pt-28 lg:pb-20 diq-sponsors-hero-section">
-        <div className="absolute inset-0 pointer-events-none diq-sponsors-hero-grid-bg" aria-hidden="true" style={{
-          backgroundImage: 'linear-gradient(rgba(44,47,56,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(44,47,56,0.35) 1px, transparent 1px)',
-          backgroundSize: '48px 48px'
-        }} />
-        <div className="absolute inset-0 pointer-events-none diq-sponsors-hero-glow-bg" aria-hidden="true" style={{
-          background: 'radial-gradient(ellipse 50% 60% at 20% 50%, rgba(199,154,78,0.06) 0%, transparent 70%)'
-        }} />
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <HeroVideoBackground pageKey="sponsors"  />
+        </div>
         
         <div className="container mx-auto px-6 lg:px-8 relative z-10 diq-sponsors-hero-container">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start diq-sponsors-hero-row">
-            <div className="diq-sponsors-hero-copy">
-              {hero.eyebrow && <p className="text-[11px] font-semibold tracking-[0.2em] text-primary uppercase mb-4 diq-sponsors-hero-eyebrow">{hero.eyebrow}</p>}
-              <h1 className="text-4xl md:text-5xl font-bold text-foreground leading-tight mb-5 whitespace-pre-line diq-sponsors-hero-headline">{hero.headline}</h1>
-              <p className="text-lg text-muted-foreground leading-relaxed max-w-xl mb-8 diq-sponsors-hero-subheadline">{hero.subheadline}</p>
+            <div className={"flex flex-col " + alignClass + " diq-sponsors-hero-copy"}>
+              {hero.eyebrow && <p className="text-[11px] font-semibold tracking-[0.2em] text-primary uppercase mb-4 diq-sponsors-hero-eyebrow" style={{ color: config?.buttonColor || 'hsl(var(--primary))' }}>{hero.eyebrow}</p>}
+              <h1 className="text-4xl md:text-5xl font-bold text-foreground leading-tight mb-5 whitespace-pre-line diq-sponsors-hero-headline" style={{ color: config?.textColor || undefined }}>{hero.headline}</h1>
+              <p className="text-lg text-muted-foreground leading-relaxed max-w-xl mb-8 diq-sponsors-hero-subheadline" style={{ color: config?.textColor || 'hsl(var(--muted-foreground))' }}>{hero.subheadline}</p>
             </div>
             
             <div className="lg:sticky lg:top-32 w-full diq-sponsors-form-sticky-col">
@@ -71,7 +79,7 @@ export function SponsorsVisual({ data }: Props) {
         <div className="container mx-auto px-6 lg:px-8 text-center diq-sponsors-cta-container">
           <h2 className="text-2xl font-bold text-foreground mb-3 diq-sponsors-cta-headline">{cta.headline}</h2>
           {cta.subtext && <p className="text-sm text-muted-foreground mb-6 diq-sponsors-cta-subtext">{cta.subtext}</p>}
-          <a href={cta.buttonHref} className="inline-flex items-center gap-2 px-7 py-3.5 text-sm font-semibold bg-primary text-[#1A1D24] rounded transition-all hover:brightness-110 diq-sponsors-cta-btn">
+          <a href={cta.buttonHref} className="inline-flex items-center gap-2 px-7 py-3.5 text-sm font-semibold bg-primary text-primary-foreground rounded transition-all hover:brightness-110 diq-sponsors-cta-btn">
             {cta.buttonLabel} <ArrowRight size={14} />
           </a>
         </div>

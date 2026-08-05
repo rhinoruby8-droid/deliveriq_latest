@@ -58,7 +58,7 @@ if (corsOrigins.length === 0) {
 	corsOrigins.push("*");
 }
 
-export default defineConfig(({ mode, isSsrBuild }) => ({
+export default defineConfig(({ isSsrBuild }) => ({
 	envPrefix: ["VITE_", "SITE_"],
 
 	plugins: [
@@ -98,7 +98,7 @@ export default defineConfig(({ mode, isSsrBuild }) => ({
 			overlay: false,
 		},
 		watch: {
-			ignored: ["**/dist/**"],
+			ignored: ["**/dist/**", "**/*.mp4", "**/*.webm", "**/*.png", "**/*.jpg", "**/*.jpeg"],
 		},
 		// Pre-transform the entry chain on dev-server start so the FIRST iframe
 		// request doesn't pay the full cold on-demand transpile cost. Paired with

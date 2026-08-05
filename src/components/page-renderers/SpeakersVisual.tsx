@@ -1,6 +1,11 @@
+import React, { Suspense } from 'react';
 import type { SpeakersPageContent } from '@/lib/cms-client';
 import { ArrowRight, Globe, Users, Award, Star, Zap } from 'lucide-react';
 import { DynamicForm } from '../cms/DynamicForm';
+import { SpeakerGrid } from '@/components/SpeakerGrid';
+
+import { useCmsContent } from '@/lib/cms-client';
+import { HeroVideoBackground } from '@/components/HeroVideoBackground';
 
 const ICONS: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
   Globe, Users, Award, Star, Zap,
@@ -9,24 +14,28 @@ const ICONS: Record<string, React.ComponentType<{ size?: number; className?: str
 interface Props { data: SpeakersPageContent; }
 
 export function SpeakersVisual({ data }: Props) {
+  const { data: cms } = useCmsContent();
+  const config = cms?.heroBannerConfig;
+  const pageConfig = config?.pages?.['speakers'] || {};
+  const alignment = pageConfig.alignment || config?.alignment || 'left';
+  
+  const alignClass = alignment === 'center' ? 'text-center items-center mx-auto' 
+                   : alignment === 'right' ? 'text-right items-end ml-auto' 
+                   : 'text-left items-start';
   const { hero, benefits, cta } = data;
   return (
     <>
-      <section className="relative overflow-hidden pt-20 pb-16 lg:pt-28 lg:pb-20 diq-speakers-hero-section">
-        <div className="absolute inset-0 pointer-events-none diq-speakers-hero-grid-bg" aria-hidden="true" style={{
-          backgroundImage: 'linear-gradient(rgba(44,47,56,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(44,47,56,0.35) 1px, transparent 1px)',
-          backgroundSize: '48px 48px'
-        }} />
-        <div className="absolute inset-0 pointer-events-none diq-speakers-hero-glow-bg" aria-hidden="true" style={{
-          background: 'radial-gradient(ellipse 50% 60% at 20% 50%, rgba(199,154,78,0.06) 0%, transparent 70%)'
-        }} />
+      <section className="relative pt-20 pb-16 lg:pt-28 lg:pb-20 diq-speakers-hero-section">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <HeroVideoBackground pageKey="speakers"  />
+        </div>
         
         <div className="container mx-auto px-6 lg:px-8 relative z-10 diq-speakers-hero-container">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start diq-speakers-hero-row">
-            <div className="diq-speakers-hero-copy">
-              {hero.eyebrow && <p className="text-[11px] font-semibold tracking-[0.2em] text-primary uppercase mb-4 diq-speakers-hero-eyebrow">{hero.eyebrow}</p>}
-              <h1 className="text-4xl md:text-5xl font-bold text-foreground leading-tight mb-5 whitespace-pre-line diq-speakers-hero-headline">{hero.headline}</h1>
-              <p className="text-lg text-muted-foreground leading-relaxed max-w-xl mb-8 diq-speakers-hero-subheadline">{hero.subheadline}</p>
+            <div className={"flex flex-col " + alignClass + " diq-speakers-hero-copy"}>
+              {hero.eyebrow && <p className="text-[11px] font-semibold tracking-[0.2em] text-primary uppercase mb-4 diq-speakers-hero-eyebrow" style={{ color: config?.buttonColor || 'hsl(var(--primary))' }}>{hero.eyebrow}</p>}
+              <h1 className="text-4xl md:text-5xl font-bold text-foreground leading-tight mb-5 whitespace-pre-line diq-speakers-hero-headline" style={{ color: config?.textColor || undefined }}>{hero.headline}</h1>
+              <p className="text-lg text-muted-foreground leading-relaxed max-w-xl mb-8 diq-speakers-hero-subheadline" style={{ color: config?.textColor || 'hsl(var(--muted-foreground))' }}>{hero.subheadline}</p>
             </div>
             
             <div className="lg:sticky lg:top-32 w-full diq-speakers-form-sticky-col">
@@ -44,6 +53,7 @@ export function SpeakersVisual({ data }: Props) {
           </div>
         </div>
       </section>
+      <SpeakerGrid speakers={cms?.speakers || []} />
       {benefits.length > 0 && (
         <section className="py-16 lg:py-20 diq-speakers-benefits-section">
           <div className="container mx-auto px-6 lg:px-8 diq-speakers-benefits-container">
@@ -66,7 +76,7 @@ export function SpeakersVisual({ data }: Props) {
         <div className="container mx-auto px-6 lg:px-8 text-center diq-speakers-cta-container">
           <h2 className="text-2xl font-bold text-foreground mb-3 diq-speakers-cta-headline">{cta.headline}</h2>
           {cta.subtext && <p className="text-sm text-muted-foreground mb-6 diq-speakers-cta-subtext">{cta.subtext}</p>}
-          <a href={cta.buttonHref} className="inline-flex items-center gap-2 px-7 py-3.5 text-sm font-semibold bg-primary text-[#1A1D24] rounded transition-all hover:brightness-110 diq-speakers-cta-btn">
+          <a href={cta.buttonHref} className="inline-flex items-center gap-2 px-7 py-3.5 text-sm font-semibold bg-primary text-primary-foreground rounded transition-all hover:brightness-110 diq-speakers-cta-btn">
             {cta.buttonLabel} <ArrowRight size={14} />
           </a>
         </div>

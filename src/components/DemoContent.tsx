@@ -105,8 +105,7 @@ export default function DemoContent() {
                 <input
                   type="text"
                   id="name"
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent outline-none transition-all"
-                  style={{ focusRingColor: `hsl(var(--ring))` } as any}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent outline-none transition-all focus:ring-[hsl(var(--ring))]"
                   placeholder="Your name"
                 />
               </div>
@@ -118,8 +117,7 @@ export default function DemoContent() {
                 <input
                   type="email"
                   id="email"
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent outline-none transition-all"
-                  style={{ focusRingColor: `hsl(var(--ring))` } as any}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent outline-none transition-all focus:ring-[hsl(var(--ring))]"
                   placeholder="your@email.com"
                 />
               </div>
@@ -132,8 +130,7 @@ export default function DemoContent() {
               <textarea
                 id="message"
                 rows={3}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent outline-none transition-all resize-none"
-                style={{ focusRingColor: `hsl(var(--ring))` } as any}
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent outline-none transition-all resize-none focus:ring-[hsl(var(--ring))]"
                 placeholder="Your message..."
               ></textarea>
             </div>

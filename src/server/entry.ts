@@ -35,6 +35,8 @@ import cms_email_templates_delete from "./api/cms/email-templates/DELETE";
 import auth_forgot_password_post from "./api/auth/forgot-password/POST";
 import user_session_join_get from "./api/user/sessions/join/GET";
 import proxy_join_get from "./api/proxy/join/GET";
+import cms_upload_post from "./api/cms/upload/POST";
+import geo_get from "./api/geo/GET";
 // </api-imports>
 import { requireAuth, requireRole } from "./auth";
 import { seoRoutes } from "../lib/seo-routes";
@@ -112,8 +114,8 @@ const app = express();
 app.set("trust proxy", true);
 
 app.use(compression());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '100mb' }));
+app.use(express.urlencoded({ extended: true, limit: '100mb' }));
 
 // <api-registrations>
 app.get("/api/health", health_get_0);
@@ -145,7 +147,9 @@ app.post("/api/cms/settings/gateways", requireRole(['admin']) as any, cms_settin
 app.get("/api/cms/email-templates", requireRole(['admin']) as any, cms_email_templates_get as any);
 app.post("/api/cms/email-templates", requireRole(['admin']) as any, cms_email_templates_post as any);
 app.delete("/api/cms/email-templates", requireRole(['admin']) as any, cms_email_templates_delete as any);
+app.post("/api/cms/upload", requireRole(['admin']) as any, cms_upload_post as any);
 app.post("/api/auth/forgot-password", auth_forgot_password_post);
+app.get("/api/geo", geo_get as any);
 // </api-registrations>
 
 // Error middleware must be registered AFTER the routes it protects; Express
@@ -269,7 +273,7 @@ if (process.env.NODE_ENV !== "development") {
 	// load is unrecoverable at runtime - exiting lets the container
 	// scheduler restart with a clean slate rather than leaving the server
 	// to serve silent 503s indefinitely against a single startup log.
-	let renderFn: ((url: string) => Promise<SsrRenderResult>) | null = null;
+	let renderFn: ((url: string, origin: string) => Promise<SsrRenderResult>) | null = null;
 	const SSR_MODULE_LOAD_TIMEOUT_MS = 30_000;
 	const loadTimeout = setTimeout(() => {
 		if (renderFn !== null) return;
@@ -311,7 +315,8 @@ if (process.env.NODE_ENV !== "development") {
 			return sendFallback();
 		}
 		try {
-			const result = await renderFn(req.url);
+			const origin = `${req.protocol}://${req.get('host') || req.hostname}`;
+			const result = await renderFn(req.url, origin);
 			console.log("ssr.render.result", { url: req.url, status: result.status, htmlLength: result.html?.length });
 			if (result.redirect) {
 				// Redirect thrown from a loader/action surfaces as a Response.

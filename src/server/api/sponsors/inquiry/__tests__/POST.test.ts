@@ -6,6 +6,18 @@ import type { Request, Response } from 'express';
 const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
+vi.mock('../../../../supabase', () => ({
+  supabaseAdmin: {
+    from: vi.fn().mockReturnValue({
+      select: vi.fn().mockReturnValue({
+        eq: vi.fn().mockReturnValue({
+          maybeSingle: vi.fn().mockResolvedValue({ data: null })
+        })
+      })
+    })
+  }
+}));
+
 describe('Sponsor Inquiry POST handler', () => {
   let req: Partial<Request>;
   let res: Partial<Response>;
@@ -48,7 +60,8 @@ describe('Sponsor Inquiry POST handler', () => {
   it('should send email payload to internal gateway and return 200 on success', async () => {
     mockFetch.mockResolvedValueOnce({
       ok: true,
-      json: async () => ({ success: true })
+      status: 200,
+      json: async () => ({ success: true, messageId: '123' })
     });
 
     req.body = {
@@ -64,7 +77,7 @@ describe('Sponsor Inquiry POST handler', () => {
       'http://127.0.0.1:2525/api/email/send',
       expect.objectContaining({
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'content-type': 'application/json' },
         body: expect.stringContaining('Test Corp')
       })
     );
@@ -76,7 +89,8 @@ describe('Sponsor Inquiry POST handler', () => {
   it('should return 200 even if internal email gateway fails (non-blocking)', async () => {
     mockFetch.mockResolvedValueOnce({
       ok: false,
-      text: async () => 'Gateway Error'
+      status: 500,
+      json: async () => ({ success: false, error: 'Gateway Error' })
     });
 
     req.body = {

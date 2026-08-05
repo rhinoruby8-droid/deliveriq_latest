@@ -1,36 +1,60 @@
+import React, { Suspense } from 'react';
 import type { HomepageContent } from '@/lib/cms-client';
 import { ArrowRight } from 'lucide-react';
+import { useCmsContent } from '@/lib/cms-client';
+import { HeroVideoBackground } from '@/components/HeroVideoBackground';
+
 
 interface Props { data: HomepageContent; }
 
 export function HomepageVisual({ data }: Props) {
   const { hero, stats, introParagraph } = data;
+  const { data: cms } = useCmsContent();
+  const config = cms?.heroBannerConfig;
+  const pageConfig = config?.pages?.['homepage'] || {};
+  const alignment = pageConfig.alignment || config?.alignment || 'left';
+  
+  const alignClass = alignment === 'center' ? 'text-center items-center mx-auto' 
+                   : alignment === 'right' ? 'text-right items-end ml-auto' 
+                   : 'text-left items-start';
+  
   return (
     <>
       {/* Hero */}
-      <section className="relative overflow-hidden pt-20 pb-16 lg:pt-32 lg:pb-24 diq-hero-section">
-        <div className="absolute inset-0 pointer-events-none diq-hero-grid-bg" aria-hidden="true"
-          style={{ backgroundImage: 'linear-gradient(rgba(44,47,56,0.35) 1px,transparent 1px),linear-gradient(90deg,rgba(44,47,56,0.35) 1px,transparent 1px)', backgroundSize: '48px 48px' }} />
-        <div className="absolute inset-0 pointer-events-none diq-hero-glow-bg" aria-hidden="true"
-          style={{ background: 'radial-gradient(ellipse 70% 80% at 0% 50%,rgba(199,154,78,0.08) 0%,transparent 70%)' }} />
+      <section className="relative pt-20 pb-16 lg:pt-32 lg:pb-24 diq-hero-section">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <HeroVideoBackground pageKey="homepage"  />
+        </div>
         <div className="container mx-auto px-6 lg:px-8 relative z-10 max-w-4xl diq-hero-container">
-          {hero.eyebrow && (
-            <p className="text-[11px] font-semibold tracking-[0.2em] text-primary uppercase mb-4 diq-hero-eyebrow">{hero.eyebrow}</p>
-          )}
-          <h1 className="text-5xl md:text-6xl lg:text-[5rem] font-bold text-foreground leading-[1.0] tracking-tight mb-6 diq-hero-headline">{hero.headline}</h1>
-          <p className="text-lg text-muted-foreground leading-relaxed max-w-xl mb-5 diq-hero-subheadline">{hero.subheadline}</p>
-          {introParagraph && (
-            <p className="text-sm text-[#C0B89A] leading-relaxed border-l-2 border-primary/50 pl-4 mb-8 diq-hero-intro">{introParagraph}</p>
-          )}
-          <div className="flex flex-wrap gap-4 diq-hero-cta-group">
-            <a href={hero.primaryCta.href} className="inline-flex items-center gap-2 px-7 py-3.5 text-sm font-semibold bg-primary text-[#1A1D24] rounded transition-all hover:brightness-110 diq-hero-cta-primary">
-              {hero.primaryCta.label} <ArrowRight size={14} />
-            </a>
-            {hero.secondaryCta && (
-              <a href={hero.secondaryCta.href} className="inline-flex items-center gap-2 px-7 py-3.5 text-sm font-semibold border border-border text-foreground rounded hover:bg-muted transition-colors diq-hero-cta-secondary">
-                {hero.secondaryCta.label}
-              </a>
+          <div className={`flex flex-col ${alignClass} diq-hero-copy`}>
+            {pageConfig.textContent ? (
+              <div 
+                className="cms-hero-content"
+                style={{ color: config?.textColor || undefined }}
+                dangerouslySetInnerHTML={{ __html: pageConfig.textContent }} 
+              />
+            ) : (
+              <>
+                {hero.eyebrow && (
+                  <p className="text-[11px] font-semibold tracking-[0.2em] uppercase mb-4 diq-hero-eyebrow" style={{ color: config?.buttonColor || 'hsl(var(--primary))' }}>{hero.eyebrow}</p>
+                )}
+                <h1 className="text-5xl md:text-6xl lg:text-[5rem] font-bold leading-[1.0] tracking-tight mb-6 diq-hero-headline" style={{ color: config?.textColor || undefined }}>{hero.headline}</h1>
+                <p className="text-lg leading-relaxed max-w-xl mb-5 diq-hero-subheadline" style={{ color: config?.textColor || 'hsl(var(--muted-foreground))' }}>{hero.subheadline}</p>
+                {introParagraph && (
+                  <p className="text-sm leading-relaxed border-l-2 pl-4 mb-8 diq-hero-intro" style={{ color: config?.textColor || 'hsl(var(--primary))', borderColor: config?.buttonColor ? `${config.buttonColor}80` : 'hsl(var(--primary) / 0.5)' }}>{introParagraph}</p>
+                )}
+              </>
             )}
+            <div className={`flex flex-wrap gap-4 ${alignment === 'center' ? 'justify-center' : alignment === 'right' ? 'justify-end' : ''} diq-hero-cta-group`}>
+              <a href={hero.primaryCta.href} className="inline-flex items-center gap-2 px-7 py-3.5 text-sm font-semibold text-primary-foreground rounded transition-all hover:brightness-110 diq-hero-cta-primary" style={{ backgroundColor: config?.buttonColor || 'hsl(var(--primary))' }}>
+                {hero.primaryCta.label} <ArrowRight size={14} />
+              </a>
+              {hero.secondaryCta && (
+                <a href={hero.secondaryCta.href} className="inline-flex items-center gap-2 px-7 py-3.5 text-sm font-semibold border text-foreground rounded hover:bg-muted transition-colors diq-hero-cta-secondary" style={{ borderColor: config?.buttonColor || 'hsl(var(--border))' }}>
+                  {hero.secondaryCta.label}
+                </a>
+              )}
+            </div>
           </div>
         </div>
       </section>

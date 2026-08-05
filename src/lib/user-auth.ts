@@ -1,4 +1,5 @@
 // User Auth Client
+import { useQuery } from '@tanstack/react-query';
 
 export interface User {
   id: string;
@@ -100,4 +101,13 @@ export async function trackWatchTime(type: 'live' | 'recording', minutes: number
   } catch {
     // silently fail
   }
+}
+
+export function useUserProfile() {
+  return useQuery<User | null>({
+    queryKey: ['userProfile'],
+    queryFn: fetchMe,
+    staleTime: 1000 * 60 * 5,
+    retry: false,
+  });
 }

@@ -10,8 +10,9 @@ export interface PurchaseLog {
   amount: number;
   currency: string;
   gateway: string;
-  status: 'completed' | 'refunded' | 'initiated' | 'failed';
+  status: 'completed' | 'refunded' | 'initiated' | 'failed' | 'pending' | 'abandoned_notified';
   createdAt: string;
+  notifiedAt?: string;
 }
 
 export async function logPurchase(log: Omit<PurchaseLog, 'createdAt'>, lookupId?: string) {

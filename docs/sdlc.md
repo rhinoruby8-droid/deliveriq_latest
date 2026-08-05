@@ -30,13 +30,16 @@ graph TD
 - **Principles**: Keep components small, functional, and typed. Make sure they use design tokens defined in `src/styles/globals.css` and `tailwind.config.js`.
 - **Introspection**: All components are compiled with `source-mapperPlugin` in dev mode to support click-to-edit and AI element mapping.
 
-### Phase 3: Backend API & Payment Integration
-- **Framework**: Node.js v22+ running an Express server.
-- **Database**: **Supabase** (managed PostgreSQL) — accessed via the Supabase client SDK on the client side (`VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY`) and the service role key on the server side (`SUPABASE_SERVICE_ROLE_KEY`).
+### Phase 3: Backend API, Storage & Payment Integration
+- **Framework**: Node.js v22+ running an Express server with 50MB payload limits (`express.json({ limit: '50mb' })`).
+- **Database & Storage**: **Supabase** (managed PostgreSQL & S3 Object Storage):
+  - Database access via anon client on frontend (`VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY`) and service role key on server (`SUPABASE_SERVICE_ROLE_KEY`).
+  - Storage bucket `deliveriq-assets` stores public user and speaker avatars uploaded via `/api/cms/upload`.
+  - Database sync script (`sync-cms.ts`) updates server and database CMS layout strings seamlessly.
 - **Core Integrations**:
   - **Stripe**: Handlers for checkout sessions (`/api/stripe/checkout`) and webhook verification (`/api/stripe/webhook`).
   - **Razorpay**: Payment processing via Razorpay API (`RAZORPAY_KEY_ID` / `RAZORPAY_KEY_SECRET`) with a client-side checkout widget (`VITE_RAZORPAY_KEY_ID`).
-  - **Supabase Auth & Data**: User authentication and real-time database operations via the Supabase JS client.
+  - **Supabase Auth & Data**: User authentication and real-time database operations via the Supabase JS client. Array deletion reconciliation strategy guarantees database deletes are executed synchronously.
   - **Transactional Mail**: Communicates via loopback gateway (`127.0.0.1:2525`) for reliable SMTP delivery.
 
 ### Phase 4: Verification (Testing & Linting)
@@ -83,4 +86,4 @@ graph TD
 
 ---
 
-*Last updated: 2026-07-18*
+*Last updated: 2026-08-03*

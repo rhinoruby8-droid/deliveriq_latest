@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import Stripe from 'stripe';
 
 import { supabaseAdmin } from '../../../supabase';
+import { getSubscriptionConfig, addMonths } from '../../../subscription-config';
 
 async function getStripeKeys() {
   const { data } = await supabaseAdmin.from('settings').select('value').eq('id', 'gateway_api_keys').maybeSingle();
@@ -86,8 +87,8 @@ export default async function handler(req: Request, res: Response) {
           const { supabaseAdmin } = await import('../../../supabase');
           if (supabaseAdmin) {
             if (tier === 'tier3') {
-              const expiresAt = new Date();
-              expiresAt.setFullYear(expiresAt.getFullYear() + 1);
+              const config = await getSubscriptionConfig();
+              const expiresAt = addMonths(config.tier3DurationMonths);
               await supabaseAdmin.from('users').update({
                 subscription_tier: 'tier3',
                 subscription_expires_at: expiresAt.toISOString()
@@ -98,8 +99,8 @@ export default async function handler(req: Request, res: Response) {
               const sessionAccess = user?.session_access || {};
               const registeredIds = user?.registered_session_ids || [];
 
-              const expiresAt = new Date();
-              expiresAt.setMonth(expiresAt.getMonth() + 3);
+              const config = await getSubscriptionConfig();
+              const expiresAt = addMonths(config.tier2DurationMonths);
 
               sessionAccess[sessionId] = {
                 tier: 'tier2',
@@ -144,6 +145,8 @@ export default async function handler(req: Request, res: Response) {
               const userEmail = session.customer_details?.email || userProfile?.email || '';
               const userName = session.customer_details?.name || userProfile?.name || userEmail.split('@')[0];
 
+              const pendingId = session.metadata?.pendingId;
+
               const { logPurchase } = await import('../../../purchases-logger');
               await logPurchase({
                 id: session.id,
@@ -156,7 +159,7 @@ export default async function handler(req: Request, res: Response) {
                 currency: session.currency?.toUpperCase() || 'USD',
                 gateway: 'stripe',
                 status: 'completed'
-              });
+              }, pendingId);
 
               // Increment coupon uses if couponCode exists in metadata
               const couponCode = session.metadata?.couponCode;
@@ -178,6 +181,51 @@ export default async function handler(req: Request, res: Response) {
     case 'payment_intent.payment_failed': {
       const intent = event.data.object as Stripe.PaymentIntent;
       console.log('stripe.webhook.payment-failed', { intentId: intent.id });
+      break;
+    }
+    case 'invoice.payment_succeeded': {
+      const invoice = event.data.object as any;
+      if (invoice.subscription) {
+        const customerEmail = invoice.customer_email;
+        if (customerEmail) {
+          try {
+            const { supabaseAdmin } = await import('../../../supabase');
+            if (supabaseAdmin) {
+              const { data: user } = await supabaseAdmin.from('users').select('id, subscription_tier').eq('email', customerEmail.toLowerCase()).maybeSingle();
+              if (user && user.subscription_tier === 'tier3') {
+                const config = await getSubscriptionConfig();
+                const expiresAt = addMonths(config.tier3DurationMonths);
+                await supabaseAdmin.from('users').update({
+                  subscription_expires_at: expiresAt.toISOString()
+                }).eq('id', user.id);
+                console.log(`Successfully extended Pro Tier for user ${user.id} on invoice payment`);
+              }
+            }
+          } catch (err) {
+            console.error('Failed to handle invoice.payment_succeeded', err);
+          }
+        }
+      }
+      break;
+    }
+    case 'customer.subscription.deleted': {
+      const subscription = event.data.object as Stripe.Subscription;
+      try {
+        const customerId = subscription.customer as string;
+        const customer = await stripe.customers.retrieve(customerId);
+        if (!customer.deleted && customer.email) {
+          const { supabaseAdmin } = await import('../../../supabase');
+          if (supabaseAdmin) {
+            await supabaseAdmin.from('users').update({
+              subscription_tier: 'free',
+              subscription_expires_at: null
+            }).eq('email', customer.email.toLowerCase());
+            console.log(`Successfully revoked Pro Tier for user ${customer.email} on subscription deleted`);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to handle customer.subscription.deleted', err);
+      }
       break;
     }
     default:

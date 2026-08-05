@@ -16,6 +16,7 @@ import Spinner from './components/Spinner';
 import { routes } from './routes';
 import { ThemeProvider } from './components/ThemeProvider';
 
+// eslint-disable-next-line react-refresh/only-export-components
 export interface RenderResult {
   html: string;
   head: string;
@@ -48,7 +49,7 @@ const routeTree: RouteObject[] = [
 
 const handler = createStaticHandler(routeTree);
 
-export async function render(url: string): Promise<RenderResult> {
+export async function render(url: string, origin: string = ''): Promise<RenderResult> {
   // createStaticHandler works off a WHATWG Request. We only need the pathname +
   // search; scheme/host don't affect routing. Using a stable sentinel host
   // avoids env-dependent URL parsing.
@@ -79,11 +80,27 @@ export async function render(url: string): Promise<RenderResult> {
     },
   });
 
+  // Prefetch CMS Content so it's available synchronously during SSR render
+  await queryClient.prefetchQuery({
+    queryKey: ['cmsContent'],
+    queryFn: async () => {
+      try {
+        const fetchUrl = origin ? `${origin}/api/cms/content` : 'http://localhost:3000/api/cms/content';
+        const res = await fetch(fetchUrl);
+        if (!res.ok) throw new Error('Failed to fetch CMS SSR');
+        return await res.json();
+      } catch (err) {
+        console.error('SSR CMS Prefetch failed:', err);
+        return null;
+      }
+    }
+  });
+
   const html = renderToString(
     <StrictMode>
       <HelmetProvider context={helmetContext}>
         <QueryClientProvider client={queryClient}>
-          <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+          <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
             <StaticRouterProvider router={router} context={context} />
           </ThemeProvider>
         </QueryClientProvider>

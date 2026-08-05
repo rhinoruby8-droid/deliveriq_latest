@@ -1,4 +1,4 @@
-import { Helmet } from '@dr.pogodin/react-helmet';
+import { SeoHead } from '../../components/SeoHead';
 import { Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { CheckCircle, ArrowRight, ShieldCheck, Mail, Calendar } from 'lucide-react';
@@ -20,16 +20,10 @@ export default function PaymentSuccessPage() {
   const [params] = useSearchParams();
   const sessionId = params.get('session_id');
 
-  const site = 'https://deliveriq.live';
-
+  
   return (
     <>
-      <Helmet>
-        <title>Payment Confirmed — DeliverIQ</title>
-        <meta name="description" content="Your DeliverIQ session registration is confirmed. Check your email for details and replay access." />
-        <meta name="robots" content="noindex" />
-        <link rel="canonical" href={`${site}/payment/success`} />
-      </Helmet>
+      <SeoHead />
 
       <main className="min-h-[85vh] flex items-center justify-center bg-muted relative overflow-hidden py-12">
         {/* Decorative Grid Overlays */}

@@ -50,7 +50,7 @@ export function compileTemplateString(
     submissionDate: dateStr,
   };
 
-  return templateStr.replace(/\{\{\s*([a-zA-Z0-9_\-]+)\s*\}\}/g, (match, tagKey) => {
+  return templateStr.replace(/\{\{\s*([a-zA-Z0-9_-]+)\s*\}\}/g, (match, tagKey) => {
     // Check system map first
     if (tagKey in systemMap) {
       return sanitizeHtmlValue(systemMap[tagKey]);
@@ -78,7 +78,7 @@ export function htmlToPlainText(html: string): string {
   return html
     .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
     .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
-    .replace(/<br\s*[\/]?>/gi, '\n')
+    .replace(/<br\s*[/]?>/gi, '\n')
     .replace(/<\/p>/gi, '\n\n')
     .replace(/<\/li>/gi, '\n')
     .replace(/<[^>]+>/g, '')

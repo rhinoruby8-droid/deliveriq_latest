@@ -41,7 +41,7 @@ export function UserNav() {
 
   if (!user) {
     return (
-      <DropdownMenu>
+      <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <Button variant="default">
             Register
@@ -76,7 +76,7 @@ export function UserNav() {
   }
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" className="border-border bg-transparent text-foreground hover:bg-muted hover:text-primary">
           <User className="mr-2 h-4 w-4" />

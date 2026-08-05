@@ -1,4 +1,5 @@
 import { Helmet } from '@dr.pogodin/react-helmet';
+import { SeoHead } from '../components/SeoHead';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCmsContent, FALLBACK_CMS_CONTENT, type Speaker } from '@/lib/cms-client';
 import { motion, AnimatePresence } from 'motion/react';
@@ -24,8 +25,6 @@ const stagger = {
   visible: { transition: { staggerChildren: 0.1 } },
 };
 
-const tags = ['All', 'Project Controls', 'Project Management', 'Delivery Leadership'];
-
 export interface PlayingSession {
   id: string;
   title: string;
@@ -36,7 +35,9 @@ function ReplaysArchiveWidget({ onWatchReplay, onSpeakerClick }: {
   onWatchReplay: (sessionId: string) => void;
   onSpeakerClick: (speaker: Speaker) => void;
 }) {
-  const { data: cms } = useCmsContent();
+  const { data } = useCmsContent();
+  const cms = data || FALLBACK_CMS_CONTENT;
+  const replaysContent = cms.globalSiteContent!.replaysContent;
   const [activeTag, setActiveTag] = useState('All');
 
   const allReplays = (cms?.sessions || []).filter(s => s.status === 'published' && s.videoUrl);
@@ -47,13 +48,13 @@ function ReplaysArchiveWidget({ onWatchReplay, onSpeakerClick }: {
   return (
     <motion.div initial="hidden" animate="visible" variants={stagger} className="diq-replays-archive">
       <motion.div variants={fadeUp} custom={0} className="flex flex-wrap gap-2 mb-12 diq-replays-filters">
-        {tags.map((tag) => (
+        {replaysContent.filterTags.map((tag) => (
           <button
             key={tag}
             onClick={() => setActiveTag(tag)}
             className={`text-xs font-semibold tracking-wide px-4 py-2 rounded-sm border transition-all duration-200 diq-replays-filter-btn ${
               activeTag === tag
-                ? 'bg-primary text-[#1A1D24] border-primary diq-replays-filter-btn-active'
+                ? 'bg-primary text-primary-foreground border-primary diq-replays-filter-btn-active'
                 : 'bg-transparent text-muted-foreground border-border hover:border-primary/50 hover:text-foreground diq-replays-filter-btn-inactive'
             }`}
           >
@@ -79,12 +80,12 @@ function ReplaysArchiveWidget({ onWatchReplay, onSpeakerClick }: {
                   }}
                   className="aspect-video bg-background relative cursor-pointer overflow-hidden border-b border-border diq-replay-thumb"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-tr from-[#1A1D24] to-[#C79A4E]/5 flex items-center justify-center diq-replay-thumb-bg">
-                    <span className="text-[10px] font-mono text-[#4A4D56] tracking-wider uppercase select-none diq-replay-thumb-tag">{session.tag}</span>
+                  <div className="absolute inset-0 bg-gradient-to-tr from-background to-primary/5 flex items-center justify-center diq-replay-thumb-bg">
+                    <span className="text-[10px] font-mono text-muted-foreground tracking-wider uppercase select-none diq-replay-thumb-tag">{session.tag}</span>
                   </div>
                   <div className="absolute inset-0 bg-black/40 group-hover:bg-black/25 transition-colors duration-300 diq-replay-thumb-overlay" />
                   <div className="absolute inset-0 flex items-center justify-center diq-replay-play-btn-container">
-                    <div className="w-12 h-12 rounded-full bg-background/90 border border-primary/30 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-[#1A1D24] transition-all duration-300 scale-95 group-hover:scale-105 shadow-xl diq-replay-play-btn">
+                    <div className="w-12 h-12 rounded-full bg-background/90 border border-primary/30 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 scale-95 group-hover:scale-105 shadow-xl diq-replay-play-btn">
                       <Play size={16} fill="currentColor" className="ml-0.5 diq-replay-play-icon" />
                     </div>
                   </div>
@@ -120,7 +121,7 @@ function ReplaysArchiveWidget({ onWatchReplay, onSpeakerClick }: {
                           <img
                             src={sp.avatarUrl}
                             alt={sp.name}
-                            onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=32&h=32'; }}
+                            onError={(e) => { (e.target as HTMLImageElement).src = replaysContent.fallbackAvatarUrl; }}
                             className="h-full w-full object-cover"
                           />
                         </button>
@@ -160,11 +161,10 @@ function ReplaysArchiveWidget({ onWatchReplay, onSpeakerClick }: {
             />
           </div>
           <p className="text-lg font-semibold text-foreground mb-2 diq-replays-empty-title">
-            Replays coming soon.
+            {replaysContent.emptyStateTitle}
           </p>
           <p className="text-sm text-muted-foreground max-w-sm leading-relaxed diq-replays-empty-desc">
-            The first live sessions are on their way. Once they've aired, replays will appear
-            here — filterable by topic and available on demand.
+            {replaysContent.emptyStateDescription}
           </p>
           <Link
             to="/sessions"
@@ -187,7 +187,7 @@ function getYoutubeEmbedUrl(url: string): string | null {
       return `https://www.youtube.com/embed/${id}?autoplay=1&rel=0`;
     }
   }
-  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
   const match = url.match(regExp);
   if (match && match[2].length === 11) {
     return `https://www.youtube.com/embed/${match[2]}?autoplay=1&rel=0`;
@@ -236,21 +236,6 @@ export default function ReplaysPage() {
 
   const htmlContent = cms.replaysPageHtml || FALLBACK_CMS_CONTENT.replaysPageHtml;
 
-  const site = 'https://deliveriq.live';
-  const title = 'Replays — DeliverIQ';
-  const description = 'Access replays of past DeliverIQ sessions on AI for project management, project controls, and delivery professionals.';
-
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'WebPage',
-    '@id': `${site}/replays#webpage`,
-    name: title,
-    url: `${site}/replays`,
-    description,
-    isPartOf: { '@id': `${site}/#website` },
-    about: { '@id': `${site}/#organization` },
-  };
-
   const widgets = {
     ReplaysGrid: <ReplaysArchiveWidget onWatchReplay={handleWatchReplay} onSpeakerClick={handleSpeakerClick} />
   };
@@ -259,20 +244,8 @@ export default function ReplaysPage() {
 
   return (
     <>
+      <SeoHead />
       <Helmet>
-        <title>{title}</title>
-        <meta name="description" content={description} />
-        <link rel="canonical" href={`${site}/replays`} />
-        <meta property="og:title" content={title} />
-        <meta property="og:description" content={description} />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content={`${site}/replays`} />
-        <meta property="og:image" content={`${site}/airo-assets/images/logo/horizontal`} />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={title} />
-        <meta name="twitter:description" content={description} />
-        <meta name="twitter:image" content={`${site}/airo-assets/images/logo/horizontal`} />
-        <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
         {cms.replaysPageCss ? <style>{cms.replaysPageCss}</style> : null}
       </Helmet>
 

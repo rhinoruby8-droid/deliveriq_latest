@@ -1,4 +1,4 @@
-import { Helmet } from '@dr.pogodin/react-helmet';
+import { SeoHead } from '../components/SeoHead';
 import { useState, useEffect, type FormEvent } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { useCmsContent, FALLBACK_CMS_CONTENT } from '@/lib/cms-client';
@@ -184,24 +184,22 @@ export default function RegisterPage() {
 
   return (
     <>
-      <Helmet>
-        <title>Register for Event — DeliverIQ</title>
-      </Helmet>
+      <SeoHead />
       
       <main className="min-h-screen bg-background text-foreground py-12 px-6 flex items-center justify-center relative">
         <div className="w-full max-w-3xl bg-card border border-border rounded-2xl shadow-2xl relative z-10">
           
           {/* Header */}
           <div className="flex items-center justify-between p-6 md:p-8 border-b border-border">
-            <h1 className="text-2xl font-bold text-white">Register for Event</h1>
-            <Link to="/sessions" className="p-2 bg-muted rounded-full text-muted-foreground hover:text-white transition-colors">
+            <h1 className="text-2xl font-bold text-foreground">Register for Event</h1>
+            <Link to="/sessions" className="p-2 bg-muted rounded-full text-muted-foreground hover:text-foreground transition-colors">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
             </Link>
           </div>
 
           <div className="p-6 md:p-8">
             {matchedSession && (
-              <div className="bg-background border border-border text-white p-4 rounded-xl mb-8 flex items-center gap-3">
+              <div className="bg-background border border-border text-foreground p-4 rounded-xl mb-8 flex items-center gap-3">
                 <div className="flex-1">
                   <h3 className="font-semibold text-sm md:text-base leading-snug">{matchedSession.title}</h3>
                   <p className="text-xs text-muted-foreground mt-1">{matchedSession.date} • {matchedSession.time}</p>
@@ -217,14 +215,14 @@ export default function RegisterPage() {
             {success ? (
               <div className="flex flex-col items-center justify-center text-center py-12 gap-4">
                 <CheckCircle size={54} className="text-primary" />
-                <h2 className="text-2xl font-bold text-white">Successfully Registered!</h2>
+                <h2 className="text-2xl font-bold text-foreground">Successfully Registered!</h2>
                 <p className="text-sm text-muted-foreground max-w-sm leading-relaxed">
                   Your account has been created and you are registered for {matchedSession?.title}.
                 </p>
                 {checkoutUrl ? (
                   <p className="text-xs text-muted-foreground">Redirecting to payment gateway...</p>
                 ) : (
-                  <Link to="/dashboard" className="mt-4 px-8 py-3.5 bg-primary text-[#1A1D24] text-sm font-bold rounded-full hover:brightness-110 transition-all">
+                  <Link to="/dashboard" className="mt-4 px-8 py-3.5 bg-primary text-primary-foreground text-sm font-bold rounded-full hover:brightness-110 transition-all">
                     Go to My Dashboard
                   </Link>
                 )}
@@ -314,11 +312,11 @@ export default function RegisterPage() {
                   <label className="font-semibold text-sm text-foreground">Dietary Requirements <span className="text-red-500">*</span></label>
                   <div className="flex items-center gap-6">
                     <label className="flex items-center gap-2 text-sm text-muted-foreground cursor-pointer">
-                      <input type="radio" name="dietary" defaultChecked className="w-4 h-4 accent-[#C79A4E]" />
+                      <input type="radio" name="dietary" defaultChecked className="w-4 h-4 accent-primary" />
                       No special requirements
                     </label>
                     <label className="flex items-center gap-2 text-sm text-muted-foreground cursor-pointer">
-                      <input type="radio" name="dietary" className="w-4 h-4 accent-[#C79A4E]" />
+                      <input type="radio" name="dietary" className="w-4 h-4 accent-primary" />
                       Yes, I have requirements
                     </label>
                   </div>
@@ -339,7 +337,7 @@ export default function RegisterPage() {
                       <button
                         type="button"
                         onClick={handleApplyCoupon}
-                        className="h-12 px-8 inline-flex items-center justify-center gap-2 bg-muted text-white font-semibold rounded-[10px] hover:bg-[#3A3E4A] transition-colors shrink-0"
+                        className="h-12 px-8 inline-flex items-center justify-center gap-2 bg-muted text-foreground font-semibold rounded-[10px] hover:brightness-110 transition-colors shrink-0"
                       >
                         <Tag size={16} /> Apply
                       </button>
@@ -352,7 +350,7 @@ export default function RegisterPage() {
                 <div className="mt-8 border-t border-border pt-8">
                   <button
                     type="submit"
-                    className="w-full inline-flex items-center justify-center gap-2 px-5 py-4 bg-[#d7c2b0] text-[#1a1a1a] text-base font-bold rounded-full hover:brightness-105 transition-all cursor-pointer shadow-lg active:scale-[0.98]"
+                    className="w-full inline-flex items-center justify-center gap-2 px-5 py-4 bg-primary text-primary-foreground text-base font-bold rounded-full hover:brightness-105 transition-all cursor-pointer shadow-lg active:scale-[0.98]"
                   >
                     Continue to Payment <ArrowRight size={18} />
                   </button>
@@ -362,10 +360,10 @@ export default function RegisterPage() {
               // STEP 2 REVIEW & PAYMENT (Constrained inside the modal)
               <div className="flex flex-col gap-6">
                 <div className="flex items-center gap-3 border-b border-border pb-4">
-                  <button onClick={() => setStep(1)} className="p-2 -ml-2 text-muted-foreground hover:text-white rounded-full hover:bg-muted transition-colors">
+                  <button onClick={() => setStep(1)} className="p-2 -ml-2 text-muted-foreground hover:text-foreground rounded-full hover:bg-muted transition-colors">
                     <ArrowLeft size={16} />
                   </button>
-                  <h2 className="text-lg font-bold text-white">Review & Pay</h2>
+                  <h2 className="text-lg font-bold text-foreground">Review & Pay</h2>
                 </div>
 
                 <div className="bg-background border border-border rounded-xl p-5 text-sm flex flex-col gap-3">
@@ -395,7 +393,7 @@ export default function RegisterPage() {
                         <button
                           type="button"
                           onClick={handleApplyCoupon}
-                          className="h-10 px-4 bg-muted text-white text-xs font-semibold rounded-[8px] hover:bg-[#3A3E4A] transition-colors shrink-0"
+                          className="h-10 px-4 bg-muted text-foreground text-xs font-semibold rounded-[8px] hover:brightness-110 transition-colors shrink-0"
                         >
                           Apply
                         </button>
@@ -409,7 +407,7 @@ export default function RegisterPage() {
                       <span>-{new Intl.NumberFormat('en-US', { style: 'currency', currency: cms.paymentConfig?.currency || 'USD' }).format(originalPrice * discountPercent / 100)}</span>
                     </div>
                   )}
-                  <div className="flex justify-between text-base font-bold text-white pt-1">
+                  <div className="flex justify-between text-base font-bold text-foreground pt-1">
                     <span>Total Due</span>
                     <span className="text-primary">{new Intl.NumberFormat('en-US', { style: 'currency', currency: cms.paymentConfig?.currency || 'USD' }).format(finalPrice)}</span>
                   </div>
@@ -432,7 +430,7 @@ export default function RegisterPage() {
                     <button
                       onClick={handleRegisterAndPay}
                       disabled={submitting}
-                      className="w-full inline-flex items-center justify-center gap-2 px-5 py-4 bg-[#d7c2b0] text-[#1a1a1a] text-base font-bold rounded-full hover:brightness-105 transition-all cursor-pointer shadow-lg active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full inline-flex items-center justify-center gap-2 px-5 py-4 bg-primary text-primary-foreground text-base font-bold rounded-full hover:brightness-105 transition-all cursor-pointer shadow-lg active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {submitting ? 'Processing Registration...' : 'Complete Registration'} <ArrowRight size={18} />
                     </button>

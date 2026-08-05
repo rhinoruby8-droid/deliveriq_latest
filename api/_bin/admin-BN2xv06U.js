@@ -8220,7 +8220,7 @@ var WK_ = /* @__PURE__ */ (function() {
     "",
     "",
     "",
-    // eslint-disable-line no-mixed-spaces-and-tabs
+     
     "",
     "+",
     "-",
@@ -8229,7 +8229,7 @@ var WK_ = /* @__PURE__ */ (function() {
     "^",
     "=",
     "<>",
-    // eslint-disable-line no-mixed-spaces-and-tabs
+     
     "<=",
     ">=",
     "<",
@@ -8238,7 +8238,7 @@ var WK_ = /* @__PURE__ */ (function() {
     "",
     "",
     "",
-    // eslint-disable-line no-mixed-spaces-and-tabs
+     
     "&",
     "",
     "",
@@ -8247,7 +8247,7 @@ var WK_ = /* @__PURE__ */ (function() {
     "",
     "",
     ""
-    // eslint-disable-line no-mixed-spaces-and-tabs
+     
   ];
   function wk1_fmla_to_csf(blob, o) {
     prep_blob(blob, 0);

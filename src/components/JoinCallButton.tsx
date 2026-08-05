@@ -49,7 +49,7 @@ export default function JoinCallButton({
       size={size}
       disabled={isJoining}
       onClick={handleJoinCall}
-      className={className || "border-primary/30 text-primary hover:text-[#0A0B0E] hover:bg-primary cursor-pointer shrink-0 text-xs rounded-lg px-4 h-9 font-bold bg-primary/10"}
+      className={className || "border-primary/30 text-primary hover:text-primary-foreground hover:bg-primary cursor-pointer shrink-0 text-xs rounded-lg px-4 h-9 font-bold bg-primary/10"}
     >
       {isJoining ? (
         <span className="flex items-center gap-2">

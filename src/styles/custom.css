@@ -26,9 +26,9 @@
 input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]),
 select,
 textarea {
-  background-color: #14161B !important;
-  color: #F0EDE8 !important;
-  border: 1px solid #2C2F38 !important;
+  background-color: hsl(var(--background)) !important;
+  color: hsl(var(--foreground)) !important;
+  border: 1px solid hsl(var(--border)) !important;
   border-radius: 10px !important;
   padding: 0 1rem;
   height: 3rem !important;
@@ -48,13 +48,13 @@ textarea {
 input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):focus,
 select:focus,
 textarea:focus {
-  border-color: #C79A4E !important;
-  box-shadow: 0 0 0 1px #C79A4E !important;
+  border-color: hsl(var(--primary)) !important;
+  box-shadow: 0 0 0 1px hsl(var(--primary)) !important;
 }
 
 input::placeholder,
 textarea::placeholder {
-  color: #8A8D96 !important;
+  color: hsl(var(--muted-foreground)) !important;
   opacity: 1 !important;
 }
 
@@ -67,20 +67,20 @@ input:-internal-autofill-previewed,
 input:-internal-autofill-selected,
 input:autofill,
 input:-webkit-autofill::first-line {
-  -webkit-box-shadow: 0 0 0 1000px #14161B inset !important;
-  box-shadow: 0 0 0 1000px #14161B inset !important;
-  -webkit-text-fill-color: #F0EDE8 !important;
+  -webkit-box-shadow: 0 0 0 1000px hsl(var(--background)) inset !important;
+  box-shadow: 0 0 0 1000px hsl(var(--background)) inset !important;
+  -webkit-text-fill-color: hsl(var(--foreground)) !important;
   -webkit-background-clip: text !important;
   background-clip: text !important;
-  border-color: #2C2F38 !important;
-  color: #F0EDE8 !important;
+  border-color: hsl(var(--border)) !important;
+  color: hsl(var(--foreground)) !important;
   transition: background-color 600000s ease-in-out 0s, border-color 0.2s ease, box-shadow 0.2s ease !important;
 }
 
 /* Fix select dropdown options */
 select option {
-  background-color: #21242C !important;
-  color: #F0EDE8 !important;
+  background-color: hsl(var(--card)) !important;
+  color: hsl(var(--foreground)) !important;
 }
 
 /* Override specificity for Tailwind input padding classes containing left/right icons */
@@ -110,8 +110,8 @@ select option {
   max-width: 48rem; /* 768px */
   margin-left: auto;
   margin-right: auto;
-  background-color: #21242C;
-  border: 1px solid #2C2F38;
+  background-color: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
   border-radius: 1.25rem;
   padding: 2rem;
   box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
@@ -125,8 +125,8 @@ select option {
   gap: 0.5rem;
   width: 100%;
   padding: 1rem 2rem;
-  background-color: #C79A4E;
-  color: #1A1D24;
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
   font-weight: 700;
   font-size: 1rem;
   border-radius: 9999px;
@@ -188,7 +188,7 @@ select option {
 .hero h1 {
   font-size: 2.75rem !important;
   font-weight: 800 !important;
-  color: #F0EDE8 !important;
+  color: hsl(var(--foreground)) !important;
   line-height: 1.1 !important;
   margin: 0 0 1.5rem 0 !important;
   letter-spacing: -0.02em !important;
@@ -206,13 +206,13 @@ select option {
   font-weight: 600 !important;
   text-transform: uppercase !important;
   letter-spacing: 0.2em !important;
-  color: #C79A4E !important;
+  color: hsl(var(--primary)) !important;
   margin: 0 0 1rem 0 !important;
 }
 
 .hero .subheadline {
   font-size: 1.125rem !important;
-  color: #8A8D96 !important;
+  color: hsl(var(--muted-foreground)) !important;
   max-width: 36rem !important;
   line-height: 1.6 !important;
   margin: 0 0 2rem 0 !important;
@@ -232,8 +232,8 @@ select option {
   padding: 0.875rem 1.75rem !important;
   font-size: 0.875rem !important;
   font-weight: 600 !important;
-  background-color: #C79A4E !important;
-  color: #1A1D24 !important;
+  background-color: hsl(var(--primary)) !important;
+  color: hsl(var(--primary-foreground)) !important;
   border-radius: 9999px !important;
   border: none !important;
   transition: all 0.2s ease !important;
@@ -254,26 +254,26 @@ select option {
   font-size: 0.875rem !important;
   font-weight: 600 !important;
   background-color: transparent !important;
-  color: #F0EDE8 !important;
+  color: hsl(var(--foreground)) !important;
   border-radius: 9999px !important;
-  border: 1px solid #2C2F38 !important;
+  border: 1px solid hsl(var(--border)) !important;
   transition: all 0.2s ease !important;
   cursor: pointer !important;
   text-decoration: none !important;
 }
 
 .btn-secondary:hover {
-  background-color: #2C2F38 !important;
-  color: #F0EDE8 !important;
+  background-color: hsl(var(--border)) !important;
+  color: hsl(var(--foreground)) !important;
 }
 
 /* Stats Section */
 .stats {
   display: grid;
   grid-template-columns: 1fr;
-  border-top: 1px solid rgba(44, 47, 56, 0.6);
-  border-bottom: 1px solid rgba(44, 47, 56, 0.6);
-  background-color: rgba(33, 36, 44, 0.3);
+  border-top: 1px solid hsl(var(--border) / 0.6);
+  border-bottom: 1px solid hsl(var(--border) / 0.6);
+  background-color: hsl(var(--card) / 0.3);
   max-width: 100% !important;
   width: 100% !important;
 }
@@ -287,13 +287,13 @@ select option {
 .stats .stat-item {
   padding: 2rem !important;
   text-align: center !important;
-  border-bottom: 1px solid rgba(44, 47, 56, 0.6);
+  border-bottom: 1px solid hsl(var(--border) / 0.6);
 }
 
 @media (min-width: 768px) {
   .stats .stat-item {
     border-bottom: none;
-    border-right: 1px solid rgba(44, 47, 56, 0.6);
+    border-right: 1px solid hsl(var(--border) / 0.6);
   }
   .stats .stat-item:last-child {
     border-right: none;
@@ -304,14 +304,14 @@ select option {
   display: block !important;
   font-size: 2.25rem !important;
   font-weight: 700 !important;
-  color: #C79A4E !important;
+  color: hsl(var(--primary)) !important;
   margin-bottom: 0.25rem !important;
 }
 
 .stats .stat-label {
   display: block !important;
   font-size: 0.75rem !important;
-  color: #8A8D96 !important;
+  color: hsl(var(--muted-foreground)) !important;
   text-transform: uppercase !important;
   letter-spacing: 0.15em !important;
   font-weight: 600 !important;
@@ -328,7 +328,7 @@ select option {
 .intro p {
   font-size: 1.125rem !important;
   line-height: 1.7 !important;
-  color: #8A8D96 !important;
+  color: hsl(var(--muted-foreground)) !important;
 }
 
 

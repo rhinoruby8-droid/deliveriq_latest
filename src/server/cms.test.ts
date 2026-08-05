@@ -4,7 +4,7 @@ import type { Server } from 'node:http';
 
 vi.mock('./supabase', () => {
   const mockFrom = vi.fn();
-  (globalThis as any)._mockFrom = mockFrom;
+  (globalThis as typeof globalThis & { _mockFrom: typeof mockFrom })._mockFrom = mockFrom;
   return {
     supabaseAdmin: {
       from: mockFrom
@@ -45,10 +45,10 @@ describe('CMS API endpoints', () => {
   const app = express();
   app.use(express.json());
   app.get('/api/cms/content', cms_get);
-  app.post('/api/cms/content', requireRole(['admin']) as any, cms_post);
+  app.post('/api/cms/content', requireRole(['admin']) as express.RequestHandler, cms_post);
   app.post('/api/cms/login', cms_login_post);
 
-  const mockFrom = (globalThis as any)._mockFrom;
+  const mockFrom = (globalThis as typeof globalThis & { _mockFrom: ReturnType<typeof vi.fn> })._mockFrom;
 
   beforeEach(() => {
     mockFrom.mockReset();
@@ -56,7 +56,7 @@ describe('CMS API endpoints', () => {
 
   it('GET /api/cms/content returns the database contents', async () => {
     mockFrom.mockImplementation((table: string) => {
-      let data: any[] = [];
+      let data: Record<string, unknown>[] = [];
       if (table === 'pages') {
         data = [
           { id: 'homepage', html: '<h1>Home</h1>', content: { visualMode: false } },
@@ -145,6 +145,7 @@ describe('CMS API endpoints', () => {
     const mockUpsert = vi.fn().mockResolvedValue({ error: null });
     mockFrom.mockReturnValue({
       upsert: mockUpsert,
+      select: vi.fn().mockResolvedValue({ data: [], error: null })
     });
 
     await withServer(app, async (baseUrl) => {

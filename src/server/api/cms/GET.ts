@@ -58,7 +58,9 @@ export default async function handler(req: Request, res: Response) {
       })),
       sessions: sessionsRes.data.map((s: any) => {
         const pricingSetting = settingsRes.data.find((st: any) => st.id === 'session_pricing');
+        const ogImageSetting = settingsRes.data.find((st: any) => st.id === 'session_og_images');
         const pricing = pricingSetting?.value?.[s.id] || {};
+        const ogImage = ogImageSetting?.value?.[s.id] || null;
         return {
           id: s.id,
           title: s.title,
@@ -72,6 +74,7 @@ export default async function handler(req: Request, res: Response) {
           sponsorIds: s.sponsor_ids || [],
           registrationUrl: s.registration_url,
           videoUrl: s.video_url,
+          sessionOgImageUrl: ogImage,
           price: pricing.price !== undefined ? pricing.price : 0,
           isFree: pricing.isFree !== undefined ? pricing.isFree : false
         };
@@ -165,6 +168,15 @@ export default async function handler(req: Request, res: Response) {
 
     const topicsSetting = settingsRes.data.find((s: any) => s.id === 'topics');
     data.topics = topicsSetting ? topicsSetting.value : [];
+
+    const heroBannerSetting = settingsRes.data.find((s: any) => s.id === 'hero_banner_config');
+    data.heroBannerConfig = heroBannerSetting ? heroBannerSetting.value : undefined;
+
+    const globalSiteSetting = settingsRes.data.find((s: any) => s.id === 'global_site_content');
+    data.globalSiteContent = globalSiteSetting ? globalSiteSetting.value : undefined;
+
+    const subscriptionConfigSetting = settingsRes.data.find((s: any) => s.id === 'subscription_config');
+    data.subscriptionConfig = subscriptionConfigSetting ? subscriptionConfigSetting.value : undefined;
 
     // Store in cache for future requests
     const cacheModule = await import('./cache');

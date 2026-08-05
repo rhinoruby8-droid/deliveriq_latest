@@ -3,6 +3,7 @@ import Razorpay from 'razorpay';
 import { verifyToken } from '../../../auth';
 
 import { supabaseAdmin } from '../../../supabase';
+import { getSubscriptionConfig } from '../../../subscription-config';
 
 async function getRazorpay(): Promise<{ razorpay: Razorpay; keyId: string }> {
   const { data } = await supabaseAdmin.from('settings').select('value').eq('id', 'gateway_api_keys').maybeSingle();
@@ -32,7 +33,14 @@ export default async function handler(req: Request, res: Response) {
       couponCode?: string;
     };
 
-    if (!amount || !sessionTitle) {
+    const config = await getSubscriptionConfig();
+    if (tier === 'tier3' && !config.isSubscriptionActive) {
+      return res.status(503).json({ error: 'Subscription sales are currently paused.' });
+    }
+
+    const resolvedAmount = amount ?? (tier === 'tier3' ? config.tier3PriceUSD : 0);
+
+    if (!resolvedAmount || !sessionTitle) {
       return res.status(400).json({ error: 'Missing required fields: amount and sessionTitle' });
     }
 
@@ -67,14 +75,29 @@ export default async function handler(req: Request, res: Response) {
       }
     }
 
+    let description = 'DeliverIQ live session — includes replay access';
+    if (tier === 'tier1') {
+      description = 'DeliverIQ live session (Basic tier) — live event access only';
+    } else if (tier === 'tier2') {
+      const monthsText = config.tier2DurationMonths === 1 ? '1 month' : `${config.tier2DurationMonths} months`;
+      description = `DeliverIQ live session (Standard tier) — live event + ${monthsText} replay access`;
+    } else if (tier === 'tier3') {
+      const years = config.tier3DurationMonths / 12;
+      const durationText = config.tier3DurationMonths % 12 === 0 && config.tier3DurationMonths > 0
+        ? (years === 1 ? '1 year' : `${years} years`)
+        : (config.tier3DurationMonths === 1 ? '1 month' : `${config.tier3DurationMonths} months`);
+      description = `DeliverIQ Pro Membership — full access to all past and upcoming sessions for ${durationText}`;
+    }
+
     // Create Razorpay Order
     // Note: Razorpay amount must be in the smallest currency sub-unit (paise for INR).
     const options = {
-      amount: Math.round(amount * 100),
+      amount: Math.round(resolvedAmount * 100),
       currency,
       receipt: `receipt_order_${Date.now()}`,
       notes: {
         sessionTitle: sessionTitle || '',
+        description,
         userId: userId || '',
         tier: tier || '',
         sessionId: sessionId || '',
@@ -110,7 +133,7 @@ export default async function handler(req: Request, res: Response) {
         amount,
         currency,
         gateway: 'razorpay',
-        status: 'initiated'
+        status: 'pending'
       });
     } catch (err) {
       console.error('[Razorpay Order] Failed to log initiated purchase:', err);

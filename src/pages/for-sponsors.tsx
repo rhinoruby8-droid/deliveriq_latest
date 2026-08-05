@@ -1,8 +1,10 @@
 import { Helmet } from '@dr.pogodin/react-helmet';
+import { SeoHead } from '../components/SeoHead';
 import { motion } from 'motion/react';
 import { useCmsContent, FALLBACK_CMS_CONTENT } from '@/lib/cms-client';
 import { PageHtmlRenderer } from '@/components/PageHtmlRenderer';
 import { SponsorsVisual } from '@/components/page-renderers/SponsorsVisual';
+import { SponsorsHeroVisual } from '@/components/page-renderers/SponsorsHeroVisual';
 import CheckoutButton from '@/components/CheckoutButton';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from '@/components/ui/card';
 import { Check } from 'lucide-react';
@@ -10,22 +12,6 @@ import { Check } from 'lucide-react';
 export default function ForSponsorsPage() {
   const { data: cms = FALLBACK_CMS_CONTENT } = useCmsContent();
   const htmlContent = cms.sponsorsPageHtml || FALLBACK_CMS_CONTENT.sponsorsPageHtml;
-
-  const site = 'https://deliveriq.live';
-  const title = 'Sponsor DeliverIQ — Reach Project Professionals';
-  const description =
-    'Sponsorship opportunities at DeliverIQ. Put your brand in front of project managers, project controls professionals, and delivery leaders actively learning AI skills.';
-
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'WebPage',
-    '@id': `${site}/for-sponsors#webpage`,
-    name: title,
-    url: `${site}/for-sponsors`,
-    description,
-    isPartOf: { '@id': `${site}/#website` },
-    about: { '@id': `${site}/#organization` },
-  };
 
   const widgets = {
     SponsorStats: (
@@ -60,7 +46,7 @@ export default function ForSponsorsPage() {
                 </div>
                 <div className="h-2 bg-muted rounded-full overflow-hidden">
                   <motion.div
-                    className="h-full bg-gradient-to-r from-[#C79A4E] to-[#e0bc7f] rounded-full"
+                    className="h-full bg-gradient-to-r from-primary to-primary/80 rounded-full"
                     initial={{ width: 0 }}
                     whileInView={{ width: `${row.pct}%` }}
                     viewport={{ once: true, margin: "-50px" }}
@@ -80,17 +66,8 @@ export default function ForSponsorsPage() {
 
   return (
     <>
+      <SeoHead />
       <Helmet>
-        <title>{title}</title>
-        <meta name="description" content={description} />
-        <link rel="canonical" href={`${site}/for-sponsors`} />
-        <meta property="og:title" content={title} />
-        <meta property="og:description" content={description} />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content={`${site}/for-sponsors`} />
-        <meta property="og:image" content={`${site}/airo-assets/images/logo/horizontal`} />
-        <meta name="twitter:card" content="summary_large_image" />
-        <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
         {cms.sponsorsPageCss ? <style>{cms.sponsorsPageCss}</style> : null}
       </Helmet>
 
@@ -134,7 +111,7 @@ export default function ForSponsorsPage() {
 
                   {/* Tier 2: Dedicated Session */}
                   <Card className="bg-card border-primary flex flex-col relative scale-105 shadow-2xl">
-                    <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-[#1A1D24] px-3 py-1 text-xs font-bold rounded-full uppercase tracking-wider">
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-primary-foreground px-3 py-1 text-xs font-bold rounded-full uppercase tracking-wider">
                       Most Popular
                     </div>
                     <CardHeader>
@@ -183,7 +160,10 @@ export default function ForSponsorsPage() {
             </section>
           </>
         ) : (
-          <PageHtmlRenderer html={htmlContent} widgets={widgets} />
+          <>
+            <SponsorsHeroVisual />
+            <PageHtmlRenderer html={htmlContent} widgets={widgets} />
+          </>
         )}
       </main>
     </>

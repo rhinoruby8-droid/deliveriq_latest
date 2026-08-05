@@ -15,12 +15,13 @@ DeliverIQ/
 ├── src/
 │   ├── components/       # Reusable UI Components
 │   │   ├── ui/           # Custom styled buttons, input overlays, panels, etc.
-│   │   ├── cms/          # CMS editor modules and dashboard components
+│   │   ├── cms/          # CMS editor modules, GlobalContentEditor, and dashboard components
 │   │   ├── page-renderers/ # Component parsers for dynamic page builds
 │   │   ├── CheckoutButton.tsx  # Dynamic Stripe payment trigger
-│   │   └── JoinCallButton.tsx  # Centralized live webinar proxy launcher
+│   │   ├── JoinCallButton.tsx  # Centralized live webinar proxy launcher
+│   │   └── SeoHead.tsx         # Centralized SSR-safe SEO & Open Graph meta manager
 │   ├── layouts/          # Layout containers (RootLayout, Website, Dashboard)
-│   ├── lib/              # Client API wrappers, State (Zustand), Caching (TanStack Query), and Analytics
+│   ├── lib/              # Client API wrappers, CMS schema (`cms-client.ts`), State (Zustand), Caching (TanStack Query), and Analytics
 │   ├── pages/            # Page templates rendering specific page content
 │   ├── styles/           # Global CSS variables and styling overrides
 │   ├── server/           # Express Server & SSR Architecture
@@ -119,7 +120,8 @@ DeliverIQ uses **Supabase (PostgreSQL)** as its primary relational database.
   - `POST /api/auth/forgot-password` — Password reset trigger.
 - **CMS Administration (Protected: requireRole admin)**:
   - `GET  /api/cms/content` — Fetches current CMS configuration (cache-supported).
-  - `POST /api/cms/content` — Updates pages, topics, coupons, forms, and sessions.
+  - `POST /api/cms/content` — Updates pages, topics, coupons, forms, sessions, speakers, and sponsors with full entity deletion reconciliation against Supabase DB state.
+  - `POST /api/cms/upload` — Binary buffer image & asset uploader pushing files to Supabase Storage bucket `deliveriq-assets` (supports up to 50MB payload limit).
   - `POST /api/cms/login` — CMS admin login handler.
   - `GET/POST/PUT/DELETE /api/cms/users` — User management CRUD.
   - `GET/POST/DELETE /api/cms/purchases` — Purchase transactions auditor.
@@ -140,22 +142,31 @@ DeliverIQ uses **Supabase (PostgreSQL)** as its primary relational database.
   - `POST /api/notify` — Captures newsletter subscriptions.
   - `POST /api/sponsors/inquiry` — Logs sponsor inquiry submissions.
 
-### SEO & Platform Routings
-- `GET /robots.txt` — Serving static robots policies based on hostname (sandbox vs production).
-- `GET /sitemap.xml` — Dynamically built sitemap listing all published routes.
-- `GET /llms.txt` — Text file indexing the site structure for LLM parsers.
-- `GET /ads.txt` & `/app-ads.txt` — Verification registers for AdSense.
+---
+
+## 5. Subscription & Access Module
+DeliverIQ now incorporates a dynamic Subscription Module to handle tier-based gating and access durations:
+- **CMS Schema Extension**: Pricing, durations, and tier configurations (e.g. Free, Starter, Pro) are managed dynamically via the CMS Admin panel rather than being hardcoded.
+- **Access Ledgers & Tier-Based Gating**: Checkouts securely encode the requested subscription tier. The backend verifies this tier against CMS logic to apply the correct pricing, permissions, and webhook processing.
+- **Dynamic Billing Descriptions**: Billing string literal parameters passed to Stripe and Razorpay are dynamically compiled using the active CMS state (e.g., "Pro Tier - 1 year").
+- **Subscription Kill-Switch**: Provides admins the ability to pause or deprecate specific subscription tiers immediately without deploying code.
+- **Vercel-Edge Geo-Routing (Ready)**: The architecture and route handlers are designed to be compatible with Vercel Edge functions for low-latency geo-routing.
 
 ---
 
-## 5. SEO, Canonical & Host Injection
+## 5. Express Body Parser & Payload Configuration
+In `src/server/entry.ts`, Express JSON and URL-encoded body parser limits are configured to `50mb` (`express.json({ limit: '50mb' })`). This accommodates high-resolution image uploads converted to base64 strings prior to being processed by the `/api/cms/upload` endpoint and saved into the Supabase `deliveriq-assets` bucket.
+
+---
+
+## 6. SEO, Canonical & Host Injection
 In `src/server/entry.ts`, DeliverIQ uses a multi-tenant hostname filter:
 - **System Hosts**: (e.g. testing sandboxes, preview deployments). The server automatically injects `<meta name="robots" content="noindex,nofollow">` and serves a blocking `robots.txt` to prevent duplicate indexing.
 - **Production Hosts**: Injects absolute canonical tags (`<link rel="canonical" href="...">`) mapping back to the authoritative custom domain (`https://deliveriq.live`).
 
 ---
 
-## 6. Email Gateway & Loopback Protocol
+## 7. Email Gateway & Loopback Protocol
 SMTP traffic is managed via a loopback proxy interface in `src/server/email.ts`:
 - **Problem**: Directly writing credentials and managing SMTP connection pools in application code degrades performance and presents security risks.
 - **Solution**: DeliverIQ posts JSON message payloads to an internal platform gateway listening on `http://127.0.0.1:2525/api/email/send`.
@@ -163,4 +174,4 @@ SMTP traffic is managed via a loopback proxy interface in `src/server/email.ts`:
 
 ---
 
-*Last updated: 2026-07-18*
+*Last updated: 2026-08-03*

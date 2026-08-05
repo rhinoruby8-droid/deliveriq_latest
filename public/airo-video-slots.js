@@ -203,7 +203,7 @@
           }).catch(function (err) {
             pollFailures++
             if (pollFailures === 1) {
-              // eslint-disable-next-line no-console
+               
               console.warn('[airo-video-slots] manifest poll failed:', err.message || err)
             }
             if (pollFailures >= 5) {

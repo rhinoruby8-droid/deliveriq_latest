@@ -52,9 +52,9 @@ export default function AuthDialog({ isOpen, onClose, onSuccess }: AuthDialogPro
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[420px] bg-card border-border text-white">
+      <DialogContent className="sm:max-w-[420px] bg-card border-border text-foreground">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold text-center text-white">
+          <DialogTitle className="text-xl font-bold text-center text-foreground">
             {activeTab === 'login' ? 'Sign In' : 'Create Account'}
           </DialogTitle>
           <DialogDescription className="text-center text-neutral-400 text-xs mt-1">
@@ -71,10 +71,10 @@ export default function AuthDialog({ isOpen, onClose, onSuccess }: AuthDialogPro
 
         <Tabs value={activeTab} onValueChange={(val) => setActiveTab(val as any)} className="w-full mt-4">
           <TabsList className="grid grid-cols-2 bg-background border border-border p-1 rounded-lg">
-            <TabsTrigger value="login" className="text-xs rounded-md text-neutral-400 data-[state=active]:bg-primary data-[state=active]:text-[#1A1D24]">
+            <TabsTrigger value="login" className="text-xs rounded-md text-neutral-400 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               Login
             </TabsTrigger>
-            <TabsTrigger value="register" className="text-xs rounded-md text-neutral-400 data-[state=active]:bg-primary data-[state=active]:text-[#1A1D24]">
+            <TabsTrigger value="register" className="text-xs rounded-md text-neutral-400 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               Sign Up
             </TabsTrigger>
           </TabsList>
@@ -93,7 +93,7 @@ export default function AuthDialog({ isOpen, onClose, onSuccess }: AuthDialogPro
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full bg-background border border-border rounded-lg pl-10 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-primary transition-colors"
+                    className="w-full bg-background border border-border rounded-lg pl-10 pr-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors"
                     placeholder="you@company.com"
                   />
                 </div>
@@ -111,7 +111,7 @@ export default function AuthDialog({ isOpen, onClose, onSuccess }: AuthDialogPro
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full bg-background border border-border rounded-lg pl-10 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-primary transition-colors"
+                    className="w-full bg-background border border-border rounded-lg pl-10 pr-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors"
                     placeholder="••••••••"
                   />
                 </div>
@@ -131,7 +131,7 @@ export default function AuthDialog({ isOpen, onClose, onSuccess }: AuthDialogPro
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full bg-background border border-border rounded-lg pl-10 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-primary transition-colors"
+                    className="w-full bg-background border border-border rounded-lg pl-10 pr-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors"
                     placeholder="Jane Doe"
                   />
                 </div>
@@ -149,7 +149,7 @@ export default function AuthDialog({ isOpen, onClose, onSuccess }: AuthDialogPro
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full bg-background border border-border rounded-lg pl-10 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-primary transition-colors"
+                    className="w-full bg-background border border-border rounded-lg pl-10 pr-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors"
                     placeholder="you@company.com"
                   />
                 </div>
@@ -167,7 +167,7 @@ export default function AuthDialog({ isOpen, onClose, onSuccess }: AuthDialogPro
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full bg-background border border-border rounded-lg pl-10 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-primary transition-colors"
+                    className="w-full bg-background border border-border rounded-lg pl-10 pr-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors"
                     placeholder="••••••••"
                   />
                 </div>
@@ -177,7 +177,7 @@ export default function AuthDialog({ isOpen, onClose, onSuccess }: AuthDialogPro
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-primary text-[#1A1D24] font-bold text-sm py-3 rounded-lg flex items-center justify-center gap-2 hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-4 shadow-lg shadow-amber-500/10"
+              className="w-full bg-primary text-primary-foreground font-bold text-sm py-3 rounded-lg flex items-center justify-center gap-2 hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-4 shadow-lg shadow-primary/10"
             >
               {isLoading ? 'Processing...' : (activeTab === 'login' ? 'Sign In' : 'Create Account')}
               {!isLoading && <ArrowRight size={16} />}

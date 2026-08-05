@@ -69,7 +69,7 @@ export default function App() {
   const isEmbed = typeof window !== 'undefined' && window.location.pathname.startsWith('/embed/');
 
   return (
-    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+    <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
       <RouterProvider router={router} />
       {/*
         CookieBanner reads document.cookie and subscribes to browser events.

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Helmet } from '@dr.pogodin/react-helmet';
+import { SeoHead } from '../components/SeoHead';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import DashboardLayout from '../layouts/Dashboard';
@@ -54,7 +54,7 @@ export default function DashboardSessionsPage() {
         <div className="flex flex-col items-center gap-4">
           <div className="relative w-10 h-10">
             <div className="absolute inset-0 border-2 border-primary/10 rounded-full" />
-            <div className="absolute inset-0 border-2 border-transparent border-t-[#C79A4E] rounded-full animate-spin" />
+            <div className="absolute inset-0 border-2 border-transparent border-t-primary rounded-full animate-spin" />
           </div>
           <span className="text-[10px] text-slate-500 font-bold tracking-widest uppercase">Loading your calendar</span>
         </div>
@@ -99,9 +99,7 @@ export default function DashboardSessionsPage() {
 
   return (
     <DashboardLayout config={config}>
-      <Helmet>
-        <title>My Sessions | DeliverIQ</title>
-      </Helmet>
+      <SeoHead />
 
       <motion.div
         initial="hidden"
@@ -111,7 +109,7 @@ export default function DashboardSessionsPage() {
         {/* Header section */}
         <motion.div variants={fadeIn} custom={0} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-black text-white tracking-tight leading-none">
+            <h1 className="text-3xl font-black text-foreground tracking-tight leading-none">
               My Sessions
             </h1>
             <p className="text-sm text-slate-500 mt-2">
@@ -127,7 +125,7 @@ export default function DashboardSessionsPage() {
               placeholder="Search sessions..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full rounded-xl border border-border bg-background pl-9 pr-4 py-2 text-xs text-white placeholder:text-slate-500 focus:border-primary focus:outline-none"
+              className="w-full rounded-xl border border-border bg-background pl-9 pr-4 py-2 text-xs text-foreground placeholder:text-slate-500 focus:border-primary focus:outline-none"
             />
           </div>
         </motion.div>
@@ -142,7 +140,7 @@ export default function DashboardSessionsPage() {
                   <Calendar size={20} />
                 </div>
                 <div>
-                  <h3 className="text-white font-bold text-sm">
+                  <h3 className="text-foreground font-bold text-sm">
                     {searchQuery ? 'No matching sessions found' : 'No registered sessions'}
                   </h3>
                   <p className="text-xs text-slate-500 mt-1 max-w-[340px] mx-auto leading-relaxed">
@@ -155,7 +153,7 @@ export default function DashboardSessionsPage() {
                 {!searchQuery && (
                   <Link
                     to="/sessions"
-                    className="inline-flex items-center gap-2 px-6 py-2.5 text-xs font-bold bg-primary text-[#0A0B0E] rounded-xl hover:brightness-110 active:scale-[0.98] transition-all shadow-[0_4px_16px_rgba(199,154,78,0.12)]"
+                    className="inline-flex items-center gap-2 px-6 py-2.5 text-xs font-bold bg-primary text-primary-foreground rounded-xl hover:brightness-110 active:scale-[0.98] transition-all shadow-[0_4px_16px_rgba(199,154,78,0.12)]"
                   >
                     Browse Catalog <ArrowRight size={13} />
                   </Link>
@@ -181,7 +179,7 @@ export default function DashboardSessionsPage() {
                       <span className="text-[10px] text-slate-500 font-semibold">{session.duration || '90 mins'}</span>
                     </div>
 
-                    <h3 className="font-extrabold text-white text-base leading-snug group-hover:text-primary transition-colors mb-2">
+                    <h3 className="font-extrabold text-foreground text-base leading-snug group-hover:text-primary transition-colors mb-2">
                       {session.title}
                     </h3>
                     <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed mb-4">
@@ -198,7 +196,7 @@ export default function DashboardSessionsPage() {
                     </div>
 
                     <div className="flex items-center gap-2 w-full sm:w-auto shrink-0">
-                      <Button asChild variant="outline" size="sm" className="border-border text-slate-400 hover:text-white hover:bg-card cursor-pointer text-xs h-9 rounded-xl flex-1 sm:flex-none">
+                      <Button asChild variant="outline" size="sm" className="border-border text-slate-400 hover:text-foreground hover:bg-card cursor-pointer text-xs h-9 rounded-xl flex-1 sm:flex-none">
                         <Link to={`/sessions/${session.id}`}>
                           Details
                         </Link>
@@ -206,7 +204,7 @@ export default function DashboardSessionsPage() {
                       <JoinCallButton 
                         sessionId={session.id} 
                         size="sm"
-                        className="bg-primary text-[#0A0B0E] hover:brightness-110 cursor-pointer text-xs font-bold h-9 rounded-xl flex-1 sm:flex-none"
+                        className="bg-primary text-primary-foreground hover:brightness-110 cursor-pointer text-xs font-bold h-9 rounded-xl flex-1 sm:flex-none"
                       />
                     </div>
                   </div>

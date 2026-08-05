@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Helmet } from '@dr.pogodin/react-helmet';
+import { SeoHead } from '../components/SeoHead';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import DashboardLayout from '../layouts/Dashboard';
 import { fetchMe, removeUserToken, type User, trackWatchTime } from '../lib/user-auth';
@@ -101,9 +101,9 @@ export default function ReplayPlayerPage() {
   if (!session) {
     return (
       <DashboardLayout config={config}>
-        <div className="p-8 text-center text-white">
+        <div className="p-8 text-center text-foreground">
           <h2 className="text-2xl font-bold">Session not found</h2>
-          <Button asChild className="mt-4 bg-primary text-[#1A1D24]">
+          <Button asChild className="mt-4 bg-primary text-primary-foreground">
             <Link to="/replays">Back to Replays</Link>
           </Button>
         </div>
@@ -124,9 +124,7 @@ export default function ReplayPlayerPage() {
 
   return (
     <DashboardLayout config={config}>
-      <Helmet>
-        <title>{session.title} | Replay</title>
-      </Helmet>
+      <SeoHead />
 
       <div className="space-y-6">
         <Link to="/replays" className="inline-flex items-center gap-2 text-sm text-neutral-400 hover:text-white mb-2 transition-colors">
@@ -134,7 +132,7 @@ export default function ReplayPlayerPage() {
         </Link>
 
         <div>
-          <h1 className="text-2xl font-bold text-white mb-2">{session.title}</h1>
+          <h1 className="text-2xl font-bold text-foreground mb-2">{session.title}</h1>
           <p className="text-neutral-400 text-sm">{session.description}</p>
         </div>
 
@@ -149,7 +147,7 @@ export default function ReplayPlayerPage() {
             </div>
             
             <div>
-              <h2 className="text-xl font-bold text-white">Pro Upgrade Required</h2>
+              <h2 className="text-xl font-bold text-foreground">Pro Upgrade Required</h2>
               <p className="text-sm text-neutral-400 mt-2 max-w-md mx-auto">
                 This session replay requires a Pro subscription. Upgrading grants you full access to all past events, video recordings, and upcoming sessions for an entire year.
               </p>

@@ -9818,7 +9818,7 @@ function requireSideChannelList() {
     } else {
       objects.next = /** @type {import('./list.d.ts').ListNode<typeof value, typeof key>} */
       {
-        // eslint-disable-line no-param-reassign, no-extra-parens
+         
         key,
         next: objects.next,
         value
@@ -10416,7 +10416,7 @@ function requireGetIntrinsic() {
     "%encodeURIComponent%": encodeURIComponent,
     "%Error%": $Error,
     "%eval%": eval,
-    // eslint-disable-line no-eval
+     
     "%EvalError%": $EvalError,
     "%Float16Array%": typeof Float16Array === "undefined" ? undefined$1 : Float16Array,
     "%Float32Array%": typeof Float32Array === "undefined" ? undefined$1 : Float32Array,
@@ -11722,7 +11722,7 @@ function requireParse() {
       decodeDotInKeys: typeof opts.decodeDotInKeys === "boolean" ? opts.decodeDotInKeys : defaults.decodeDotInKeys,
       decoder: typeof opts.decoder === "function" ? opts.decoder : defaults.decoder,
       delimiter: typeof opts.delimiter === "string" || utils2.isRegExp(opts.delimiter) ? opts.delimiter : defaults.delimiter,
-      // eslint-disable-next-line no-implicit-coercion, no-extra-parens
+       
       depth: typeof opts.depth === "number" || opts.depth === false ? +opts.depth : defaults.depth,
       duplicates,
       ignoreQueryPrefix: opts.ignoreQueryPrefix === true,
@@ -71790,7 +71790,7 @@ function requireAxios() {
           key = removeBrackets(key);
           arr.forEach(function each(el, index) {
             !(utils$12.isUndefined(el) || el === null) && formData.append(
-              // eslint-disable-next-line no-nested-ternary
+               
               indexes === true ? renderKey([key], index, dots) : indexes === null ? key : key + "[]",
               convertValue(el)
             );
@@ -71990,7 +71990,7 @@ function requireAxios() {
   const _navigator = typeof navigator === "object" && navigator || void 0;
   const hasStandardBrowserEnv = hasBrowserEnv && (!_navigator || ["ReactNative", "NativeScript", "NS"].indexOf(_navigator.product) < 0);
   const hasStandardBrowserWebWorkerEnv = (() => {
-    return typeof WorkerGlobalScope !== "undefined" && // eslint-disable-next-line no-undef
+    return typeof WorkerGlobalScope !== "undefined" &&  
     self instanceof WorkerGlobalScope && typeof self.importScripts === "function";
   })();
   const origin = hasBrowserEnv && window.location.href || "http://localhost";

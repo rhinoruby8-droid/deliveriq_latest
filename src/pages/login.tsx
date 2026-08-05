@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Helmet } from "@dr.pogodin/react-helmet";
+import { SeoHead } from '../components/SeoHead';
 import { useNavigate, useLocation } from "react-router-dom";
 import { setUserToken } from "../lib/user-auth";
 import { trackEvent } from "../lib/analytics";
@@ -82,52 +82,26 @@ export default function Login() {
     }
   };
 
-  const inputBase: React.CSSProperties = {
-    width: "100%",
-    height: "3rem",
-    backgroundColor: "#14161B",
-    color: "#F0EDE8",
-    border: "1.5px solid #2C2F38",
-    borderRadius: "10px",
-    paddingLeft: "2.75rem",
-    paddingRight: "1rem",
-    fontSize: "0.9rem",
-    outline: "none",
-    boxSizing: "border-box" as const,
-    transition: "border-color 0.2s ease, box-shadow 0.2s ease",
-  };
-
-  const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-    e.target.style.borderColor = "#C79A4E";
-    e.target.style.boxShadow = "0 0 0 2px rgba(199,154,78,0.2)";
-  };
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    e.target.style.borderColor = "#2C2F38";
-    e.target.style.boxShadow = "none";
-  };
-
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "#1A1D24", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "3rem 1.5rem" }}>
-      <Helmet>
-        <title>{isForgotPassword ? "Reset Password | DeliverIQ" : (isLogin ? "Sign In | DeliverIQ" : "Create Account | DeliverIQ")}</title>
-      </Helmet>
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-12 sm:px-6">
+      <SeoHead />
 
-      <div style={{ marginBottom: "2rem", textAlign: "center" }}>
-        <span style={{ fontSize: "0.65rem", fontWeight: 800, letterSpacing: "0.3em", color: "#C79A4E", textTransform: "uppercase", display: "block", marginBottom: "0.75rem" }}>DeliverIQ</span>
-        <h1 style={{ fontSize: "1.75rem", fontWeight: 800, color: "#F0EDE8", margin: 0 }}>
+      <div className="mb-8 text-center">
+        <span className="text-[0.65rem] font-extrabold tracking-[0.3em] text-primary uppercase block mb-3">DeliverIQ</span>
+        <h1 className="text-3xl font-extrabold text-foreground m-0">
           {isForgotPassword ? "Reset your password" : (isLogin ? "Sign in to your account" : "Create your account")}
         </h1>
-        <p style={{ fontSize: "0.875rem", color: "#8A8D96", marginTop: "0.5rem" }}>
+        <p className="text-sm text-muted-foreground mt-2">
           {isForgotPassword ? (
             <button type="button" onClick={() => setIsForgotPassword(false)}
-              style={{ color: "#C79A4E", fontWeight: 600, background: "none", border: "none", cursor: "pointer", padding: 0, fontSize: "inherit" }}>
+              className="text-primary font-semibold bg-transparent border-none cursor-pointer p-0 text-inherit hover:underline">
               Back to sign in
             </button>
           ) : (
             <>
               {isLogin ? "Or " : "Already have an account? "}
               <button type="button" onClick={() => setIsLogin(!isLogin)}
-                style={{ color: "#C79A4E", fontWeight: 600, background: "none", border: "none", cursor: "pointer", padding: 0, fontSize: "inherit" }}>
+                className="text-primary font-semibold bg-transparent border-none cursor-pointer p-0 text-inherit hover:underline">
                 {isLogin ? "create a new account" : "sign in instead"}
               </button>
             </>
@@ -135,83 +109,83 @@ export default function Login() {
         </p>
       </div>
 
-      <div style={{ width: "100%", maxWidth: "28rem", backgroundColor: "#21242C", border: "1px solid #2C2F38", borderRadius: "1.25rem", padding: "2.5rem", boxShadow: "0 25px 50px -12px rgba(0,0,0,0.6)" }}>
+      <div className="w-full max-w-md bg-card border border-border rounded-2xl p-10 shadow-2xl">
         {error && (
-          <div style={{ marginBottom: "1.5rem", backgroundColor: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: "0.625rem", padding: "0.875rem 1rem", display: "flex", alignItems: "flex-start", gap: "0.75rem" }}>
-            <AlertTriangle size={16} color="#f87171" style={{ flexShrink: 0, marginTop: "2px" }} />
-            <span style={{ fontSize: "0.875rem", color: "#fca5a5" }}>{error}</span>
+          <div className="mb-6 bg-red-500/10 border border-red-500/30 rounded-lg p-3.5 flex items-start gap-3">
+            <AlertTriangle size={16} className="text-red-400 shrink-0 mt-0.5" />
+            <span className="text-sm text-red-300">{error}</span>
           </div>
         )}
 
         {resetSuccess && (
-          <div style={{ marginBottom: "1.5rem", backgroundColor: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.3)", borderRadius: "0.625rem", padding: "0.875rem 1rem" }}>
-            <span style={{ fontSize: "0.875rem", color: "#86efac" }}>{resetSuccess}</span>
+          <div className="mb-6 bg-green-500/10 border border-green-500/30 rounded-lg p-3.5">
+            <span className="text-sm text-green-300">{resetSuccess}</span>
           </div>
         )}
 
         {isForgotPassword ? (
-          <form onSubmit={handleForgotPasswordSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+          <form onSubmit={handleForgotPasswordSubmit} className="flex flex-col gap-5">
             <div>
-              <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 700, color: "#8A8D96", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "0.5rem" }}>Email Address</label>
-              <div style={{ position: "relative" }}>
-                <Mail size={16} color="#8A8D96" style={{ position: "absolute", left: "0.875rem", top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} />
+              <label className="block text-xs font-bold text-muted-foreground tracking-widest uppercase mb-2">Email Address</label>
+              <div className="relative">
+                <Mail size={16} className="text-muted-foreground absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                 <input id="email" type="email" required value={email} onChange={e => setEmail(e.target.value)}
-                  placeholder="jane@company.com" style={inputBase} onFocus={handleFocus} onBlur={handleBlur} />
+                  placeholder="jane@company.com" className="w-full h-12 bg-background text-foreground border border-border rounded-[10px] pl-11 pr-4 text-sm outline-none transition-all focus:border-primary focus:ring-1 focus:ring-primary/20" />
               </div>
             </div>
             <button type="submit" disabled={isLoading}
-              style={{ width: "100%", height: "3.25rem", backgroundColor: "#C79A4E", color: "#1A1D24", fontWeight: 700, fontSize: "1rem", borderRadius: "9999px", border: "none", cursor: isLoading ? "not-allowed" : "pointer", opacity: isLoading ? 0.7 : 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", marginTop: "0.25rem", boxShadow: "0 4px 20px rgba(199,154,78,0.25)" }}>
+              className="w-full h-12 mt-1 bg-primary text-primary-foreground font-bold text-base rounded-full flex items-center justify-center gap-2 transition-all hover:brightness-110 disabled:opacity-70 disabled:cursor-not-allowed shadow-[0_4px_20px_hsl(var(--primary)/0.25)]">
               {isLoading ? "Please wait..." : "Send Reset Link"}
               {!isLoading && <ArrowRight size={18} />}
             </button>
           </form>
         ) : (
-          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
           {!isLogin && (
             <div>
-              <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 700, color: "#8A8D96", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "0.5rem" }}>Full Name</label>
-              <div style={{ position: "relative" }}>
-                <User size={16} color="#8A8D96" style={{ position: "absolute", left: "0.875rem", top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} />
+              <label className="block text-xs font-bold text-muted-foreground tracking-widest uppercase mb-2">Full Name</label>
+              <div className="relative">
+                <User size={16} className="text-muted-foreground absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                 <input id="name" type="text" required value={name} onChange={e => setName(e.target.value)}
-                  placeholder="Jane Doe" style={inputBase} onFocus={handleFocus} onBlur={handleBlur} />
+                  placeholder="Jane Doe" className="w-full h-12 bg-background text-foreground border border-border rounded-[10px] pl-11 pr-4 text-sm outline-none transition-all focus:border-primary focus:ring-1 focus:ring-primary/20" />
               </div>
             </div>
           )}
 
           <div>
-            <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 700, color: "#8A8D96", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "0.5rem" }}>Email Address</label>
-            <div style={{ position: "relative" }}>
-              <Mail size={16} color="#8A8D96" style={{ position: "absolute", left: "0.875rem", top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} />
+            <label className="block text-xs font-bold text-muted-foreground tracking-widest uppercase mb-2">Email Address</label>
+            <div className="relative">
+              <Mail size={16} className="text-muted-foreground absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
               <input id="email" type="email" autoComplete="email" required value={email} onChange={e => setEmail(e.target.value)}
-                placeholder="jane@company.com" style={inputBase} onFocus={handleFocus} onBlur={handleBlur} />
+                placeholder="jane@company.com" className="w-full h-12 bg-background text-foreground border border-border rounded-[10px] pl-11 pr-4 text-sm outline-none transition-all focus:border-primary focus:ring-1 focus:ring-primary/20" />
             </div>
           </div>
 
           <div>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
-              <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 700, color: "#8A8D96", letterSpacing: "0.08em", textTransform: "uppercase", margin: 0 }}>Password</label>
+            <div className="flex justify-between items-center mb-2">
+              <label className="block text-xs font-bold text-muted-foreground tracking-widest uppercase m-0">Password</label>
               {isLogin && (
                 <button type="button" onClick={() => setIsForgotPassword(true)}
-                  style={{ color: "#C79A4E", fontWeight: 600, background: "none", border: "none", cursor: "pointer", padding: 0, fontSize: "0.75rem" }}>
+                  className="text-primary font-semibold bg-transparent border-none cursor-pointer p-0 text-xs hover:underline">
                   Forgot password?
                 </button>
               )}
             </div>
-            <div style={{ position: "relative" }}>
-              <Lock size={16} color="#8A8D96" style={{ position: "absolute", left: "0.875rem", top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} />
+            <div className="relative">
+              <Lock size={16} className="text-muted-foreground absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
               <input id="password" type={showPassword ? "text" : "password"}
                 autoComplete={isLogin ? "current-password" : "new-password"} required value={password}
-                onChange={e => setPassword(e.target.value)} placeholder="��������"
-                style={{ ...inputBase, paddingRight: "2.75rem" }} onFocus={handleFocus} onBlur={handleBlur} />
+                onChange={e => setPassword(e.target.value)} placeholder="••••••••"
+                className="w-full h-12 bg-background text-foreground border border-border rounded-[10px] pl-11 pr-11 text-sm outline-none transition-all focus:border-primary focus:ring-1 focus:ring-primary/20" />
               <button type="button" onClick={() => setShowPassword(!showPassword)}
-                style={{ position: "absolute", right: "0.875rem", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "#8A8D96", padding: 0, display: "flex", alignItems: "center" }}>
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 bg-transparent border-none cursor-pointer text-muted-foreground p-0 flex items-center hover:text-foreground transition-colors">
                 {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>
           </div>
 
           <button type="submit" disabled={isLoading}
-            style={{ width: "100%", height: "3.25rem", backgroundColor: "#C79A4E", color: "#1A1D24", fontWeight: 700, fontSize: "1rem", borderRadius: "9999px", border: "none", cursor: isLoading ? "not-allowed" : "pointer", opacity: isLoading ? 0.7 : 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", marginTop: "0.25rem", boxShadow: "0 4px 20px rgba(199,154,78,0.25)" }}>
+            className="w-full h-12 mt-1 bg-primary text-primary-foreground font-bold text-base rounded-full flex items-center justify-center gap-2 transition-all hover:brightness-110 disabled:opacity-70 disabled:cursor-not-allowed shadow-[0_4px_20px_hsl(var(--primary)/0.25)]">
             {isLoading ? "Please wait..." : (isLogin ? "Sign in" : "Create account")}
             {!isLoading && <ArrowRight size={18} />}
           </button>

@@ -1,19 +1,17 @@
-import { Helmet } from '@dr.pogodin/react-helmet';
+import { SeoHead } from '../../components/SeoHead';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { XCircle, ArrowRight } from 'lucide-react';
+import { useCmsContent, FALLBACK_CMS_CONTENT } from '@/lib/cms-client';
 
 export default function PaymentCancelPage() {
-  const site = 'https://deliveriq.live';
+  const { data } = useCmsContent();
+  const cms = data || FALLBACK_CMS_CONTENT;
+  const cancelContent = cms?.globalSiteContent?.paymentCancelContent;
 
   return (
     <>
-      <Helmet>
-        <title>Payment Cancelled — DeliverIQ</title>
-        <meta name="description" content="Your payment was cancelled. No charge was made. Return to sessions to try again." />
-        <meta name="robots" content="noindex" />
-        <link rel="canonical" href={`${site}/payment/cancel`} />
-      </Helmet>
+      <SeoHead />
 
       <main className="min-h-[80vh] flex items-center justify-center">
         <div className="container mx-auto px-6 lg:px-8 max-w-xl text-center">
@@ -30,16 +28,15 @@ export default function PaymentCancelPage() {
             </div>
 
             <p className="text-[11px] font-semibold tracking-[0.2em] text-muted-foreground uppercase mb-4">
-              Payment Cancelled
+              {cancelContent?.primaryCtaLabel || 'Payment Cancelled'}
             </p>
 
             <h1 className="text-3xl md:text-4xl font-bold text-foreground leading-tight mb-4">
-              No charge was made.
+              {cancelContent?.heading || 'No charge was made.'}
             </h1>
 
             <p className="text-muted-foreground text-base leading-relaxed mb-10">
-              You cancelled before completing payment. No charge was made to your card.
-              You can try again any time.
+              {cancelContent?.paragraph || 'You cancelled before completing payment. No charge was made to your card.'}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

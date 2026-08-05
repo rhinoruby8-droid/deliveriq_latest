@@ -27,20 +27,23 @@ export default async function handler(req: Request, res: Response) {
       return res.status(200).json({ success: true });
     }
 
-    // Default email payload fallback
-    await sendEmail({
-      to: 'sales@deliveriq.live',
-      replyTo: validatedData.email,
-      fromName: 'DeliverIQ',
-      subject: `New Sponsor Inquiry from ${validatedData.companyName}`,
-      html: `
-        <h2>New Sponsor Inquiry</h2>
-        <p><strong>Company:</strong> ${validatedData.companyName}</p>
-        <p><strong>Email:</strong> ${validatedData.email}</p>
-        <p><strong>Package of Interest:</strong> ${validatedData.packageInterest}</p>
-        <p><strong>Message:</strong><br/>${validatedData.message || 'N/A'}</p>
-      `,
-    });
+    try {
+      await sendEmail({
+        to: 'sales@deliveriq.live',
+        replyTo: validatedData.email,
+        fromName: 'DeliverIQ',
+        subject: `New Sponsor Inquiry from ${validatedData.companyName}`,
+        html: `
+          <h2>New Sponsor Inquiry</h2>
+          <p><strong>Company:</strong> ${validatedData.companyName}</p>
+          <p><strong>Email:</strong> ${validatedData.email}</p>
+          <p><strong>Package of Interest:</strong> ${validatedData.packageInterest}</p>
+          <p><strong>Message:</strong><br/>${validatedData.message || 'N/A'}</p>
+        `,
+      });
+    } catch (emailErr) {
+      console.error('sponsors/inquiry POST email error', emailErr);
+    }
 
     return res.status(200).json({ success: true });
   } catch (err) {

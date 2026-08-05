@@ -15,7 +15,7 @@ export default async function handler(req: Request, res: Response) {
       .eq('id', 'purchases')
       .maybeSingle();
 
-    let purchases = record?.value || [];
+    const purchases = record?.value || [];
     const purchaseToDelete = purchases.find((p: any) => p.id === id);
 
     if (!purchaseToDelete) {

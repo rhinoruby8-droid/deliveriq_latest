@@ -105,15 +105,32 @@ async function seed() {
   if (error) console.error('Error seeding pages:', error);
 
   console.log('Seeding settings...');
-  const { error: settingsError } = await supabase.from('settings').upsert({
-    id: 'payment_config',
-    value: data.paymentConfig || {
-      stripeActive: true,
-      paypalActive: false,
-      razorpayActive: false,
-      currency: 'USD'
+  const settingsToSeed = [
+    {
+      id: 'payment_config',
+      value: data.paymentConfig || {
+        stripeActive: true,
+        paypalActive: false,
+        razorpayActive: false,
+        currency: 'USD'
+      }
     }
-  });
+  ];
+
+  if (data.globalSiteContent) {
+    settingsToSeed.push({ id: 'global_site_content', value: data.globalSiteContent });
+  }
+  if (data.heroBannerConfig) {
+    settingsToSeed.push({ id: 'hero_banner_config', value: data.heroBannerConfig });
+  }
+  if (data.topics) {
+    settingsToSeed.push({ id: 'topics', value: data.topics });
+  }
+  if (data.coupons) {
+    settingsToSeed.push({ id: 'coupons', value: data.coupons });
+  }
+
+  const { error: settingsError } = await supabase.from('settings').upsert(settingsToSeed);
   if (settingsError) console.error('Error seeding settings:', settingsError);
 
   console.log('Seeding complete!');

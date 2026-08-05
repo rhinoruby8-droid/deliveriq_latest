@@ -10,7 +10,7 @@ export default async function handler(req: AuthRequest, res: Response) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    const { sessionId } = req.params;
+    const sessionId = req.params.sessionId as string;
     if (!sessionId) {
       return res.status(400).json({ error: 'Missing sessionId' });
     }
@@ -18,7 +18,7 @@ export default async function handler(req: AuthRequest, res: Response) {
     // Verify user exists and check registration
     const { data: user, error: userErr } = await supabaseAdmin
       .from('users')
-      .select('registered_session_ids')
+      .select('registered_session_ids, subscription_tier, subscription_expires_at, session_access')
       .eq('id', userId)
       .single();
 
@@ -26,8 +26,35 @@ export default async function handler(req: AuthRequest, res: Response) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    const registeredIds = user.registered_session_ids || [];
-    if (!registeredIds.includes(sessionId)) {
+    const now = new Date();
+    
+    // Check Tier 3 (Pro) Global Bypass
+    let hasAccess = false;
+    if (user.subscription_tier === 'tier3' && user.subscription_expires_at) {
+      if (new Date(user.subscription_expires_at) > now) {
+        hasAccess = true;
+      }
+    }
+
+    if (!hasAccess) {
+      // Check Tier 2 expiration or specific access
+      const access = (user.session_access as Record<string, any>)?.[sessionId];
+      if (access && access.tier === 'tier2' && access.expires_at) {
+        if (new Date(access.expires_at) > now) {
+          hasAccess = true;
+        } else {
+          return res.status(403).json({ error: 'Forbidden: Your 3-month access for this session has expired.' });
+        }
+      } else {
+        // Fallback to basic registration check
+        const registeredIds = user.registered_session_ids || [];
+        if (registeredIds.includes(sessionId)) {
+          hasAccess = true;
+        }
+      }
+    }
+
+    if (!hasAccess) {
       return res.status(403).json({ error: 'Forbidden: You are not registered for this session.' });
     }
 

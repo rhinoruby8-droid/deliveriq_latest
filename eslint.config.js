@@ -7,7 +7,7 @@ import security from 'eslint-plugin-security';
 
 export default [
   {
-    ignores: ['dist', 'node_modules', '.next', '.vite'],
+    ignores: ['dist', 'node_modules', '.next', '.vite', 'api/_bin'],
   },
   {
     files: ['**/*.{ts,tsx}'],
@@ -45,6 +45,13 @@ export default [
         HTMLTableRowElement: 'readonly',
         HTMLTableCellElement: 'readonly',
         HTMLTableCaptionElement: 'readonly',
+        describe: 'readonly',
+        it: 'readonly',
+        expect: 'readonly',
+        vi: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        test: 'readonly',
       },
       parser: tsparser,
       parserOptions: {
@@ -66,8 +73,9 @@ export default [
       ...security.configs.recommended.rules,
       'react-refresh/only-export-components': [
         'warn',
-        { allowConstantExport: true },
+        { allowConstantExport: true, allowExportNames: ['badgeVariants', 'buttonVariants', 'toggleVariants', 'navigationMenuTriggerStyle'] },
       ],
+      'no-undef': 'off',
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/explicit-function-return-type': 'off',

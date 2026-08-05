@@ -36700,7 +36700,7 @@ var invalidProtocols = [
   "devtools:",
   "file:",
   "filesystem:",
-  // eslint-disable-next-line no-script-url
+   
   "javascript:"
 ];
 function hasInvalidProtocol(location2) {

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import CheckoutButton from './CheckoutButton';
 import { Check, Sparkles, Clock, Play } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
+import { useCmsContent } from '@/lib/cms-client';
 
 interface PricingTiersProps {
   basePrice: number;
@@ -19,10 +20,20 @@ export default function PricingTiers({
   couponCode
 }: PricingTiersProps) {
   const [selectedTier, setSelectedTier] = useState<'tier1' | 'tier2' | 'tier3'>('tier2');
+  const { data: cms } = useCmsContent();
+  const config = cms?.subscriptionConfig;
 
   const tier1Price = Math.round(basePrice * 0.7);
   const tier2Price = basePrice;
-  const tier3Price = 199.00;
+  const tier3Price = config?.tier3PriceUSD ?? 199.00;
+
+  const tier2Months = config?.tier2DurationMonths ?? 3;
+  const tier3Months = config?.tier3DurationMonths ?? 12;
+  const tier3DurationText = tier3Months % 12 === 0 && tier3Months > 0 
+    ? (tier3Months === 12 ? 'a full year' : `${tier3Months / 12} years`) 
+    : `${tier3Months} months`;
+
+  const isSubscriptionActive = config?.isSubscriptionActive !== false;
 
   const tiers = [
     {
@@ -42,10 +53,10 @@ export default function PricingTiers({
       id: 'tier2' as const,
       name: 'Standard',
       price: tier2Price,
-      description: 'Live session access plus 3 months of recording replays.',
+      description: `Live session access plus ${tier2Months} months of recording replays.`,
       features: [
         'Access to the live session',
-        'Watch recording replays for 3 months',
+        `Watch recording replays for ${tier2Months} months`,
         'Interactive Q&A',
         'Digital attendance certificate',
         'Session slides and resources'
@@ -58,11 +69,11 @@ export default function PricingTiers({
       id: 'tier3' as const,
       name: 'Pro',
       price: tier3Price,
-      description: 'Full access to all past and upcoming sessions for a full year.',
+      description: `Full access to all past and upcoming sessions for ${tier3DurationText}.`,
       features: [
         'Access to all past sessions (free & paid)',
         'Access to all upcoming live sessions',
-        'Watch recording replays for 1 year',
+        `Watch recording replays for ${tier3DurationText}`,
         'Interactive Q&A & resources',
         'Exclusive Pro templates & Discord'
       ],
@@ -106,7 +117,7 @@ export default function PricingTiers({
               }`}
             >
               {tier.popular && !showOnlyPro && (
-                <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-[#1A1D24] text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-full z-10">
+                <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-full z-10">
                   Popular
                 </span>
               )}
@@ -117,7 +128,7 @@ export default function PricingTiers({
                   <Icon className={`w-5 h-5 ${tier.iconColor}`} />
                 </div>
                 <div className="flex items-baseline gap-1">
-                  <span className="text-3xl font-extrabold text-white font-sans">${tier.price}</span>
+                  <span className="text-3xl font-extrabold text-foreground font-sans">${tier.price}</span>
                   {(tier.id === 'tier3' || showOnlyPro) && <span className="text-xs text-muted-foreground font-sans">/year</span>}
                 </div>
                 <CardDescription className="text-xs text-muted-foreground mt-2 leading-relaxed">{tier.description}</CardDescription>
@@ -138,8 +149,8 @@ export default function PricingTiers({
                 <CardFooter className="p-6 pt-4 border-t border-border/40">
                   <span className={`text-xs font-semibold px-4 py-2.5 rounded-sm border w-full block text-center transition-colors font-sans ${
                     isSelected
-                      ? 'bg-primary text-[#1A1D24] border-primary'
-                      : 'bg-transparent text-muted-foreground border-border hover:border-primary/30 hover:text-white'
+                      ? 'bg-primary text-primary-foreground border-primary'
+                      : 'bg-transparent text-muted-foreground border-border hover:border-primary/30 hover:text-foreground'
                   }`}>
                     {isSelected ? 'Selected' : 'Select Plan'}
                   </span>
@@ -153,7 +164,7 @@ export default function PricingTiers({
       <div className="border-t border-border/40 pt-6 mt-4 flex flex-col items-center gap-4">
         <div className="text-center">
           <p className="text-xs text-muted-foreground">You are purchasing:</p>
-          <h4 className="text-sm font-bold text-white mt-1">
+          <h4 className="text-sm font-bold text-foreground mt-1">
             {getCheckoutTitle()}
           </h4>
           <p className="text-lg font-extrabold text-primary mt-1">
@@ -169,6 +180,8 @@ export default function PricingTiers({
           label={showOnlyPro ? 'Continue Subscription' : 'Purchase Plan'}
           className="w-full max-w-sm"
           couponCode={couponCode}
+          disabled={!isSubscriptionActive && (showOnlyPro || selectedTier === 'tier3')}
+          disabledReason="Pro Membership enrollment is currently paused."
         />
       </div>
     </div>

@@ -29,7 +29,7 @@ Skills provide tools and protocols that enhance the capabilities of coding assis
 ## 2. Platform Architecture Coding Patterns
 
 ### A. Centralized Component DRY Pattern
-- **Standard**: Actionable UI components containing critical business logic (e.g., secure proxy joins, authenticated checkout buttons) must be centralized in the `src/components/` directory (like `JoinCallButton.tsx` and `CheckoutButton.tsx`) and imported where needed, rather than duplicated inline across multiple page layouts.
+- **Standard**: Actionable UI components containing critical business logic or complex structural layouts (e.g., secure proxy joins, authenticated checkout buttons, hero video background loops) must be centralized in the `src/components/` directory (like `JoinCallButton.tsx`, `CheckoutButton.tsx`, and `HeroVideoBackground.tsx`) and imported where needed, rather than duplicated inline across multiple page layouts.
 
 ### B. Secure Tokenized Redirect (Proxy Join Flow)
 - **Standard**: High-value meeting links must never be exposed raw in the client DOM.
@@ -55,4 +55,4 @@ Subagents are specialized, isolated instances of AI models configured with dedic
 
 ---
 
-*Last updated: 2026-07-18*
+*Last updated: 2026-08-03*

@@ -1,0 +1,16 @@
+# Shadcn Component Structural Overrides
+
+When radically changing the layout structure of a shared `shadcn/ui` component (e.g., changing a Dialog from a narrow `grid` to a wide `flex` container), **DO NOT** attempt to override the hardcoded base classes by passing Tailwind classes via props (e.g. `className="flex max-w-4xl"`). `tailwind-merge` will often fail to override the base classes correctly due to breakpoint mismatch or property precedence, leading to silent layout failures.
+
+**Instead:** Bypass the shared `shadcn` wrapper component entirely for that specific instance. Import and use the underlying headless primitives directly (e.g., `@radix-ui/react-dialog`) to compose the UI. This provides 100% CSS control over the new layout without mutating the shared `shadcn` component and breaking other instances across the app.
+
+# Critical Layout Properties Must Use Inline Styles
+
+For modal/dialog components with custom structural layouts (e.g. multi-column grids, fixed widths, constrained heights), **always use inline `style={{}}` props** for the critical CSS properties that define the layout skeleton:
+- `display: 'grid'` / `display: 'flex'`
+- `gridTemplateColumns`
+- `maxWidth`, `maxHeight`, `width`
+- `position`, `transform` (for centering)
+- `overflow`
+
+Reserve Tailwind classes only for **theme tokens** (colors via CSS variables like `bg-card`, `text-foreground`, `border-border`) and non-structural utilities (`custom-scrollbar`, `hover:` states, `transition-*`). This eliminates any possibility of Tailwind JIT compilation issues, class ordering conflicts, or responsive breakpoint mismatches silently breaking the layout.

@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import crypto from 'node:crypto';
 import Razorpay from 'razorpay';
 import { supabaseAdmin } from '../../../supabase';
+import { getSubscriptionConfig, addMonths } from '../../../subscription-config';
 
 async function getRazorpayKeys() {
   const { data } = await supabaseAdmin.from('settings').select('value').eq('id', 'gateway_api_keys').maybeSingle();
@@ -70,8 +71,8 @@ export default async function handler(req: Request, res: Response) {
     // Grant access rights in Database
     if (supabaseAdmin) {
       if (tier === 'tier3') {
-        const expiresAt = new Date();
-        expiresAt.setFullYear(expiresAt.getFullYear() + 1);
+        const config = await getSubscriptionConfig();
+        const expiresAt = addMonths(config.tier3DurationMonths);
         await supabaseAdmin
           .from('users')
           .update({
@@ -89,8 +90,8 @@ export default async function handler(req: Request, res: Response) {
         const sessionAccess = user?.session_access || {};
         const registeredIds = user?.registered_session_ids || [];
 
-        const expiresAt = new Date();
-        expiresAt.setMonth(expiresAt.getMonth() + 3);
+        const config = await getSubscriptionConfig();
+        const expiresAt = addMonths(config.tier2DurationMonths);
 
         sessionAccess[sessionId] = {
           tier: 'tier2',
