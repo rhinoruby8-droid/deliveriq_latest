@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
 import { supabaseAdmin } from '../../../supabase';
+import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
+import { join } from 'node:path';
 
 export default async function uploadHandler(req: Request, res: Response) {
   try {
@@ -14,29 +16,45 @@ export default async function uploadHandler(req: Request, res: Response) {
     
     // Ensure unique filename
     const uniqueFilename = `${Date.now()}-${filename.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
-    const folder = req.body.folder || 'avatars';
+    const folder = req.body.folder || 'uploads';
     const path = `${folder}/${uniqueFilename}`;
 
-    const { error } = await supabaseAdmin.storage
-      .from('deliveriq-assets')
-      .upload(path, buffer, {
-        contentType,
-        upsert: false,
-      });
+    // Try Supabase Storage first
+    try {
+      if (supabaseAdmin) {
+        const { error } = await supabaseAdmin.storage
+          .from('deliveriq-assets')
+          .upload(path, buffer, {
+            contentType,
+            upsert: false,
+          });
 
-    if (error) {
-      console.error('Supabase upload error:', error);
-      return res.status(500).json({ error: error.message });
+        if (!error) {
+          const { data: publicUrlData } = supabaseAdmin.storage
+            .from('deliveriq-assets')
+            .getPublicUrl(path);
+          return res.status(200).json({ url: publicUrlData.publicUrl });
+        }
+        console.warn('Supabase upload warning, falling back to local file storage:', error.message);
+      }
+    } catch (supErr: any) {
+      console.warn('Supabase storage unavailable, using local disk fallback:', supErr?.message || supErr);
     }
 
-    // Get public URL
-    const { data: publicUrlData } = supabaseAdmin.storage
-      .from('deliveriq-assets')
-      .getPublicUrl(path);
+    // Local Disk Fallback
+    const uploadDir = join(process.cwd(), 'public', 'assets', 'uploads');
+    if (!existsSync(uploadDir)) {
+      mkdirSync(uploadDir, { recursive: true });
+    }
 
-    return res.status(200).json({ url: publicUrlData.publicUrl });
+    const localFilePath = join(uploadDir, uniqueFilename);
+    writeFileSync(localFilePath, buffer);
+
+    const publicUrl = `/assets/uploads/${uniqueFilename}`;
+    return res.status(200).json({ url: publicUrl });
+
   } catch (error: any) {
     console.error('Upload handler error:', error);
-    return res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error.message || 'Upload failed.' });
   }
 }

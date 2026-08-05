@@ -114,24 +114,45 @@ export default function SpeakerDialog({ speaker, isOpen, onClose }: SpeakerDialo
             >
               {/* Avatar & Identity */}
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-                <img
-                  src={speaker.avatarUrl}
-                  alt={speaker.name}
-                  loading="lazy"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&h=200';
-                  }}
+                {speaker.avatarUrl ? (
+                  <img
+                    src={speaker.avatarUrl}
+                    alt={speaker.name}
+                    loading="lazy"
+                    onError={(e) => {
+                      const target = e.currentTarget;
+                      target.style.display = 'none';
+                      const fallback = target.nextElementSibling as HTMLElement;
+                      if (fallback) fallback.style.display = 'flex';
+                    }}
+                    style={{
+                      width: '120px',
+                      height: '120px',
+                      borderRadius: '50%',
+                      objectFit: 'cover',
+                      border: '4px solid',
+                      flexShrink: 0,
+                      marginBottom: '16px',
+                    }}
+                    className="border-background bg-background shadow-sm"
+                  />
+                ) : null}
+
+                <div
                   style={{
+                    display: speaker.avatarUrl ? 'none' : 'flex',
                     width: '120px',
                     height: '120px',
                     borderRadius: '50%',
-                    objectFit: 'cover',
-                    border: '4px solid',
-                    flexShrink: 0,
+                    alignItems: 'center',
+                    justifyContent: 'center',
                     marginBottom: '16px',
+                    flexShrink: 0,
                   }}
-                  className="border-background bg-background shadow-sm"
-                />
+                  className="bg-muted border-4 border-background shadow-sm"
+                >
+                  <User size={48} className="text-muted-foreground opacity-50" />
+                </div>
 
                 <h2
                   style={{ fontSize: '1.25rem', fontWeight: 700, letterSpacing: '-0.01em', marginBottom: '4px' }}
