@@ -6,6 +6,7 @@ import { SessionsList } from '@/components/SessionsList';
 import { TopicsList } from '@/components/TopicsList';
 import { MarqueeTicker } from '@/components/MarqueeTicker';
 import { HeroVideoBackground } from '@/components/HeroVideoBackground';
+import { HomepageVisual } from '@/components/page-renderers/HomepageVisual';
 
 export default function HomePage() {
   const { data: cms = FALLBACK_CMS_CONTENT } = useCmsContent();
