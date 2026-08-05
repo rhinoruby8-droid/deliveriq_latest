@@ -5,13 +5,14 @@ import { PageHtmlRenderer } from '@/components/PageHtmlRenderer';
 import { SessionsList } from '@/components/SessionsList';
 import { TopicsList } from '@/components/TopicsList';
 import { MarqueeTicker } from '@/components/MarqueeTicker';
-import { HomepageVisual } from '@/components/page-renderers/HomepageVisual';
+import { HeroVideoBackground } from '@/components/HeroVideoBackground';
 
 export default function HomePage() {
   const { data: cms = FALLBACK_CMS_CONTENT } = useCmsContent();
   const htmlContent = cms.homepageHtml || FALLBACK_CMS_CONTENT.homepageHtml;
 
   const widgets = {
+    HeroVideoBackground: <HeroVideoBackground pageKey="homepage" />,
     SessionsList: <SessionsList />,
     TopicsList: <TopicsList />,
     MarqueeTicker: <MarqueeTicker />

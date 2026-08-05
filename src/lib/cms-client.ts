@@ -383,6 +383,7 @@ export const FALLBACK_CMS_CONTENT: CmsContent = {
   sessionDetailPageCss: '',
   notFoundPageCss: '',
   homepageHtml: `<section class="relative overflow-hidden pt-20 pb-16 lg:pt-32 lg:pb-24">
+  <div class="absolute inset-0 overflow-hidden pointer-events-none">[HeroVideoBackground]</div>
   <div class="container mx-auto px-6 lg:px-8 relative z-10">
     <div class="max-w-4xl">
       <h1 class="text-5xl md:text-6xl lg:text-[5rem] font-bold text-foreground leading-[1.0] tracking-tight mb-0">

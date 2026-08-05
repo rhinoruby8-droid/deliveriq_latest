@@ -22,15 +22,11 @@ export function HeroVideoBackground({ videoSrc, pageKey }: HeroVideoBackgroundPr
     if (videoRef.current) {
       videoRef.current.defaultMuted = true;
       videoRef.current.muted = true;
-      const playPromise = videoRef.current.play();
-      
-      if (playPromise !== undefined) {
-        playPromise.catch((e) => {
-          if (e.name !== 'AbortError') {
-            setIsAutoplayBlocked(true);
-          }
-        });
-      }
+      videoRef.current.play().catch((e) => {
+        if (e.name !== 'AbortError') {
+          console.warn('Hero video autoplay notice:', e);
+        }
+      });
     }
   }, [resolvedSrc]);
 
@@ -38,7 +34,7 @@ export function HeroVideoBackground({ videoSrc, pageKey }: HeroVideoBackgroundPr
     return (
       <img
         src={config.globalGifUrl}
-        className="absolute inset-0 object-cover w-full h-full -z-10 diq-hero-video-bg"
+        className="absolute inset-0 object-cover w-full h-full -z-10 diq-hero-video-bg opacity-40 pointer-events-none"
         style={{ willChange: 'transform', backfaceVisibility: 'hidden', transform: 'translateZ(0)' }}
         alt="Hero Background"
       />
@@ -46,7 +42,7 @@ export function HeroVideoBackground({ videoSrc, pageKey }: HeroVideoBackgroundPr
   }
 
   return (
-    <div className="absolute inset-0 w-full h-full -z-10 diq-hero-video-bg">
+    <div className="absolute inset-0 w-full h-full -z-10 diq-hero-video-bg pointer-events-none overflow-hidden">
       <video
         ref={videoRef}
         key={resolvedSrc}
@@ -57,25 +53,9 @@ export function HeroVideoBackground({ videoSrc, pageKey }: HeroVideoBackgroundPr
         playsInline
         preload="auto"
         poster="/assets/hero-image.png"
-        className="w-full h-full object-cover pointer-events-none"
+        className="w-full h-full object-cover opacity-50 transition-opacity duration-700"
         style={{ willChange: 'transform', backfaceVisibility: 'hidden', transform: 'translateZ(0)' }}
       />
-      {isAutoplayBlocked && (
-        <div className="absolute inset-0 bg-black/40 flex items-center justify-center z-20 pointer-events-auto">
-          <button 
-            onClick={() => {
-              if (videoRef.current) {
-                videoRef.current.play();
-                setIsAutoplayBlocked(false);
-              }
-            }}
-            className="flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-full font-semibold hover:brightness-110 transition-all shadow-lg"
-          >
-            <Play className="w-5 h-5" />
-            Play Video
-          </button>
-        </div>
-      )}
     </div>
   );
 }
