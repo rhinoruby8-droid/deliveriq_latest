@@ -5,10 +5,12 @@ import { join } from 'node:path';
 
 export default async function uploadHandler(req: Request, res: Response) {
   try {
-    const { filename, contentType, base64 } = req.body;
+    const filename = req.body.filename;
+    const contentType = req.body.contentType || 'application/octet-stream';
+    const base64 = req.body.base64 || req.body.base64data;
 
-    if (!filename || !contentType || !base64) {
-      return res.status(400).json({ error: 'Missing required fields: filename, contentType, or base64.' });
+    if (!filename || !base64) {
+      return res.status(400).json({ error: 'Missing required fields: filename or base64 data.' });
     }
 
     // Convert base64 back to binary buffer
